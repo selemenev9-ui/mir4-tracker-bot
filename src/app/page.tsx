@@ -23,6 +23,13 @@ type BossLocationCard = {
   accent: string;
 };
 
+type BossPinData = {
+  id: string;
+  bossName: string;
+  locationLabel: string;
+  region: BossRegion;
+};
+
 const bossLocationCards: BossLocationCard[] = [
   {
     id: "sp_f1",
@@ -70,12 +77,41 @@ const bossLocationCards: BossLocationCard[] = [
 
 type SdkStatus = "idle" | "initializing" | "ready" | "error";
 
+type BossPinProps = {
+  x: number;
+  y: number;
+  data: BossPinData;
+  onClick: () => void;
+};
+
+function BossPin({ x, y, data, onClick }: BossPinProps) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className="group absolute -translate-x-1/2 -translate-y-full rounded-full border border-emerald-400/70 bg-emerald-500/90 px-2 py-1 text-[10px] font-semibold text-emerald-50 shadow-lg shadow-emerald-900/60 transition-transform hover:-translate-y-[110%] hover:bg-emerald-400/90"
+      style={{ left: `${x}%`, top: `${y}%` }}
+    >
+      <span className="flex items-center gap-1">
+        <span className="inline-block h-1.5 w-1.5 rounded-full bg-emerald-100" />
+        <span className="truncate max-w-[7rem]">{data.bossName}</span>
+      </span>
+    </button>
+  );
+}
+
 export default function DashboardPage() {
   const [sdkStatus, setSdkStatus] = useState<SdkStatus>("idle");
   const [currentUser, setCurrentUser] = useState<{
     id: string;
     username: string;
   } | null>(null);
+  const [activePin, setActivePin] = useState<
+    (BossPinData & { x: number; y: number }) | null
+  >(null);
+  const [isReporting, setIsReporting] = useState(false);
+  const [reportError, setReportError] = useState<string | null>(null);
+  const [reportSuccess, setReportSuccess] = useState(false);
 
   useEffect(() => {
     if (typeof window === "undefined") {
@@ -174,49 +210,204 @@ export default function DashboardPage() {
           </div>
         </header>
 
-        {/* Map grid */}
-        <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-          {bossLocationCards.map((card) => (
-            <article
-              key={card.id}
-              className="group relative overflow-hidden rounded-2xl border border-zinc-800/80 bg-gradient-to-br from-zinc-900/80 to-slate-950/90 shadow-lg shadow-black/60 transition-transform hover:-translate-y-0.5 hover:border-zinc-500/80"
-            >
-              <div
-                className={`pointer-events-none absolute inset-px rounded-2xl bg-gradient-to-br ${card.accent} opacity-60 mix-blend-screen`}
-                aria-hidden="true"
-              />
-              <div className="relative flex h-full flex-col gap-3 px-4 py-4 sm:px-5 sm:py-5">
-                <div className="flex items-center justify-between gap-2">
-                  <div>
-                    <h2 className="text-sm font-semibold tracking-tight text-zinc-50 sm:text-base">
-                      {card.label}
-                    </h2>
-                    <p className="mt-1 text-[11px] uppercase tracking-[0.18em] text-zinc-400">
-                      {card.region} region
-                    </p>
-                  </div>
-                  <span className="inline-flex items-center rounded-full border border-zinc-700/80 bg-black/40 px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide text-zinc-300">
-                    Placeholder
-                  </span>
-                </div>
-
-                <p className="text-xs text-zinc-300/90 sm:text-[13px]">{card.subtitle}</p>
-
-                <div className="mt-2 flex items-center justify-between gap-3 text-[11px] text-zinc-400">
-                  <span className="inline-flex items-center gap-1.5">
-                    <span className="inline-block h-1.5 w-1.5 rounded-full bg-emerald-400" />
-                    Interactive map slot
-                  </span>
-                  <button
-                    type="button"
-                    className="inline-flex items-center gap-1 rounded-full border border-zinc-700/80 bg-zinc-900/60 px-2.5 py-1 text-[11px] font-medium text-zinc-100 transition-colors hover:border-zinc-400 hover:bg-zinc-800/80"
-                  >
-                    Open tracker
-                  </button>
-                </div>
+        {/* Interactive map container */}
+        <section className="grid gap-4 md:grid-cols-[minmax(0,3fr)] md:grid-rows-1 lg:grid-cols-[minmax(0,3fr)]">
+          <article className="relative col-span-1 overflow-hidden rounded-2xl border border-zinc-800/80 bg-zinc-950/80 shadow-lg shadow-black/60">
+            <div className="flex items-center justify-between border-b border-zinc-800/70 px-4 py-3 sm:px-5">
+              <div>
+                <h2 className="text-sm font-semibold tracking-tight text-zinc-50 sm:text-base">
+                  Secret Peak · Prototype Map
+                </h2>
+                <p className="mt-1 text-[11px] uppercase tracking-[0.18em] text-zinc-400">
+                  Interactive pins · {bossLocationCards.length} presets
+                </p>
               </div>
-            </article>
-          ))}
+              <span className="inline-flex items-center rounded-full border border-zinc-700/80 bg-black/40 px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide text-zinc-300">
+                Map Prototype
+              </span>
+            </div>
+
+            <div className="relative h-[360px] w-full overflow-hidden bg-neutral-800/90 sm:h-[420px] md:h-[460px]">
+              {/* Здесь позже будет фон-карта. Пока просто тёмный placeholder. */}
+              <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(148,163,184,0.35),_transparent_55%),radial-gradient(circle_at_bottom,_rgba(15,23,42,0.9),_transparent_55%)] mix-blend-screen" />
+
+              {/* Dummy pins с координатами в процентах */}
+              <BossPin
+                x={22}
+                y={38}
+                data={{
+                  id: "pin_1",
+                  bossName: "Kruel · F1",
+                  locationLabel: "Secret Peak F1",
+                  region: "Secret Peak",
+                }}
+                onClick={() =>
+                  setActivePin({
+                    id: "pin_1",
+                    bossName: "Kruel · F1",
+                    locationLabel: "Secret Peak Floor 1",
+                    region: "Secret Peak",
+                    x: 22,
+                    y: 38,
+                  })
+                }
+              />
+              <BossPin
+                x={63}
+                y={52}
+                data={{
+                  id: "pin_2",
+                  bossName: "Red Boss · Core",
+                  locationLabel: "Labyrinth Core",
+                  region: "Labyrinth",
+                }}
+                onClick={() =>
+                  setActivePin({
+                    id: "pin_2",
+                    bossName: "Red Boss · Core",
+                    locationLabel: "Labyrinth Core Rooms",
+                    region: "Labyrinth",
+                    x: 63,
+                    y: 52,
+                  })
+                }
+              />
+              <BossPin
+                x={78}
+                y={22}
+                data={{
+                  id: "pin_3",
+                  bossName: "Mirage Blue",
+                  locationLabel: "Mirage Blue Route",
+                  region: "Mirage",
+                }}
+                onClick={() =>
+                  setActivePin({
+                    id: "pin_3",
+                    bossName: "Mirage Blue",
+                    locationLabel: "Mirage Blue Boss Route",
+                    region: "Mirage",
+                    x: 78,
+                    y: 22,
+                  })
+                }
+              />
+
+              {/* Popover над картой */}
+              {activePin && (
+                <div className="pointer-events-none absolute inset-0">
+                  <div
+                    className="pointer-events-auto absolute z-20 w-[220px] max-w-[70vw] -translate-x-1/2 -translate-y-full rounded-2xl border border-zinc-700/80 bg-zinc-950/95 px-3 py-3 text-xs text-zinc-100 shadow-xl shadow-black/70 backdrop-blur"
+                    style={{ left: `${activePin.x}%`, top: `${activePin.y}%` }}
+                  >
+                    <div className="flex items-start justify-between gap-2">
+                      <div>
+                        <p className="text-[11px] uppercase tracking-[0.16em] text-zinc-400">
+                          Report Kill
+                        </p>
+                        <h3 className="mt-0.5 text-sm font-semibold">
+                          {activePin.bossName}
+                        </h3>
+                        <p className="mt-0.5 text-[11px] text-zinc-400">
+                          {activePin.locationLabel} · {activePin.region}
+                        </p>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setActivePin(null);
+                          setReportError(null);
+                          setReportSuccess(false);
+                        }}
+                        className="ml-2 inline-flex h-5 w-5 items-center justify-center rounded-full border border-zinc-700/80 bg-zinc-900/80 text-[10px] text-zinc-400 transition-colors hover:border-zinc-500 hover:text-zinc-200"
+                      >
+                        ×
+                      </button>
+                    </div>
+
+                    <div className="mt-2 space-y-1.5">
+                      {reportError && (
+                        <p className="text-[11px] text-rose-400">
+                          {reportError}
+                        </p>
+                      )}
+                      {reportSuccess && (
+                        <p className="text-[11px] text-emerald-400">
+                          Kill reported. Timer updated.
+                        </p>
+                      )}
+                    </div>
+
+                    <div className="mt-3 flex items-center justify-between gap-2">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setActivePin(null);
+                          setReportError(null);
+                          setReportSuccess(false);
+                        }}
+                        className="inline-flex flex-1 items-center justify-center rounded-full border border-zinc-700/80 bg-zinc-900/70 px-2 py-1.5 text-[11px] font-medium text-zinc-300 transition-colors hover:border-zinc-500 hover:bg-zinc-800/80"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        type="button"
+                        disabled={isReporting || !currentUser}
+                        onClick={async () => {
+                          if (!currentUser || !activePin) return;
+                          setIsReporting(true);
+                          setReportError(null);
+                          setReportSuccess(false);
+
+                          try {
+                            const response = await fetch("/api/report-kill", {
+                              method: "POST",
+                              headers: {
+                                "Content-Type": "application/json",
+                              },
+                              body: JSON.stringify({
+                                bossName: activePin.bossName,
+                                location: activePin.locationLabel,
+                                reporterId: currentUser.id,
+                              }),
+                            });
+
+                            const json = (await response.json()) as {
+                              success?: boolean;
+                              error?: string;
+                            };
+
+                            if (!response.ok || !json.success) {
+                              setReportError(
+                                json.error ||
+                                  "Failed to record kill. Please try again."
+                              );
+                            } else {
+                              setReportSuccess(true);
+                            }
+                          } catch (error) {
+                            console.error("Failed to call /api/report-kill", error);
+                            setReportError(
+                              "Unexpected error while reporting kill."
+                            );
+                          } finally {
+                            setIsReporting(false);
+                          }
+                        }}
+                        className="inline-flex flex-1 items-center justify-center rounded-full border border-emerald-500/80 bg-emerald-500 px-2 py-1.5 text-[11px] font-semibold text-emerald-950 shadow-sm shadow-emerald-900/50 transition-colors hover:bg-emerald-400 disabled:cursor-not-allowed disabled:border-emerald-900/60 disabled:bg-emerald-900/60 disabled:text-emerald-300/60"
+                      >
+                        {isReporting
+                          ? "Reporting..."
+                          : currentUser
+                          ? "Confirm Report Kill"
+                          : "Login required"}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          </article>
         </section>
 
         {/* Footer hint */}
