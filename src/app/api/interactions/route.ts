@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { InteractionType, InteractionResponseType } from "discord-interactions";
 import { verifyDiscordRequest } from "@/lib/discord";
+import { getSupabaseClient } from "@/lib/supabase";
 
 type PingInteraction = {
   type: InteractionType.PING;
@@ -20,10 +21,36 @@ type MessageComponentInteraction = {
   };
 };
 
+type ModalSubmitActionRow = {
+  type: 1;
+  components: {
+    type: 4;
+    custom_id: string;
+    value?: string;
+  }[];
+};
+
+type ModalSubmitInteraction = {
+  type: InteractionType.MODAL_SUBMIT;
+  data: {
+    custom_id: string;
+    components: ModalSubmitActionRow[];
+  };
+  member?: {
+    user?: {
+      id: string;
+    };
+  };
+  user?: {
+    id: string;
+  };
+};
+
 type AnyInteraction =
   | PingInteraction
   | ApplicationCommandInteraction
-  | MessageComponentInteraction;
+  | MessageComponentInteraction
+  | ModalSubmitInteraction;
 
 type Embed = {
   title: string;
@@ -201,6 +228,107 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
         data: {
           content: "⏳ Fetching active timers from the database...",
+          flags: 64,
+        },
+      };
+
+      return NextResponse.json(responseBody);
+    }
+  }
+
+  if (interaction.type === InteractionType.MODAL_SUBMIT) {
+    const modalInteraction = interaction as ModalSubmitInteraction;
+
+    if (modalInteraction.data.custom_id !== "modal_report_kill") {
+      return new NextResponse("Unhandled modal submit", { status: 400 });
+    }
+
+    const fields: Record<string, string> = {};
+
+    for (const row of modalInteraction.data.components) {
+      for (const component of row.components) {
+        if (component.type === 4 && component.custom_id) {
+          fields[component.custom_id] = (component.value ?? "").trim();
+        }
+      }
+    }
+
+    const bossName = fields["input_boss_name"];
+    const location = fields["input_location"];
+
+    if (!bossName || !location) {
+      const responseBody: DiscordInteractionResponse = {
+        type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+        data: {
+          content: "❌ Missing required fields in the report.",
+          flags: 64,
+        },
+      };
+
+      return NextResponse.json(responseBody);
+    }
+
+    const userId =
+      modalInteraction.member?.user?.id ?? modalInteraction.user?.id ?? null;
+
+    if (!userId) {
+      const responseBody: DiscordInteractionResponse = {
+        type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+        data: {
+          content: "❌ Could not determine reporting user.",
+          flags: 64,
+        },
+      };
+
+      return NextResponse.json(responseBody);
+    }
+
+    const supabase = getSupabaseClient();
+    const now = new Date();
+    const nextSpawn = new Date(now.getTime() + 3 * 60 * 60 * 1000);
+
+    try {
+      const { error } = await supabase.from("boss_timers").insert({
+        boss_name: bossName,
+        location,
+        updated_by: userId,
+        boss_type: "dynamic",
+        next_spawn: nextSpawn.toISOString(),
+        last_killed: now.toISOString(),
+      });
+
+      if (error) {
+        console.error("Failed to insert boss timer", error);
+
+        const responseBody: DiscordInteractionResponse = {
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+          data: {
+            content:
+              "❌ Failed to record boss kill. Please try again or contact an administrator.",
+            flags: 64,
+          },
+        };
+
+        return NextResponse.json(responseBody);
+      }
+
+      const responseBody: DiscordInteractionResponse = {
+        type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+        data: {
+          content: "✅ Boss kill reported and timer started!",
+          flags: 64,
+        },
+      };
+
+      return NextResponse.json(responseBody);
+    } catch (error) {
+      console.error("Unexpected error while inserting boss timer", error);
+
+      const responseBody: DiscordInteractionResponse = {
+        type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+        data: {
+          content:
+            "❌ An unexpected error occurred while recording the boss kill.",
           flags: 64,
         },
       };
