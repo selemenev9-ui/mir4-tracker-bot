@@ -11,6 +11,13 @@ export interface BossTimer {
 }
 
 export async function GET(): Promise<NextResponse> {
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
+    return NextResponse.json(
+      { success: false, error: "Missing env vars" },
+      { status: 500 }
+    );
+  }
+
   try {
     const supabase = getSupabaseClient();
 
@@ -20,7 +27,7 @@ export async function GET(): Promise<NextResponse> {
       .order("next_spawn", { ascending: true });
 
     if (error) {
-      console.error("Failed to fetch boss timers", error);
+      console.error("Failed to fetch boss timers:", JSON.stringify(error));
       return NextResponse.json(
         { success: false, error: "Failed to fetch timers" },
         { status: 500 }

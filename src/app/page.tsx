@@ -83,7 +83,11 @@ function CountdownBadge({ nextSpawn }: { nextSpawn: Date | null }) {
     !isSpawned && !isCritical && !isWarning ? "text-zinc-400" : "",
   ].join(" ");
 
-  return <span className={className}>{label}</span>;
+  return (
+    <span className={className} suppressHydrationWarning>
+      {label}
+    </span>
+  );
 }
 
 // ─── Secret Peak View ──────────────────────────────────────────────────────
@@ -203,15 +207,13 @@ function SecretPeakView({
 
       {/* Map + Pins */}
       <div className="relative rounded-2xl overflow-hidden border border-zinc-800/80 bg-zinc-950/80">
-        <div className="relative w-full" style={{ paddingBottom: "54.75%" }}>
+        <div className="relative w-full">
           <Image
             src="/maps/secret_peak.png"
             alt={`Secret Peak Floor ${selectedFloor}`}
-            fill
-            className="object-cover opacity-70"
-            onError={(e) => {
-              (e.target as HTMLImageElement).style.display = "none";
-            }}
+            width={1337}
+            height={732}
+            className="w-full h-auto opacity-70"
           />
           <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-black/20 to-black/60" />
 
