@@ -203,7 +203,7 @@ function SecretPeakView({
 
       {/* Map + Pins */}
       <div className="relative rounded-2xl overflow-hidden border border-zinc-800/80 bg-zinc-950/80">
-        <div className="relative w-full" style={{ paddingBottom: "56.25%" }}>
+        <div className="relative w-full" style={{ paddingBottom: "54.75%" }}>
           <Image
             src="/maps/secret_peak.png"
             alt={`Secret Peak Floor ${selectedFloor}`}
