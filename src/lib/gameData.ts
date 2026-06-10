@@ -36,15 +36,15 @@ export interface SecretPeakBoss {
 }
 
 const SECRET_PEAK_TEAL_COORDS = [
-  { suffix: "teal1", pinX: 38, pinY: 20 },
-  { suffix: "teal2", pinX: 17, pinY: 31 },
-  { suffix: "teal3", pinX: 30, pinY: 40 },
-  { suffix: "teal4", pinX: 22, pinY: 52 },
+  { suffix: "teal1", pinX: 46, pinY: 26 },
+  { suffix: "teal2", pinX: 28, pinY: 37 },
+  { suffix: "teal3", pinX: 47, pinY: 53 },
+  { suffix: "teal4", pinX: 68, pinY: 60 },
 ] as const;
 
 const SECRET_PEAK_GOLD_COORDS = [
-  { suffix: "gold1", pinX: 83, pinY: 22 },
-  { suffix: "gold2", pinX: 8, pinY: 50 },
+  { suffix: "gold1", pinX: 68, pinY: 34 },
+  { suffix: "gold2", pinX: 27, pinY: 52 },
 ] as const;
 
 export const SECRET_PEAK_BOSSES: SecretPeakBoss[] = (() => {
@@ -84,7 +84,7 @@ export const SECRET_PEAK_BOSSES: SecretPeakBoss[] = (() => {
       floor,
       type: "red_lower",
       fixedHoursUTC8: [13, 19, 1, 7],
-      pinX: 10,
+      pinX: 18,
       pinY: 72,
     });
 
@@ -94,8 +94,8 @@ export const SECRET_PEAK_BOSSES: SecretPeakBoss[] = (() => {
       floor,
       type: "red_upper",
       fixedHoursUTC8: [16, 22, 4, 10],
-      pinX: 87,
-      pinY: 8,
+      pinX: 73,
+      pinY: 12,
     });
   }
 
@@ -152,19 +152,277 @@ export interface MirageBoss {
   id: string;
   name: string;
   layer: number;
-  type: "blue" | "red" | "purple";
-  fixedHoursUTC8: number[]; // UTC+8 hours when this boss spawns daily
+  world: string; // e.g. "W1", "W2"
+  location: string; // e.g. "Bullface Forest"
+  level: string; // e.g. "140 below", "141+", "155+"
+  spawnTimes: string[]; // "HH:MM" format, UTC+8
 }
 
 export const MIRAGE_BOSSES: MirageBoss[] = [
-  // ── Layer 1 ──
-  { id: "mir_l1_b1", name: "Mirage Boss 1", layer: 1, type: "blue", fixedHoursUTC8: [2, 6, 10, 14, 18, 22] },
-  { id: "mir_l1_b2", name: "Mirage Boss 2", layer: 1, type: "red", fixedHoursUTC8: [4, 8, 12, 16, 20, 0] },
-  { id: "mir_l1_b3", name: "Mirage Boss 3", layer: 1, type: "purple", fixedHoursUTC8: [3, 9, 15, 21] },
-  // ── Layer 3 ──
-  { id: "mir_l3_b1", name: "Mirage Boss 4", layer: 3, type: "blue", fixedHoursUTC8: [2, 8, 14, 20] },
-  { id: "mir_l3_b2", name: "Mirage Boss 5", layer: 3, type: "red", fixedHoursUTC8: [5, 11, 17, 23] },
-  { id: "mir_l3_b3", name: "Mirage Boss 6", layer: 3, type: "purple", fixedHoursUTC8: [1, 7, 13, 19] },
+  // ── Layer 3 ─────────────────────────────────────────────────────────────
+  // W1 — 140 below
+  {
+    id: "mir_l3_w1_mata",
+    name: "Mata",
+    layer: 3,
+    world: "W1",
+    location: "Bullface Forest",
+    level: "140 below",
+    spawnTimes: ["2:00", "4:00", "6:00", "8:00", "10:00", "12:00"],
+  },
+  {
+    id: "mir_l3_w1_boltox",
+    name: "Boltox",
+    layer: 3,
+    world: "W1",
+    location: "Demon Bull Temple 1F",
+    level: "140 below",
+    spawnTimes: ["1:00", "3:00", "5:00", "7:00", "9:00", "11:00"],
+  },
+  {
+    id: "mir_l3_w1_bfk",
+    name: "Bullface Fiend King",
+    layer: 3,
+    world: "W1",
+    location: "Bullface King Fiend Sanctuary",
+    level: "140 below",
+    spawnTimes: ["3:00", "6:00", "9:00", "12:00"],
+  },
+  // W8 — 140 below
+  {
+    id: "mir_l3_w8_yew",
+    name: "Yeo Wihuang",
+    layer: 3,
+    world: "W8",
+    location: "Whitemaur Sealing Circle",
+    level: "140 below",
+    spawnTimes: ["1:00", "5:00", "9:00"],
+  },
+  // W7 — 141+
+  {
+    id: "mir_l3_w7_tae",
+    name: "Taehyul",
+    layer: 3,
+    world: "W7",
+    location: "Taehyuls Garden",
+    level: "141+",
+    spawnTimes: ["1:00", "3:00", "5:00", "7:00", "9:00", "11:00"],
+  },
+  {
+    id: "mir_l3_w7_yiun",
+    name: "Yiun",
+    layer: 3,
+    world: "W7",
+    location: "Demon Cult Hall",
+    level: "141+",
+    spawnTimes: ["2:00", "5:00", "8:00", "11:00"],
+  },
+  // W4 — 141+
+  {
+    id: "mir_l3_w4_noz",
+    name: "Nefariox Obdurate Zenith",
+    layer: 3,
+    world: "W4",
+    location: "Phantasia Desert",
+    level: "141+",
+    spawnTimes: ["2:00", "4:00", "6:00", "8:00", "10:00", "12:00"],
+  },
+  {
+    id: "mir_l3_w4_kuri",
+    name: "Kurilaica",
+    layer: 3,
+    world: "W4",
+    location: "Overlord Sealing Circle",
+    level: "141+",
+    spawnTimes: ["3:00", "6:00", "9:00", "12:00"],
+  },
+  // W2 — 143+
+  {
+    id: "mir_l3_w2_juhui",
+    name: "Juhui",
+    layer: 3,
+    world: "W2",
+    location: "Redmoon Mountain",
+    level: "143+",
+    spawnTimes: ["2:30", "5:30", "8:30", "11:30"],
+  },
+  {
+    id: "mir_l3_w5_faluk",
+    name: "Faluk",
+    layer: 3,
+    world: "W5",
+    location: "Great Sabuk Wall",
+    level: "143+",
+    spawnTimes: ["3:30", "6:30", "9:30", "12:30"],
+  },
+  {
+    id: "mir_l3_w5_twf",
+    name: "Tale Warper Fiend",
+    layer: 3,
+    world: "W5",
+    location: "Illusion Temple",
+    level: "143+",
+    spawnTimes: ["1:30", "4:30", "7:30", "10:30"],
+  },
+  // W3 — 150+
+  {
+    id: "mir_l3_w3_gyo",
+    name: "Tombeast Gyo",
+    layer: 3,
+    world: "W3",
+    location: "Nefariox Necropolis",
+    level: "150+",
+    spawnTimes: ["2:30", "8:30"],
+  },
+  {
+    id: "mir_l3_w3_dae",
+    name: "Dusk Armado Emperor",
+    layer: 3,
+    world: "W3",
+    location: "Viperbeast Plain",
+    level: "150+",
+    spawnTimes: ["1:30", "3:30", "5:30", "7:30", "9:30", "11:30"],
+  },
+  {
+    id: "mir_l3_w3_boodo",
+    name: "Boodo",
+    layer: 3,
+    world: "W3",
+    location: "Rockcut Tomb",
+    level: "150+",
+    spawnTimes: ["3:30", "9:30"],
+  },
+  {
+    id: "mir_l3_w3_mara",
+    name: "Mara",
+    layer: 3,
+    world: "W3",
+    location: "Rockcut Tomb",
+    level: "150+",
+    spawnTimes: ["2:30", "5:30", "8:30", "11:30"],
+  },
+  // W6 — 150+
+  {
+    id: "mir_l3_w6_sura",
+    name: "Sura",
+    layer: 3,
+    world: "W6",
+    location: "Bincheon Town",
+    level: "150+",
+    spawnTimes: ["4:30", "10:30"],
+  },
+  {
+    id: "mir_l3_w6_mok",
+    name: "Mokgang",
+    layer: 3,
+    world: "W6",
+    location: "Bincheon Town",
+    level: "150+",
+    spawnTimes: ["2:30", "4:30", "6:30", "8:30", "10:30", "12:30"],
+  },
+  {
+    id: "mir_l3_w6_wui",
+    name: "Wuihan",
+    layer: 3,
+    world: "W6",
+    location: "Phantom Woods",
+    level: "150+",
+    spawnTimes: ["5:30", "11:30"],
+  },
+  {
+    id: "mir_l3_w6_yeti",
+    name: "Obscene Yeticlops",
+    layer: 3,
+    world: "W6",
+    location: "Bincheon Labyrinth",
+    level: "150+",
+    spawnTimes: ["6:30", "12:30"],
+  },
+  {
+    id: "mir_l3_w6_thy",
+    name: "Transformed Hong Yeom",
+    layer: 3,
+    world: "W6",
+    location: "Demoniac Mine Deep Area",
+    level: "150+",
+    spawnTimes: ["1:30", "3:30", "5:30", "7:30", "9:30", "11:30"],
+  },
+
+  // ── Layer 1 ─────────────────────────────────────────────────────────────
+  // W1 — 155+
+  {
+    id: "mir_l1_w1_jih",
+    name: "Jihwa",
+    layer: 1,
+    world: "W1",
+    location: "Unseo Town",
+    level: "155+",
+    spawnTimes: ["2:30", "5:30", "8:30", "11:30"],
+  },
+  {
+    id: "mir_l1_w1_nya",
+    name: "Nighteyes Yaksha",
+    layer: 1,
+    world: "W1",
+    location: "Seven Valleys Mountain",
+    level: "155+",
+    spawnTimes: ["3:30", "9:30"],
+  },
+  {
+    id: "mir_l1_w1_bca",
+    name: "Black Carapace Dusk Armado",
+    layer: 1,
+    world: "W1",
+    location: "Seven Valleys Mountain",
+    level: "155+",
+    spawnTimes: ["3:30", "6:30", "9:30", "12:30"],
+  },
+  {
+    id: "mir_l1_w1_bul",
+    name: "Bulhu",
+    layer: 1,
+    world: "W1",
+    location: "Roaring Flame Island",
+    level: "155+",
+    spawnTimes: ["4:30", "10:30"],
+  },
+  // W2 — 155+
+  {
+    id: "mir_l1_w2_gue",
+    name: "Guemugwang",
+    layer: 1,
+    world: "W2",
+    location: "Nine Dragon Ice Field",
+    level: "155+",
+    spawnTimes: ["5:30", "11:30"],
+  },
+  {
+    id: "mir_l1_w2_dom",
+    name: "Do Maeongryong",
+    layer: 1,
+    world: "W2",
+    location: "Underground Jail",
+    level: "155+",
+    spawnTimes: ["6:30", "12:30"],
+  },
+  {
+    id: "mir_l1_w2_mol",
+    name: "Molgrash",
+    layer: 1,
+    world: "W2",
+    location: "Underground Jail",
+    level: "155+",
+    spawnTimes: ["1:30", "4:30", "7:30", "10:30"],
+  },
+  {
+    id: "mir_l1_w2_wig",
+    name: "Wi Gwangryeong",
+    layer: 1,
+    world: "W2",
+    location: "Nine Dragon Palace",
+    level: "155+",
+    spawnTimes: ["2:30", "5:30", "8:30", "11:30"],
+  },
 ];
 
 // ─── WORLD BOSSES — Daily ─────────────────────────────────────────────────
@@ -290,6 +548,31 @@ export function getNextFixedSpawn(fixedHoursUTC8: number[]): Date {
   const tomorrowOffset = 24 * 60 * 60 * 1000;
   return new Date(
     todayUTC8StartMs + tomorrowOffset + (8 + sortedHours[0]) * 60 * 60 * 1000
+  );
+}
+
+export function getNextSpawnFromTimes(spawnTimes: string[]): Date {
+  const UTC8_OFFSET = 8 * 60 * 60 * 1000;
+  const nowUTC = Date.now();
+  const nowUTC8 = new Date(nowUTC + UTC8_OFFSET);
+  const todayUTC8StartMs =
+    Date.UTC(
+      nowUTC8.getUTCFullYear(),
+      nowUTC8.getUTCMonth(),
+      nowUTC8.getUTCDate()
+    ) - UTC8_OFFSET;
+
+  const sorted = [...spawnTimes].sort();
+  for (const t of sorted) {
+    const [hStr, mStr] = t.split(":");
+    const totalMin = parseInt(hStr, 10) * 60 + parseInt(mStr ?? "0", 10);
+    const spawnMs = todayUTC8StartMs + (8 * 60 + totalMin) * 60 * 1000;
+    if (spawnMs > nowUTC + 5000) return new Date(spawnMs);
+  }
+  const [hStr, mStr] = sorted[0].split(":");
+  const totalMin = parseInt(hStr, 10) * 60 + parseInt(mStr ?? "0", 10);
+  return new Date(
+    todayUTC8StartMs + 24 * 60 * 60 * 1000 + (8 * 60 + totalMin) * 60 * 1000
   );
 }
 

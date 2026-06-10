@@ -11,6 +11,7 @@ import {
   WEEKLY_WORLD_BOSSES,
   formatCountdown,
   getNextFixedSpawn,
+  getNextSpawnFromTimes,
   getNextWeeklySpawn,
   getServerTimeString,
   type MagicSquareBoss,
@@ -204,7 +205,7 @@ function SecretPeakView({
       <div className="relative rounded-2xl overflow-hidden border border-zinc-800/80 bg-zinc-950/80">
         <div className="relative w-full" style={{ paddingBottom: "56.25%" }}>
           <Image
-            src="/maps/secret_peak.jpg"
+            src="/maps/secret_peak.png"
             alt={`Secret Peak Floor ${selectedFloor}`}
             fill
             className="object-cover opacity-70"
@@ -418,50 +419,41 @@ function MirageView() {
 
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {filtered.map((boss: MirageBoss) => {
-          const nextSpawn = getNextFixedSpawn(boss.fixedHoursUTC8);
-          const classes = [
-            "rounded-2xl border p-4 backdrop-blur-sm transition-all",
-            boss.type === "blue" ? "border-sky-500/40 bg-sky-500/5" : "",
-            boss.type === "red" ? "border-red-500/40 bg-red-500/5" : "",
-            boss.type === "purple" ? "border-violet-500/40 bg-violet-500/5" : "",
-          ].join(" ");
+          const nextSpawn = getNextSpawnFromTimes(boss.spawnTimes);
+          const classes =
+            "rounded-2xl border border-zinc-800/60 bg-zinc-950/80 p-4 backdrop-blur-sm transition-all";
 
           return (
             <div key={boss.id} className={classes}>
               <div className="mb-3 flex items-start justify-between gap-2">
                 <div>
-                  <p className="mb-0.5 text-[10px] uppercase tracking-widest text-zinc-500">
-                    Layer {boss.layer}
-                  </p>
+                  <div className="mb-0.5 flex items-center gap-2 text-[10px] uppercase tracking-widest text-zinc-500">
+                    <span className="rounded bg-zinc-800/80 px-1.5 py-0.5 font-semibold">
+                      Layer {boss.layer}
+                    </span>
+                    <span className="rounded bg-zinc-800/80 px-1.5 py-0.5 font-semibold">
+                      {boss.world}
+                    </span>
+                  </div>
                   <h3 className="text-sm font-semibold text-zinc-100">
                     {boss.name}
                   </h3>
+                  <p className="mt-0.5 text-[11px] text-zinc-400">
+                    {boss.location}
+                  </p>
                 </div>
-                <span
-                  className={[
-                    "rounded-full px-2 py-0.5 text-[9px] font-bold uppercase tracking-widest",
-                    boss.type === "blue"
-                      ? "bg-sky-500/20 text-sky-300"
-                      : "",
-                    boss.type === "red"
-                      ? "bg-red-500/20 text-red-300"
-                      : "",
-                    boss.type === "purple"
-                      ? "bg-violet-500/20 text-violet-300"
-                      : "",
-                  ].join(" ")}
-                >
-                  {boss.type}
+                <span className="rounded-full bg-zinc-800/80 px-2 py-0.5 text-[9px] font-bold uppercase tracking-widest text-zinc-300">
+                  {boss.level}
                 </span>
               </div>
 
               <div className="mb-3 flex flex-wrap gap-1">
-                {boss.fixedHoursUTC8.map((h) => (
+                {boss.spawnTimes.map((t) => (
                   <span
-                    key={h}
+                    key={t}
                     className="rounded bg-zinc-800/80 px-1.5 py-0.5 text-[10px] font-mono text-zinc-400"
                   >
-                    {String(h).padStart(2, "0")}:00
+                    {t}
                   </span>
                 ))}
               </div>
