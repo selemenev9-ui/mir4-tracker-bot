@@ -46,7 +46,10 @@ function ServerClock() {
   return (
     <div className="flex items-center gap-2">
       <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 shadow-[0_0_6px_2px_rgba(52,211,153,0.5)]" />
-      <span className="font-mono text-xs text-zinc-300 tracking-widest">
+      <span
+        className="font-mono text-xs text-zinc-300 tracking-widest"
+        suppressHydrationWarning
+      >
         {time} UTC+8
       </span>
     </div>
@@ -214,6 +217,7 @@ function SecretPeakView({
             width={1337}
             height={732}
             className="w-full h-auto opacity-70"
+            unoptimized
           />
           <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-black/20 to-black/60" />
 
@@ -901,7 +905,7 @@ export default function DashboardPage() {
           ))}
         </nav>
 
-        <section className="flex-1">
+        <section className="flex-1" suppressHydrationWarning>
           {activeTab === "secret_peak" && (
             <SecretPeakView
               dynamicTimers={dynamicTimers}
