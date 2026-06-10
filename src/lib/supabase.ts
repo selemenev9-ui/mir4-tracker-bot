@@ -1,3 +1,20 @@
+/*
+ * Required Supabase tables:
+ *
+ * boss_timers (already exists):
+ *   boss_name text PRIMARY KEY
+ *   location text
+ *   updated_by text
+ *   boss_type text
+ *   last_killed timestamptz
+ *   next_spawn timestamptz
+ *
+ * notifications_sent (CREATE IF NOT EXISTS):
+ *   id bigserial PRIMARY KEY
+ *   notification_key text UNIQUE
+ *   sent_at timestamptz DEFAULT now()
+ */
+
 import { createClient, SupabaseClient } from "@supabase/supabase-js";
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;

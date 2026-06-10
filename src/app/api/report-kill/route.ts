@@ -35,14 +35,19 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
   const nextSpawn = new Date(now.getTime() + 3 * 60 * 60 * 1000);
 
   try {
-    const { error } = await supabase.from("boss_timers").insert({
-      boss_name: bossName,
-      location,
-      updated_by: reporterId,
-      boss_type: "dynamic",
-      next_spawn: nextSpawn.toISOString(),
-      last_killed: now.toISOString(),
-    });
+    const { error } = await supabase
+      .from("boss_timers")
+      .upsert(
+        {
+          boss_name: bossName,
+          location,
+          updated_by: reporterId,
+          boss_type: "dynamic",
+          next_spawn: nextSpawn.toISOString(),
+          last_killed: now.toISOString(),
+        },
+        { onConflict: "boss_name" }
+      );
 
     if (error) {
       console.error("Failed to insert boss timer from report-kill API", error);
