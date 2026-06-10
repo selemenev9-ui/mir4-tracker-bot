@@ -537,7 +537,7 @@ export function getNextFixedSpawn(fixedHoursUTC8: number[]): Date {
   const sortedHours = [...fixedHoursUTC8].sort((a, b) => a - b);
 
   for (const h of sortedHours) {
-    const spawnMs = todayUTC8StartMs + (8 + h) * 60 * 60 * 1000; // UTC equivalent
+    const spawnMs = todayUTC8StartMs + h * 60 * 60 * 1000;
     if (spawnMs > nowUTC + 5000) {
       // 5s buffer
       return new Date(spawnMs);
@@ -547,7 +547,7 @@ export function getNextFixedSpawn(fixedHoursUTC8: number[]): Date {
   // All today's spawns passed — return first spawn tomorrow
   const tomorrowOffset = 24 * 60 * 60 * 1000;
   return new Date(
-    todayUTC8StartMs + tomorrowOffset + (8 + sortedHours[0]) * 60 * 60 * 1000
+    todayUTC8StartMs + tomorrowOffset + sortedHours[0] * 60 * 60 * 1000
   );
 }
 
@@ -566,13 +566,13 @@ export function getNextSpawnFromTimes(spawnTimes: string[]): Date {
   for (const t of sorted) {
     const [hStr, mStr] = t.split(":");
     const totalMin = parseInt(hStr, 10) * 60 + parseInt(mStr ?? "0", 10);
-    const spawnMs = todayUTC8StartMs + (8 * 60 + totalMin) * 60 * 1000;
+    const spawnMs = todayUTC8StartMs + totalMin * 60 * 1000;
     if (spawnMs > nowUTC + 5000) return new Date(spawnMs);
   }
   const [hStr, mStr] = sorted[0].split(":");
   const totalMin = parseInt(hStr, 10) * 60 + parseInt(mStr ?? "0", 10);
   return new Date(
-    todayUTC8StartMs + 24 * 60 * 60 * 1000 + (8 * 60 + totalMin) * 60 * 1000
+    todayUTC8StartMs + 24 * 60 * 60 * 1000 + totalMin * 60 * 1000
   );
 }
 
@@ -600,7 +600,7 @@ export function getNextWeeklySpawn(
   const targetSpawnMs =
     todayUTC8StartMs +
     daysUntil * 24 * 60 * 60 * 1000 +
-    (8 + spawnHourUTC8) * 60 * 60 * 1000;
+    spawnHourUTC8 * 60 * 60 * 1000;
 
   if (targetSpawnMs <= nowUTC + 5000) {
     // That time has passed — next week
