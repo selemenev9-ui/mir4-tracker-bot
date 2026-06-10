@@ -10,6 +10,7 @@
     "register:commands": "node node_modules/tsx/dist/cli.mjs src/scripts/register-commands.ts"
   },
   "dependencies": {
+    "@discord/embedded-app-sdk": "^2.5.0",
     "@supabase/supabase-js": "^2.108.1",
     "discord-interactions": "^4.4.0",
     "next": "16.2.9",
