@@ -13,7 +13,17 @@ type ApplicationCommandInteraction = {
   };
 };
 
-type AnyInteraction = PingInteraction | ApplicationCommandInteraction;
+type MessageComponentInteraction = {
+  type: InteractionType.MESSAGE_COMPONENT;
+  data: {
+    custom_id: string;
+  };
+};
+
+type AnyInteraction =
+  | PingInteraction
+  | ApplicationCommandInteraction
+  | MessageComponentInteraction;
 
 type Embed = {
   title: string;
@@ -30,20 +40,49 @@ type ButtonComponent = {
   custom_id: string;
 };
 
+type TextInputStyle = 1 | 2;
+
+type TextInputComponent = {
+  type: 4;
+  custom_id: string;
+  style: TextInputStyle;
+  label: string;
+  required?: boolean;
+  min_length?: number;
+  max_length?: number;
+  value?: string;
+  placeholder?: string;
+};
+
+type Component = ButtonComponent | TextInputComponent;
+
 type ActionRowComponent = {
   type: 1;
-  components: ButtonComponent[];
+  components: Component[];
 };
 
-type InteractionResponseData = {
+type MessageResponseData = {
+  content?: string;
   embeds?: Embed[];
   components?: ActionRowComponent[];
+  flags?: number;
 };
 
-type DiscordInteractionResponse = {
-  type: InteractionResponseType;
-  data?: InteractionResponseData;
+type ChannelMessageResponse = {
+  type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE;
+  data: MessageResponseData;
 };
+
+type ModalResponse = {
+  type: InteractionResponseType.MODAL;
+  data: {
+    custom_id: string;
+    title: string;
+    components: ActionRowComponent[];
+  };
+};
+
+type DiscordInteractionResponse = ChannelMessageResponse | ModalResponse;
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
   const signature = request.headers.get("x-signature-ed25519");
@@ -113,6 +152,61 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     };
 
     return NextResponse.json(responseBody);
+  }
+
+  if (interaction.type === InteractionType.MESSAGE_COMPONENT) {
+    const componentInteraction = interaction as MessageComponentInteraction;
+    const customId = componentInteraction.data.custom_id;
+
+    if (customId === "btn_report_kill") {
+      const responseBody: DiscordInteractionResponse = {
+        type: InteractionResponseType.MODAL,
+        data: {
+          custom_id: "modal_report_kill",
+          title: "Report Boss Kill",
+          components: [
+            {
+              type: 1,
+              components: [
+                {
+                  type: 4,
+                  custom_id: "input_boss_name",
+                  style: 1,
+                  label: "Boss Name (e.g., Kruel)",
+                  required: true,
+                },
+              ],
+            },
+            {
+              type: 1,
+              components: [
+                {
+                  type: 4,
+                  custom_id: "input_location",
+                  style: 1,
+                  label: "Location or Floor",
+                  required: true,
+                },
+              ],
+            },
+          ],
+        },
+      };
+
+      return NextResponse.json(responseBody);
+    }
+
+    if (customId === "btn_view_timers") {
+      const responseBody: DiscordInteractionResponse = {
+        type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+        data: {
+          content: "⏳ Fetching active timers from the database...",
+          flags: 64,
+        },
+      };
+
+      return NextResponse.json(responseBody);
+    }
   }
 
   return new NextResponse("Unhandled interaction type", { status: 400 });
