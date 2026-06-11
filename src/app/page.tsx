@@ -1337,8 +1337,8 @@ export default function DashboardPage() {
   ];
 
   return (
-    <div className="text-zinc-100 antialiased">
-      <main className="mx-auto flex min-h-screen max-w-5xl flex-col gap-3 px-3 pb-4 pt-3 sm:px-5">
+    <div className="flex h-screen flex-col overflow-hidden text-zinc-100 antialiased">
+      <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col overflow-hidden px-3 pt-3 sm:px-5">
         <header
           className="flex items-center justify-between gap-3 pb-3"
           style={{ borderBottom: "1px solid rgba(255,255,255,0.07)" }}
@@ -1416,7 +1416,7 @@ export default function DashboardPage() {
           ))}
         </nav>
 
-        <section className="flex-1" suppressHydrationWarning>
+        <section className="flex-1 overflow-y-auto pb-4" suppressHydrationWarning>
           {activeTab === "secret_peak" && (
             <SecretPeakView
               dynamicTimers={dynamicTimers}
