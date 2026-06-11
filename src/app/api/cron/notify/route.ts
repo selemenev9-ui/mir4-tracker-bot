@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import {
   DAILY_WORLD_BOSSES,
   WEEKLY_WORLD_BOSSES,
-  SECRET_PEAK_BOSSES,
   MAGIC_SQUARE_BOSSES,
   MIRAGE_BOSSES,
   REDMOON_BOSSES,
