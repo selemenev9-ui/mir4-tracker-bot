@@ -36,15 +36,15 @@ export interface SecretPeakBoss {
 }
 
 const SECRET_PEAK_TEAL_COORDS = [
-  { suffix: "teal1", pinX: 46, pinY: 26 },
-  { suffix: "teal2", pinX: 28, pinY: 37 },
-  { suffix: "teal3", pinX: 47, pinY: 53 },
-  { suffix: "teal4", pinX: 68, pinY: 60 },
+  { suffix: "teal1", pinX: 20, pinY: 7 },
+  { suffix: "teal2", pinX: 10, pinY: 14 },
+  { suffix: "teal3", pinX: 19, pinY: 25 },
+  { suffix: "teal4", pinX: 33, pinY: 29 },
 ] as const;
 
 const SECRET_PEAK_GOLD_COORDS = [
-  { suffix: "gold1", pinX: 68, pinY: 34 },
-  { suffix: "gold2", pinX: 27, pinY: 52 },
+  { suffix: "gold1", pinX: 35, pinY: 12 },
+  { suffix: "gold2", pinX: 9, pinY: 27 },
 ] as const;
 
 export const SECRET_PEAK_BOSSES: SecretPeakBoss[] = (() => {
@@ -84,8 +84,8 @@ export const SECRET_PEAK_BOSSES: SecretPeakBoss[] = (() => {
       floor,
       type: "red_lower",
       fixedHoursUTC8: [13, 19, 1, 7],
-      pinX: 18,
-      pinY: 72,
+      pinX: 11,
+      pinY: 41,
     });
 
     bosses.push({
@@ -94,8 +94,8 @@ export const SECRET_PEAK_BOSSES: SecretPeakBoss[] = (() => {
       floor,
       type: "red_upper",
       fixedHoursUTC8: [16, 22, 4, 10],
-      pinX: 73,
-      pinY: 12,
+      pinX: 34,
+      pinY: 2,
     });
   }
 
