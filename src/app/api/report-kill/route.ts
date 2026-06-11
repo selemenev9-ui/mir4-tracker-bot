@@ -5,6 +5,7 @@ type ReportKillBody = {
   bossName?: string;
   location?: string;
   reporterId?: string;
+  respawnMinutes?: number;
 };
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
@@ -22,6 +23,10 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
   const bossName = (body.bossName ?? "").trim();
   const location = (body.location ?? "").trim();
   const reporterId = (body.reporterId ?? "").trim();
+  const respawnMinutes =
+    typeof body.respawnMinutes === "number" && body.respawnMinutes > 0
+      ? body.respawnMinutes
+      : 180;
 
   if (!bossName || !location || !reporterId) {
     return NextResponse.json(
@@ -32,7 +37,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
   const supabase = getSupabaseClient();
   const now = new Date();
-  const nextSpawn = new Date(now.getTime() + 3 * 60 * 60 * 1000);
+  const nextSpawn = new Date(now.getTime() + respawnMinutes * 60 * 1000);
 
   try {
     const { error } = await supabase

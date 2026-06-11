@@ -827,6 +827,12 @@ export default function DashboardPage() {
   const handleReportKill = useCallback(
     async (bossId: string, bossName: string, floor: number) => {
       if (!currentUser) throw new Error("Not logged in");
+      const spBossForRequest = SECRET_PEAK_BOSSES.find((b) => b.id === bossId);
+      const msBossForRequest = MAGIC_SQUARE_BOSSES.find((b) => b.id === bossId);
+      const respawnMinutesForRequest =
+        spBossForRequest?.respawnMinutes ??
+        msBossForRequest?.respawnMinutes ??
+        180;
       const res = await fetch("/api/report-kill", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -834,6 +840,7 @@ export default function DashboardPage() {
           bossName: bossId,
           location: `Floor ${floor}`,
           reporterId: currentUser.id,
+          respawnMinutes: respawnMinutesForRequest,
         }),
       });
 
