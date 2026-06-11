@@ -701,3 +701,36 @@ export function getServerTimeString(): string {
   const utc8 = new Date(now.getTime() + 8 * 3600 * 1000);
   return utc8.toISOString().slice(11, 19);
 }
+
+// 
+// ─── REDMOON PURGATORY ──────────────────────────────────────────────────────
+
+export interface RedmoonBoss {
+  id: string;
+  name: string;
+  description: string;
+  spawnHoursUTC8: number[];
+  notifyMinutesBefore: number;
+  /** Optional: weekday filter (0=Sun … 6=Sat). If set, only fires on that day. */
+  dayOfWeek?: number;
+}
+
+export const REDMOON_BOSSES: RedmoonBoss[] = [
+  {
+    id: "redmoon_quest",
+    name: "Redmoon Purgatory Quest Bosses",
+    description:
+      "Quest Boss Monsters spawn on all floors (1F–7F). Active for 5 minutes only — be ready!",
+    spawnHoursUTC8: [6, 12, 18, 0],
+    notifyMinutesBefore: 10,
+  },
+  {
+    id: "redmoon_helbar",
+    name: "[Hellish Lord] Helbar",
+    description:
+      "Special boss on Redmoon Purgatory 7F. Spawns every Wednesday at 23:00 UTC+8.",
+    spawnHoursUTC8: [23],
+    notifyMinutesBefore: 10,
+    dayOfWeek: 3, // Wednesday
+  },
+];
