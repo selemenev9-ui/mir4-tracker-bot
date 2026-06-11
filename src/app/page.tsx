@@ -44,8 +44,22 @@ function ServerClock() {
   }, []);
 
   return (
-    <div className="flex items-center gap-2">
-      <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 shadow-[0_0_6px_2px_rgba(52,211,153,0.5)]" />
+    <div
+      className="flex items-center gap-2"
+      style={{
+        background: "rgba(255,255,255,0.04)",
+        border: "1px solid rgba(255,255,255,0.08)",
+        borderRadius: "20px",
+        padding: "4px 12px",
+      }}
+    >
+      <span
+        className="h-1.5 w-1.5 rounded-full bg-emerald-400"
+        style={{
+          boxShadow:
+            "0 0 6px rgba(52,211,153,0.8), 0 0 12px rgba(52,211,153,0.4)",
+        }}
+      />
       <span
         className="font-mono text-xs text-zinc-300 tracking-widest"
         suppressHydrationWarning
@@ -56,7 +70,13 @@ function ServerClock() {
   );
 }
 
-function CountdownBadge({ nextSpawn }: { nextSpawn: Date | null }) {
+function CountdownBadge({
+  nextSpawn,
+  large = false,
+}: {
+  nextSpawn: Date | null;
+  large?: boolean;
+}) {
   const [ms, setMs] = useState<number>(
     () => (nextSpawn ? nextSpawn.getTime() - Date.now() : -1)
   );
@@ -70,7 +90,7 @@ function CountdownBadge({ nextSpawn }: { nextSpawn: Date | null }) {
   }, [nextSpawn]);
 
   if (!nextSpawn) {
-    return <span className="font-mono text-xs text-zinc-500">—</span>;
+    return <span className="font-mono text-xs text-zinc-600">—</span>;
   }
 
   const label = formatCountdown(ms);
@@ -78,16 +98,42 @@ function CountdownBadge({ nextSpawn }: { nextSpawn: Date | null }) {
   const isCritical = ms > 0 && ms < 10 * 60 * 1000;
   const isWarning = ms >= 10 * 60 * 1000 && ms < 60 * 60 * 1000;
 
-  const className = [
-    "font-mono text-sm font-semibold tabular-nums tracking-wider",
-    isSpawned ? "text-emerald-400 animate-pulse" : "",
-    isCritical ? "text-red-400 animate-pulse" : "",
-    isWarning ? "text-amber-400" : "",
-    !isSpawned && !isCritical && !isWarning ? "text-zinc-400" : "",
-  ].join(" ");
+  if (isSpawned) {
+    return (
+      <span
+        className={`timer-spawned font-semibold tracking-wider ${
+          large ? "text-base" : "text-sm"
+        }`}
+        style={{
+          color: "#4ade80",
+          textShadow: "0 0 16px rgba(74,222,128,0.7)",
+        }}
+        suppressHydrationWarning
+      >
+        ● SPAWNED
+      </span>
+    );
+  }
+
+  const color = isCritical
+    ? "#f87171"
+    : isWarning
+    ? "#fbbf24"
+    : "#94a3b8";
+  const shadow = isCritical
+    ? "0 0 12px rgba(248,113,113,0.6)"
+    : isWarning
+    ? "0 0 10px rgba(251,191,36,0.4)"
+    : "none";
 
   return (
-    <span className={className} suppressHydrationWarning>
+    <span
+      className={`font-mono font-semibold tabular-nums tracking-wider ${
+        isCritical ? "timer-critical" : ""
+      } ${large ? "text-xl" : "text-sm"}`}
+      style={{ color, textShadow: shadow }}
+      suppressHydrationWarning
+    >
       {label}
     </span>
   );
@@ -129,24 +175,22 @@ function secretPeakPinClasses(boss: SecretPeakBoss, state: SecretPeakBossState) 
 
 function secretPeakCardClasses(boss: SecretPeakBoss, state: SecretPeakBossState) {
   const base =
-    "flex items-center justify-between rounded-xl border px-4 py-3 backdrop-blur-sm";
+    "flex items-center justify-between rounded-xl px-4 py-3 glass-card";
 
-  if (state === "cooldown") {
-    return `${base} border-zinc-700/60 bg-zinc-900/80 text-zinc-300`;
-  }
+  if (state === "cooldown") return base;
 
   switch (boss.type) {
     case "teal":
-      return `${base} border-sky-500/30 bg-sky-500/5`;
+      return `${base} card-warning`;
     case "gold":
-      return `${base} border-amber-500/30 bg-amber-500/5`;
+      return base;
     case "red_lower":
     case "red_upper":
-      return `${base} border-red-500/30 bg-red-500/5`;
+      return `${base} card-critical`;
     case "chamber":
-      return `${base} border-violet-500/30 bg-violet-500/5`;
+      return base;
     default:
-      return `${base} border-zinc-700/60 bg-zinc-900/60`;
+      return base;
   }
 }
 
@@ -397,12 +441,21 @@ function MirageView() {
         <button
           type="button"
           onClick={() => setSelectedLayer("all")}
-          className={[
-            "px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all",
+          className="px-3 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200"
+          style={
             selectedLayer === "all"
-              ? "border-red-500/80 bg-red-500/20 text-red-300"
-              : "border-zinc-700/60 bg-zinc-900/60 text-zinc-400 hover:border-zinc-500",
-          ].join(" ")}
+              ? {
+                  background: "rgba(168,85,247,0.2)",
+                  border: "1px solid rgba(168,85,247,0.5)",
+                  color: "#d8b4fe",
+                  boxShadow: "0 0 14px rgba(168,85,247,0.25)",
+                }
+              : {
+                  background: "rgba(255,255,255,0.03)",
+                  border: "1px solid rgba(255,255,255,0.08)",
+                  color: "#475569",
+                }
+          }
         >
           All Layers
         </button>
@@ -411,64 +464,160 @@ function MirageView() {
             key={layer}
             type="button"
             onClick={() => setSelectedLayer(layer)}
-            className={[
-              "px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all",
+            className="px-3 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200"
+            style={
               selectedLayer === layer
-                ? "border-red-500/80 bg-red-500/20 text-red-300"
-                : "border-zinc-700/60 bg-zinc-900/60 text-zinc-400 hover:border-zinc-500",
-            ].join(" ")}
+                ? {
+                    background: "rgba(168,85,247,0.2)",
+                    border: "1px solid rgba(168,85,247,0.5)",
+                    color: "#d8b4fe",
+                    boxShadow: "0 0 14px rgba(168,85,247,0.25)",
+                  }
+                : {
+                    background: "rgba(255,255,255,0.03)",
+                    border: "1px solid rgba(255,255,255,0.08)",
+                    color: "#475569",
+                  }
+            }
           >
             Layer {layer}
           </button>
         ))}
       </div>
 
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {filtered.map((boss: MirageBoss) => {
           const nextSpawn = getNextSpawnFromTimes(boss.spawnTimes);
-          const classes =
-            "rounded-2xl border border-zinc-800/60 bg-zinc-950/80 p-4 backdrop-blur-sm transition-all";
-
           return (
-            <div key={boss.id} className={classes}>
-              <div className="mb-3 flex items-start justify-between gap-2">
-                <div>
-                  <div className="mb-0.5 flex items-center gap-2 text-[10px] uppercase tracking-widest text-zinc-500">
-                    <span className="rounded bg-zinc-800/80 px-1.5 py-0.5 font-semibold">
+            <div
+              key={boss.id}
+              className="glass-card rounded-2xl overflow-hidden"
+            >
+              {boss.rewardImage ? (
+                <div className="relative h-32 overflow-hidden">
+                  <Image
+                    src={boss.rewardImage}
+                    alt={`${boss.name} rewards`}
+                    fill
+                    className="object-cover object-top"
+                    style={{
+                      opacity: 0.55,
+                      filter: "brightness(0.85) saturate(1.1)",
+                    }}
+                    unoptimized
+                  />
+                  <div
+                    className="absolute inset-0"
+                    style={{
+                      background:
+                        "linear-gradient(to bottom, transparent 30%, rgba(8,14,36,0.9) 100%)",
+                    }}
+                  />
+                  <div className="absolute bottom-2 left-3 flex items-center gap-1.5">
+                    <span
+                      className="text-[10px] font-semibold uppercase tracking-widest px-2 py-0.5 rounded-full"
+                      style={{
+                        background: "rgba(0,0,0,0.6)",
+                        backdropFilter: "blur(8px)",
+                        border: "1px solid rgba(255,255,255,0.12)",
+                        color: "#94a3b8",
+                      }}
+                    >
                       Layer {boss.layer}
                     </span>
-                    <span className="rounded bg-zinc-800/80 px-1.5 py-0.5 font-semibold">
+                    <span
+                      className="text-[10px] font-semibold px-2 py-0.5 rounded-full"
+                      style={{
+                        background: "rgba(168,85,247,0.25)",
+                        backdropFilter: "blur(8px)",
+                        border: "1px solid rgba(168,85,247,0.4)",
+                        color: "#d8b4fe",
+                      }}
+                    >
                       {boss.world}
                     </span>
+                    <span
+                      className="text-[10px] font-semibold px-2 py-0.5 rounded-full"
+                      style={{
+                        background: "rgba(0,0,0,0.6)",
+                        backdropFilter: "blur(8px)",
+                        border: "1px solid rgba(255,255,255,0.1)",
+                        color: "#64748b",
+                      }}
+                    >
+                      {boss.level}
+                    </span>
                   </div>
-                  <h3 className="text-sm font-semibold text-zinc-100">
-                    {boss.name}
-                  </h3>
-                  <p className="mt-0.5 text-[11px] text-zinc-400">
-                    {boss.location}
-                  </p>
                 </div>
-                <span className="rounded-full bg-zinc-800/80 px-2 py-0.5 text-[9px] font-bold uppercase tracking-widest text-zinc-300">
-                  {boss.level}
-                </span>
-              </div>
-
-              <div className="mb-3 flex flex-wrap gap-1">
-                {boss.spawnTimes.map((t) => (
+              ) : (
+                <div className="flex items-center gap-2 px-4 pt-4">
                   <span
-                    key={t}
-                    className="rounded bg-zinc-800/80 px-1.5 py-0.5 text-[10px] font-mono text-zinc-400"
+                    className="text-[10px] font-semibold uppercase tracking-widest px-2 py-0.5 rounded-full"
+                    style={{
+                      background: "rgba(255,255,255,0.06)",
+                      border: "1px solid rgba(255,255,255,0.1)",
+                      color: "#64748b",
+                    }}
                   >
-                    {t}
+                    Layer {boss.layer}
                   </span>
-                ))}
-              </div>
+                  <span
+                    className="text-[10px] font-semibold px-2 py-0.5 rounded-full"
+                    style={{
+                      background: "rgba(168,85,247,0.2)",
+                      border: "1px solid rgba(168,85,247,0.35)",
+                      color: "#d8b4fe",
+                    }}
+                  >
+                    {boss.world}
+                  </span>
+                  <span
+                    className="text-[10px] font-semibold px-2 py-0.5 rounded-full ml-auto"
+                    style={{
+                      background: "rgba(255,255,255,0.05)",
+                      border: "1px solid rgba(255,255,255,0.08)",
+                      color: "#475569",
+                    }}
+                  >
+                    {boss.level}
+                  </span>
+                </div>
+              )}
 
-              <div className="flex items-center justify-between">
-                <span className="text-[10px] uppercase tracking-wide text-zinc-500">
-                  Next spawn
-                </span>
-                <CountdownBadge nextSpawn={nextSpawn} />
+              <div className="px-4 pb-4 pt-3">
+                <h3 className="text-sm font-bold text-zinc-100 leading-snug mb-0.5">
+                  {boss.name}
+                </h3>
+                <p className="text-[11px] text-zinc-500 mb-3">{boss.location}</p>
+
+                <div className="flex flex-wrap gap-1 mb-4">
+                  {boss.spawnTimes.map((t) => (
+                    <span
+                      key={t}
+                      className="font-mono text-[10px] px-1.5 py-0.5 rounded"
+                      style={{
+                        background: "rgba(255,255,255,0.05)",
+                        border: "1px solid rgba(255,255,255,0.08)",
+                        color: "#475569",
+                      }}
+                    >
+                      {t}
+                    </span>
+                  ))}
+                </div>
+
+                <div
+                  className="flex items-center justify-between rounded-xl px-3 py-2.5"
+                  style={{
+                    background: "rgba(0,0,0,0.35)",
+                    border: "1px solid rgba(255,255,255,0.05)",
+                  }}
+                >
+                  <span className="text-[10px] uppercase tracking-widest font-semibold text-zinc-600">
+                    Next Spawn
+                  </span>
+                  <CountdownBadge nextSpawn={nextSpawn} large />
+                </div>
               </div>
             </div>
           );
@@ -537,12 +686,21 @@ function MagicSquareView({
             key={f}
             type="button"
             onClick={() => setSelectedFloor(f)}
-            className={[
-              "px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all",
+            className="px-3 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200"
+            style={
               selectedFloor === f
-                ? "border-red-500/80 bg-red-500/20 text-red-300"
-                : "border-zinc-700/60 bg-zinc-900/60 text-zinc-400 hover:border-zinc-500 hover:text-zinc-200",
-            ].join(" ")}
+                ? {
+                    background: "rgba(168,85,247,0.2)",
+                    border: "1px solid rgba(168,85,247,0.5)",
+                    color: "#d8b4fe",
+                    boxShadow: "0 0 14px rgba(168,85,247,0.25)",
+                  }
+                : {
+                    background: "rgba(255,255,255,0.03)",
+                    border: "1px solid rgba(255,255,255,0.08)",
+                    color: "#475569",
+                  }
+            }
           >
             Floor {f}
           </button>
@@ -897,15 +1055,27 @@ export default function DashboardPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-[#050712] text-zinc-100 antialiased">
+    <div className="min-h-screen text-zinc-100 antialiased">
       <main className="mx-auto flex min-h-screen max-w-6xl flex-col gap-6 px-4 pb-12 pt-6 sm:px-8">
-        <header className="flex flex-col gap-3 border-b border-zinc-800/80 pb-5 sm:flex-row sm:items-center sm:justify-between">
+        <header
+          className="flex flex-col gap-3 pb-5 sm:flex-row sm:items-center sm:justify-between"
+          style={{ borderBottom: "1px solid rgba(255,255,255,0.07)" }}
+        >
           <div>
-            <h1 className="text-xl font-bold tracking-tight text-zinc-50 sm:text-2xl">
-              MIR4 Boss Tracker
+            <h1
+              className="text-xl font-bold tracking-tight sm:text-2xl"
+              style={{
+                background:
+                  "linear-gradient(135deg, #e2e8f0 0%, #94a3b8 100%)",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                backgroundClip: "text",
+              }}
+            >
+              ⚔️ MIR4 Boss Tracker
             </h1>
             <p className="mt-0.5 text-xs text-zinc-500">
-              Real-time spawn tracker for Secret Peak, Magic Square, Mirage &amp;
+              Real-time spawn tracker · Secret Peak · Magic Square · Mirage ·
               World Bosses
             </p>
           </div>
@@ -913,10 +1083,17 @@ export default function DashboardPage() {
             <ServerClock />
             {currentUser ? (
               <div className="flex items-center gap-2">
-                <span className="text-xs text-zinc-500">
-                  <span className="font-medium text-zinc-300">
-                    {currentUser.username}
-                  </span>
+                <span
+                  className="text-xs"
+                  style={{
+                    background: "rgba(255,255,255,0.05)",
+                    border: "1px solid rgba(255,255,255,0.1)",
+                    borderRadius: "20px",
+                    padding: "3px 10px",
+                    color: "#94a3b8",
+                  }}
+                >
+                  👤 <span className="font-medium text-zinc-200">{currentUser.username}</span>
                 </span>
                 <button
                   type="button"
@@ -991,8 +1168,23 @@ export default function DashboardPage() {
 
       {/* Name Prompt Modal */}
       {showNamePrompt && !currentUser && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm">
-          <div className="w-full max-w-sm rounded-2xl border border-zinc-700/80 bg-zinc-950 p-6 shadow-2xl">
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center"
+          style={{
+            background: "rgba(3,7,17,0.85)",
+            backdropFilter: "blur(16px)",
+          }}
+        >
+          <div
+            className="w-full max-w-sm rounded-2xl p-6 shadow-2xl"
+            style={{
+              background: "rgba(8,14,36,0.9)",
+              border: "1px solid rgba(255,255,255,0.1)",
+              backdropFilter: "blur(20px)",
+              boxShadow:
+                "0 0 80px rgba(109,40,217,0.2), 0 32px 64px rgba(0,0,0,0.7)",
+            }}
+          >
             <h2 className="mb-1 text-base font-bold text-zinc-50">Who are you?</h2>
             <p className="mb-4 text-xs text-zinc-500">
               Enter your Discord username to report boss kills. Saved
