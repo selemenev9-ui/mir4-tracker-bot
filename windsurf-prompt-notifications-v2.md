@@ -1,3 +1,56 @@
+# Windsurf Agent Prompt: Extend Cron Notifications
+
+## Task
+
+Extend the existing notification system with new boss/event types. Two files to edit:
+1. `src/lib/gameData.ts` — add Redmoon Purgatory data
+2. `src/app/api/cron/notify/route.ts` — add notification logic for all new types
+
+**DO NOT touch** any other files.
+
+---
+
+## 1. Add Redmoon Purgatory data to `src/lib/gameData.ts`
+
+Add at the very end of the file:
+
+```ts
+// ─── REDMOON PURGATORY ──────────────────────────────────────────────────────
+
+export interface RedmoonBoss {
+  id: string;
+  name: string;
+  description: string;
+  spawnHoursUTC8: number[];
+  notifyMinutesBefore: number;
+  // Optional: if weekly, provide dayOfWeek (0=Sun … 6=Sat)
+  dayOfWeek?: number;
+}
+
+export const REDMOON_BOSSES: RedmoonBoss[] = [
+  {
+    id: "redmoon_quest",
+    name: "Redmoon Purgatory Quest Bosses",
+    description: "Quest Boss Monsters spawn on all floors (1F–7F). Active for 5 minutes only — be ready!",
+    spawnHoursUTC8: [6, 12, 18, 0],
+    notifyMinutesBefore: 10,
+  },
+  {
+    id: "redmoon_helbar",
+    name: "[Hellish Lord] Helbar",
+    description: "Special boss on Redmoon Purgatory 7F. Spawns every Wednesday at 23:00 UTC+8.",
+    spawnHoursUTC8: [23],
+    notifyMinutesBefore: 10,
+    dayOfWeek: 3, // Wednesday
+  },
+];
+```
+
+---
+
+## 2. Replace `src/app/api/cron/notify/route.ts` entirely with this:
+
+```ts
 import { NextRequest, NextResponse } from "next/server";
 import {
   DAILY_WORLD_BOSSES,
@@ -75,10 +128,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
   }
 
   if (!WEBHOOK_URL) {
-    return NextResponse.json({
-      ok: false,
-      error: "DISCORD_WEBHOOK_URL not configured",
-    });
+    return NextResponse.json({ ok: false, error: "DISCORD_WEBHOOK_URL not configured" });
   }
 
   const supabase = getSupabaseClient();
@@ -95,9 +145,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
         const key = `${boss.id}_${spawnHour}_${today}`;
         if (!(await hasNotified(supabase, key))) {
           await sendWebhook(
-            `@here ⚔️ **${boss.name}** spawns in **${boss.notifyMinutesBefore} min** — ${boss.zone} (${fmtHour(
-              spawnHour
-            )})`
+            `@here ⚔️ **${boss.name}** spawns in **${boss.notifyMinutesBefore} min** — ${boss.zone} (${fmtHour(spawnHour)})`
           );
           await markNotified(supabase, key);
           notifications.push(key);
@@ -125,6 +173,9 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
   }
 
   // ── 3. Secret Peak — Red Lords (fixed schedule, same times on all floors) ──
+  // Red Lord (Lower): 01:00 07:00 13:00 19:00
+  // Red Lord (Upper): 04:00 10:00 16:00 22:00
+  // Send ONE notification per spawn time (not per floor).
   const redLordTypes = [
     {
       name: "Red Lord (Lower)",
@@ -145,9 +196,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
         const key = `sp_${rl.name.replace(/\s/g, "_").toLowerCase()}_${spawnHour}_${today}`;
         if (!(await hasNotified(supabase, key))) {
           await sendWebhook(
-            `@here ${rl.emoji} **${rl.name}** spawns in **${NOTIFY_BEFORE} min** on all Secret Peak floors (${fmtHour(
-              spawnHour
-            )})`
+            `@here ${rl.emoji} **${rl.name}** spawns in **${NOTIFY_BEFORE} min** on all Secret Peak floors (${fmtHour(spawnHour)})`
           );
           await markNotified(supabase, key);
           notifications.push(key);
@@ -157,9 +206,11 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
   }
 
   // ── 4. Magic Square — Leaders Chamber III (every 3h from 00:00) ────────────
-  const chamber3Hours =
-    MAGIC_SQUARE_BOSSES.find((b) => b.type === "chamber3")?.fixedHoursUTC8 ??
-    [0, 3, 6, 9, 12, 15, 18, 21];
+  // Spawn hours: 00 03 06 09 12 15 18 21
+  // One notification for all floors combined.
+  const chamber3Hours = MAGIC_SQUARE_BOSSES.find(
+    (b) => b.type === "chamber3"
+  )?.fixedHoursUTC8 ?? [0, 3, 6, 9, 12, 15, 18, 21];
 
   for (const spawnHour of chamber3Hours) {
     const diff = spawnHour * 60 - nowMinutes;
@@ -167,9 +218,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       const key = `magic_chamber3_${spawnHour}_${today}`;
       if (!(await hasNotified(supabase, key))) {
         await sendWebhook(
-          `@here 🏯 **Leaders Chamber III** spawns in **${NOTIFY_BEFORE} min** on all Magic Square floors (${fmtHour(
-            spawnHour
-          )})`
+          `@here 🏯 **Leaders Chamber III** spawns in **${NOTIFY_BEFORE} min** on all Magic Square floors (${fmtHour(spawnHour)})`
         );
         await markNotified(supabase, key);
         notifications.push(key);
@@ -178,21 +227,21 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
   }
 
   // ── 5. Mirage Bosses (fixed spawn schedule) ─────────────────────────────────
+  // Each Mirage boss has spawnTimes[] in "H:MM" format (already expanded to 24h).
+  // Send one notification per boss per spawn time.
   for (const boss of MIRAGE_BOSSES) {
     for (const timeStr of boss.spawnTimes) {
       const [hStr, mStr] = timeStr.split(":");
       const spawnH = parseInt(hStr, 10);
       const spawnM = parseInt(mStr ?? "0", 10);
-      if (Number.isNaN(spawnH) || Number.isNaN(spawnM)) continue;
+      if (isNaN(spawnH) || isNaN(spawnM)) continue;
       const spawnTotalMinutes = spawnH * 60 + spawnM;
       const diff = spawnTotalMinutes - nowMinutes;
       if (diff === NOTIFY_BEFORE) {
         const key = `mirage_${boss.id}_${spawnH}_${spawnM}_${today}`;
         if (!(await hasNotified(supabase, key))) {
           await sendWebhook(
-            `@here ⚡ **${boss.name}** spawns in **${NOTIFY_BEFORE} min** — ${boss.location} (${boss.world}, ${String(
-              spawnH
-            ).padStart(2, "0")}:${String(spawnM).padStart(2, "0")} UTC+8)`
+            `@here ⚡ **${boss.name}** spawns in **${NOTIFY_BEFORE} min** — ${boss.location} (${boss.world}, ${String(spawnH).padStart(2, "0")}:${String(spawnM).padStart(2, "0")} UTC+8)`
           );
           await markNotified(supabase, key);
           notifications.push(key);
@@ -203,6 +252,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 
   // ── 6. Redmoon Purgatory Bosses ─────────────────────────────────────────────
   for (const boss of REDMOON_BOSSES) {
+    // Skip if weekly boss and today is not the right day
     if (boss.dayOfWeek !== undefined && boss.dayOfWeek !== dayOfWeek) continue;
 
     for (const spawnHour of boss.spawnHoursUTC8) {
@@ -212,9 +262,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
         if (!(await hasNotified(supabase, key))) {
           const desc = boss.description ? `\n> ${boss.description}` : "";
           await sendWebhook(
-            `@here 🌙 **${boss.name}** spawns in **${boss.notifyMinutesBefore} min** — Redmoon Purgatory (${fmtHour(
-              spawnHour
-            )})${desc}`
+            `@here 🌙 **${boss.name}** spawns in **${boss.notifyMinutesBefore} min** — Redmoon Purgatory (${fmtHour(spawnHour)})${desc}`
           );
           await markNotified(supabase, key);
           notifications.push(key);
@@ -225,3 +273,18 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 
   return NextResponse.json({ ok: true, sent: notifications });
 }
+```
+
+---
+
+## Summary of changes
+
+- **`src/lib/gameData.ts`**: Add `RedmoonBoss` interface + `REDMOON_BOSSES` array at the end
+- **`src/app/api/cron/notify/route.ts`**: Full replacement — adds 4 new notification sections:
+  1. Secret Peak Red Lords (Upper + Lower) — fixed 4×/day schedule
+  2. Magic Square Leaders Chamber III — every 3 hours
+  3. Mirage bosses — fixed spawn schedule per boss
+  4. Redmoon Purgatory — Quest Bosses 4×/day + Helbar every Wednesday
+
+Existing World Bosses + Weekly events logic is preserved unchanged.
+No other files are touched.
