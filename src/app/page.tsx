@@ -1355,7 +1355,9 @@ export default function DashboardPage() {
             ⚔️ MIR4 Boss Tracker
           </h1>
           <div className="flex min-w-0 items-center gap-2">
-            <ServerClock />
+            <span className="hidden sm:block">
+              <ServerClock />
+            </span>
             {currentUser ? (
               <>
                 <span
@@ -1398,14 +1400,14 @@ export default function DashboardPage() {
           </div>
         </header>
 
-        <nav className="flex gap-0.5 border-b border-zinc-800/80">
+        <nav className="flex gap-0 overflow-x-auto border-b border-zinc-800/80 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           {tabs.map((tab) => (
             <button
               key={tab.id}
               type="button"
               onClick={() => setActiveTab(tab.id)}
               className={[
-                "-mb-px border-b-2 px-3 py-1.5 text-xs font-semibold transition-all whitespace-nowrap",
+                "-mb-px shrink-0 border-b-2 px-2.5 py-1.5 text-[11px] font-semibold transition-all whitespace-nowrap sm:px-3 sm:text-xs",
                 activeTab === tab.id
                   ? "border-red-500 text-zinc-100"
                   : "border-transparent text-zinc-500 hover:border-zinc-600 hover:text-zinc-300",
@@ -1447,7 +1449,7 @@ export default function DashboardPage() {
           }}
         >
           <div
-            className="w-full max-w-sm rounded-2xl p-6 shadow-2xl"
+            className="w-full max-w-sm rounded-2xl p-6 shadow-2xl mx-4"
             style={{
               background: "rgba(8,14,36,0.9)",
               border: "1px solid rgba(255,255,255,0.1)",

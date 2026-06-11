@@ -16,6 +16,7 @@ export const metadata: Metadata = {
   title: "MIR4 Boss Tracker",
   description:
     "Real-time boss spawn tracker for MIR4 guilds — Secret Peak, Mirage, and World Bosses.",
+  viewport: "width=device-width, initial-scale=1, maximum-scale=1",
 };
 
 export default function RootLayout({
