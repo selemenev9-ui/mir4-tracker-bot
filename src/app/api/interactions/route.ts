@@ -1,115 +1,26 @@
 import { NextRequest, NextResponse } from "next/server";
-import { InteractionType, InteractionResponseType } from "discord-interactions";
+import { InteractionType } from "discord-interactions";
 import { verifyDiscordRequest } from "@/lib/discord";
-import { getSupabaseClient } from "@/lib/supabase";
 
-type PingInteraction = {
-  type: InteractionType.PING;
-};
+// Discord Interaction Response Types (официальный список Discord API v10)
+const InteractionResponseType = {
+  PONG: 1,
+  CHANNEL_MESSAGE_WITH_SOURCE: 4,
+  DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE: 5,
+  DEFERRED_UPDATE_MESSAGE: 6,
+  UPDATE_MESSAGE: 7,
+  APPLICATION_COMMAND_AUTOCOMPLETE_RESULT: 8,
+  MODAL: 9,
+  LAUNCH_ACTIVITY: 12, // Запустить Activity приложения — не требует голосового канала
+} as const;
 
-type ApplicationCommandInteraction = {
-  type: InteractionType.APPLICATION_COMMAND;
-  data: {
-    name: string;
+type AnyInteraction = {
+  type: number;
+  data?: {
+    name?: string;
+    custom_id?: string;
   };
 };
-
-type MessageComponentInteraction = {
-  type: InteractionType.MESSAGE_COMPONENT;
-  data: {
-    custom_id: string;
-  };
-};
-
-type ModalSubmitActionRow = {
-  type: 1;
-  components: {
-    type: 4;
-    custom_id: string;
-    value?: string;
-  }[];
-};
-
-type ModalSubmitInteraction = {
-  type: InteractionType.MODAL_SUBMIT;
-  data: {
-    custom_id: string;
-    components: ModalSubmitActionRow[];
-  };
-  member?: {
-    user?: {
-      id: string;
-    };
-  };
-  user?: {
-    id: string;
-  };
-};
-
-type AnyInteraction =
-  | PingInteraction
-  | ApplicationCommandInteraction
-  | MessageComponentInteraction
-  | ModalSubmitInteraction;
-
-type Embed = {
-  title: string;
-  description: string;
-  color: number;
-};
-
-type ButtonStyle = 1 | 2 | 3 | 4 | 5;
-
-type ButtonComponent = {
-  type: 2;
-  style: ButtonStyle;
-  label: string;
-  custom_id: string;
-};
-
-type TextInputStyle = 1 | 2;
-
-type TextInputComponent = {
-  type: 4;
-  custom_id: string;
-  style: TextInputStyle;
-  label: string;
-  required?: boolean;
-  min_length?: number;
-  max_length?: number;
-  value?: string;
-  placeholder?: string;
-};
-
-type Component = ButtonComponent | TextInputComponent;
-
-type ActionRowComponent = {
-  type: 1;
-  components: Component[];
-};
-
-type MessageResponseData = {
-  content?: string;
-  embeds?: Embed[];
-  components?: ActionRowComponent[];
-  flags?: number;
-};
-
-type ChannelMessageResponse = {
-  type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE;
-  data: MessageResponseData;
-};
-
-type ModalResponse = {
-  type: InteractionResponseType.MODAL;
-  data: {
-    custom_id: string;
-    title: string;
-    components: ActionRowComponent[];
-  };
-};
-
-type DiscordInteractionResponse = ChannelMessageResponse | ModalResponse;
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
   const signature = request.headers.get("x-signature-ed25519");
@@ -120,7 +31,6 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
   }
 
   const bodyText = await request.text();
-
   const isValid = await verifyDiscordRequest(bodyText, signature, timestamp);
 
   if (!isValid) {
@@ -134,211 +44,65 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     return new NextResponse("Invalid JSON body", { status: 400 });
   }
 
+  // PING
   if (interaction.type === InteractionType.PING) {
     return NextResponse.json({ type: InteractionResponseType.PONG });
   }
 
+  // Slash command — показать embed с кнопкой запуска
   if (interaction.type === InteractionType.APPLICATION_COMMAND) {
-    const commandInteraction = interaction as ApplicationCommandInteraction;
+    const commandName = interaction.data?.name;
 
-    if (commandInteraction.data.name !== "setup_tracker") {
-      return new NextResponse("Unknown command", { status: 400 });
-    }
-
-    const responseBody: DiscordInteractionResponse = {
-      type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-      data: {
-        embeds: [
-          {
-            title: "⚔️ MIR4 Global Boss Tracker",
-            description:
-              "Select an action below to update respawn timers or view the current schedule.",
-            color: 0x8b0000,
-          },
-        ],
-        components: [
-          {
-            type: 1,
-            components: [
-              {
-                type: 2,
-                style: 1,
-                label: "Report Kill",
-                custom_id: "btn_report_kill",
-              },
-              {
-                type: 2,
-                style: 2,
-                label: "View Active Timers",
-                custom_id: "btn_view_timers",
-              },
-            ],
-          },
-        ],
-      },
-    };
-
-    return NextResponse.json(responseBody);
-  }
-
-  if (interaction.type === InteractionType.MESSAGE_COMPONENT) {
-    const componentInteraction = interaction as MessageComponentInteraction;
-    const customId = componentInteraction.data.custom_id;
-
-    if (customId === "btn_report_kill") {
-      const responseBody: DiscordInteractionResponse = {
-        type: InteractionResponseType.MODAL,
+    if (commandName === "setup_tracker" || commandName === "tracker") {
+      return NextResponse.json({
+        type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
         data: {
-          custom_id: "modal_report_kill",
-          title: "Report Boss Kill",
+          embeds: [
+            {
+              title: "⚔️ MIR4 Boss Tracker",
+              description:
+                "Интерактивная карта боссов в реальном времени.\n\n" +
+                "**Что умеет:**\n" +
+                "• 🗺️ Карта с пинами всех боссов (Secret Peak, Magic Square, Mirage)\n" +
+                "• ⏱️ Таймеры обратного отсчёта до респауна\n" +
+                "• ☠️ Кнопка «Убил» — таймер виден всей гильдии\n" +
+                "• 🌍 Уведомления @here для World Bosses (лабиринты / долины)",
+              color: 0xdc2626,
+              footer: {
+                text: "Нажми кнопку ниже чтобы открыть трекер прямо в Discord",
+              },
+            },
+          ],
           components: [
             {
               type: 1,
               components: [
                 {
-                  type: 4,
-                  custom_id: "input_boss_name",
-                  style: 1,
-                  label: "Boss Name (e.g., Kruel)",
-                  required: true,
-                },
-              ],
-            },
-            {
-              type: 1,
-              components: [
-                {
-                  type: 4,
-                  custom_id: "input_location",
-                  style: 1,
-                  label: "Location or Floor",
-                  required: true,
+                  type: 2,
+                  style: 1, // Primary (синяя кнопка)
+                  label: "🗺️ Открыть Boss Tracker",
+                  custom_id: "btn_launch_map",
                 },
               ],
             },
           ],
         },
-      };
-
-      return NextResponse.json(responseBody);
+      });
     }
 
-    if (customId === "btn_view_timers") {
-      const responseBody: DiscordInteractionResponse = {
-        type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-        data: {
-          content: "⏳ Fetching active timers from the database...",
-          flags: 64,
-        },
-      };
-
-      return NextResponse.json(responseBody);
-    }
+    return new NextResponse("Unknown command", { status: 400 });
   }
 
-  if (interaction.type === InteractionType.MODAL_SUBMIT) {
-    const modalInteraction = interaction as ModalSubmitInteraction;
+  // Button click — запустить Activity
+  if (interaction.type === InteractionType.MESSAGE_COMPONENT) {
+    const customId = interaction.data?.custom_id;
 
-    if (modalInteraction.data.custom_id !== "modal_report_kill") {
-      return new NextResponse("Unhandled modal submit", { status: 400 });
-    }
-
-    const fields: Record<string, string> = {};
-
-    for (const row of modalInteraction.data.components) {
-      for (const component of row.components) {
-        if (component.type === 4 && component.custom_id) {
-          fields[component.custom_id] = (component.value ?? "").trim();
-        }
-      }
-    }
-
-    const bossName = fields["input_boss_name"];
-    const location = fields["input_location"];
-
-    if (!bossName || !location) {
-      const responseBody: DiscordInteractionResponse = {
-        type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-        data: {
-          content: "❌ Missing required fields in the report.",
-          flags: 64,
-        },
-      };
-
-      return NextResponse.json(responseBody);
-    }
-
-    const userId =
-      modalInteraction.member?.user?.id ?? modalInteraction.user?.id ?? null;
-
-    if (!userId) {
-      const responseBody: DiscordInteractionResponse = {
-        type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-        data: {
-          content: "❌ Could not determine reporting user.",
-          flags: 64,
-        },
-      };
-
-      return NextResponse.json(responseBody);
-    }
-
-    const supabase = getSupabaseClient();
-    const now = new Date();
-    const nextSpawn = new Date(now.getTime() + 3 * 60 * 60 * 1000);
-
-    try {
-      const { error } = await supabase
-        .from("boss_timers")
-        .upsert(
-          {
-            boss_name: bossName,
-            location,
-            updated_by: userId,
-            boss_type: "dynamic",
-            next_spawn: nextSpawn.toISOString(),
-            last_killed: now.toISOString(),
-          },
-          { onConflict: "boss_name" }
-        );
-
-      if (error) {
-        console.error("Failed to insert boss timer", error);
-
-        const responseBody: DiscordInteractionResponse = {
-          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-          data: {
-            content:
-              "❌ Failed to record boss kill. Please try again or contact an administrator.",
-            flags: 64,
-          },
-        };
-
-        return NextResponse.json(responseBody);
-      }
-
-      const responseBody: DiscordInteractionResponse = {
-        type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-        data: {
-          content: "✅ Boss kill reported and timer started!",
-          flags: 64,
-        },
-      };
-
-      return NextResponse.json(responseBody);
-    } catch (error) {
-      console.error("Unexpected error while inserting boss timer", error);
-
-      const responseBody: DiscordInteractionResponse = {
-        type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-        data: {
-          content:
-            "❌ An unexpected error occurred while recording the boss kill.",
-          flags: 64,
-        },
-      };
-
-      return NextResponse.json(responseBody);
+    if (customId === "btn_launch_map") {
+      // LAUNCH_ACTIVITY (type 12) — открывает Embedded App прямо в Discord
+      // без необходимости заходить в голосовой канал
+      return NextResponse.json({
+        type: InteractionResponseType.LAUNCH_ACTIVITY,
+      });
     }
   }
 
