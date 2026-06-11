@@ -968,9 +968,9 @@ function BoostSection({
       {/* Stat cards */}
       <div className="mb-4 grid grid-cols-3 gap-3">
         {[
-          { label: "Сек / удар", value: secPerHit.toFixed(2), unit: "сек" },
-          { label: "Ускорение", value: `${speedup}×`, unit: "быстрее" },
-          { label: "Ударов / мин", value: hitsPerMin, unit: "уд/мин" },
+          { label: "Sec / hit", value: secPerHit.toFixed(2), unit: "sec" },
+          { label: "Speedup", value: `${speedup}×`, unit: "faster" },
+          { label: "Hits / min", value: hitsPerMin, unit: "hits/min" },
         ].map(({ label, value, unit }) => (
           <div
             key={label}
@@ -996,10 +996,10 @@ function BoostSection({
 }
 
 const MINING_NODES = [
-  { color: "Зелёный", dotColor: "#22c55e", hp: 50, dsPerHit: 60 },
-  { color: "Синий", dotColor: "#3b82f6", hp: 75, dsPerHit: 100 },
-  { color: "Красный", dotColor: "#ef4444", hp: 100, dsPerHit: 150 },
-  { color: "Золотой", dotColor: "#eab308", hp: 125, dsPerHit: 300 },
+  { color: "Green", dotColor: "#22c55e", hp: 50, dsPerHit: 60 },
+  { color: "Blue", dotColor: "#3b82f6", hp: 75, dsPerHit: 100 },
+  { color: "Red", dotColor: "#ef4444", hp: 100, dsPerHit: 150 },
+  { color: "Gold", dotColor: "#eab308", hp: 125, dsPerHit: 300 },
 ];
 
 function MiningNodeTable({ secPerHit }: { secPerHit: number }) {
@@ -1009,11 +1009,11 @@ function MiningNodeTable({ secPerHit }: { secPerHit: number }) {
         Magic Square / Secret Peak — F1
       </p>
       <div className="mb-1 grid grid-cols-5 gap-1 px-1 text-[11px] font-semibold uppercase tracking-wide text-zinc-600">
-        <span>Цвет</span>
-        <span className="text-right">Хиты</span>
-        <span className="text-right">DS/уд</span>
-        <span className="text-right">Время</span>
-        <span className="text-right">DS/нода</span>
+        <span>Color</span>
+        <span className="text-right">Hits</span>
+        <span className="text-right">DS/hit</span>
+        <span className="text-right">Time</span>
+        <span className="text-right">DS/node</span>
       </div>
       {MINING_NODES.map((n) => {
         const totalSec = n.hp * secPerHit;
@@ -1043,7 +1043,7 @@ function MiningNodeTable({ secPerHit }: { secPerHit: number }) {
 
       {/* DS/hour row */}
       <p className="mb-2 mt-4 text-[11px] font-semibold uppercase tracking-wider text-zinc-500">
-        DS в час (F1, без перерывов)
+        DS per hour (F1, no breaks)
       </p>
       <div className="grid grid-cols-4 gap-2">
         {MINING_NODES.map((n) => {
@@ -1064,7 +1064,7 @@ function MiningNodeTable({ secPerHit }: { secPerHit: number }) {
               <p className="text-sm font-semibold text-zinc-100">
                 {dsPerHour.toLocaleString()}
               </p>
-              <p className="text-[10px] text-zinc-600">DS/ч</p>
+              <p className="text-[10px] text-zinc-600">DS/hr</p>
             </div>
           );
         })}
@@ -1080,19 +1080,19 @@ function MiningCalculatorView() {
         id="mining"
         title="Mining Boost"
         emoji="⛏️"
-        note="Формула: 10 / (1 + boost/100) сек/удар — MIR4 Wiki. +~10% DS за каждый следующий этаж."
+        note="Formula: 10 / (1 + boost/100) sec/hit — MIR4 Wiki. Roughly +10% DS for each higher floor."
       />
       <BoostSection
         id="gathering"
         title="Gathering Boost"
         emoji="🌿"
-        note="Формула по аналогии с Mining. База — 10 сек/сбор. Проверь в игре при 0%."
+        note="Same formula as Mining. Base is 10 sec per gather. Verify in game at 0%."
       />
       <BoostSection
         id="energy"
         title="Energy Gathering Boost"
         emoji="⚡"
-        note="Возможно влияет на количество энергии, а не скорость. Числа предположительные — проверяй в игре."
+        note="May affect the amount of energy rather than speed. Numbers are approximate — verify in game."
       />
     </div>
   );
