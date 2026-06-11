@@ -78,6 +78,14 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
                   label: "🗺️ Open Boss Tracker",
                   custom_id: "btn_launch_map",
                 },
+                {
+                  type: 2,
+                  style: 5,
+                  label: "🌐 Open in Browser",
+                  url:
+                    process.env.APP_URL ??
+                    "https://mir4-tracker-bot.vercel.app",
+                },
               ],
             },
           ],
