@@ -924,7 +924,7 @@ export default function DashboardPage() {
                   }}
                   className="text-[10px] text-zinc-600 hover:text-zinc-400 transition-colors"
                 >
-                  изменить
+                  change
                 </button>
               </div>
             ) : (
@@ -933,7 +933,7 @@ export default function DashboardPage() {
                 onClick={() => setShowNamePrompt(true)}
                 className="text-xs text-zinc-500 hover:text-zinc-300 transition-colors underline underline-offset-2"
               >
-                {sdkError ? "Войти (веб-режим)" : "Войти"}
+                {sdkError ? "Login (web mode)" : "Login"}
               </button>
             )}
           </div>
@@ -986,10 +986,10 @@ export default function DashboardPage() {
       {showNamePrompt && !currentUser && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm">
           <div className="w-full max-w-sm rounded-2xl border border-zinc-700/80 bg-zinc-950 p-6 shadow-2xl">
-            <h2 className="mb-1 text-base font-bold text-zinc-50">Кто ты?</h2>
+            <h2 className="mb-1 text-base font-bold text-zinc-50">Who are you?</h2>
             <p className="mb-4 text-xs text-zinc-500">
-              Введи своё Discord-имя чтобы репортить убийства боссов. Сохранится
-              автоматически.
+              Enter your Discord username to report boss kills. Saved
+              automatically.
             </p>
             <input
               type="text"
@@ -998,7 +998,7 @@ export default function DashboardPage() {
               onKeyDown={(e) => {
                 if (e.key === "Enter") handleSaveName();
               }}
-              placeholder="Твой ник в Discord"
+              placeholder="Your Discord username"
               autoFocus
               className="mb-3 w-full rounded-xl border border-zinc-700 bg-zinc-900 px-3 py-2 text-sm text-zinc-100 placeholder-zinc-600 outline-none focus:border-red-500/60 focus:ring-1 focus:ring-red-500/20"
             />
@@ -1008,7 +1008,7 @@ export default function DashboardPage() {
               onClick={handleSaveName}
               className="w-full rounded-xl border border-red-500/80 bg-red-500/20 py-2 text-sm font-semibold text-red-300 transition-colors hover:bg-red-500/30 disabled:cursor-not-allowed disabled:opacity-40"
             >
-              Войти
+              Confirm
             </button>
           </div>
         </div>

@@ -2,16 +2,11 @@ import { NextRequest, NextResponse } from "next/server";
 import { InteractionType } from "discord-interactions";
 import { verifyDiscordRequest } from "@/lib/discord";
 
-// Discord Interaction Response Types (официальный список Discord API v10)
+// Discord Interaction Response Types (Discord API v10)
 const InteractionResponseType = {
   PONG: 1,
   CHANNEL_MESSAGE_WITH_SOURCE: 4,
-  DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE: 5,
-  DEFERRED_UPDATE_MESSAGE: 6,
-  UPDATE_MESSAGE: 7,
-  APPLICATION_COMMAND_AUTOCOMPLETE_RESULT: 8,
-  MODAL: 9,
-  LAUNCH_ACTIVITY: 12, // Запустить Activity приложения — не требует голосового канала
+  LAUNCH_ACTIVITY: 12, // Launch the embedded Activity — no voice channel required
 } as const;
 
 type AnyInteraction = {
@@ -49,7 +44,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     return NextResponse.json({ type: InteractionResponseType.PONG });
   }
 
-  // Slash command — показать embed с кнопкой запуска
+  // Slash command — show embed with launch button
   if (interaction.type === InteractionType.APPLICATION_COMMAND) {
     const commandName = interaction.data?.name;
 
@@ -61,15 +56,15 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
             {
               title: "⚔️ MIR4 Boss Tracker",
               description:
-                "Интерактивная карта боссов в реальном времени.\n\n" +
-                "**Что умеет:**\n" +
-                "• 🗺️ Карта с пинами всех боссов (Secret Peak, Magic Square, Mirage)\n" +
-                "• ⏱️ Таймеры обратного отсчёта до респауна\n" +
-                "• ☠️ Кнопка «Убил» — таймер виден всей гильдии\n" +
-                "• 🌍 Уведомления @here для World Bosses (лабиринты / долины)",
+                "Real-time interactive boss map — right inside Discord.\n\n" +
+                "**Features:**\n" +
+                "• 🗺️ Map with boss pins by floor (Secret Peak, Magic Square, Mirage)\n" +
+                "• ⏱️ Countdown timers to next respawn\n" +
+                "• ☠️ \"Killed\" button — starts a timer visible to the whole guild\n" +
+                "• 🌍 @here notifications for World Bosses (Labyrinth / Valley)",
               color: 0xdc2626,
               footer: {
-                text: "Нажми кнопку ниже чтобы открыть трекер прямо в Discord",
+                text: "Click the button below to open the tracker inside Discord",
               },
             },
           ],
@@ -79,8 +74,8 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
               components: [
                 {
                   type: 2,
-                  style: 1, // Primary (синяя кнопка)
-                  label: "🗺️ Открыть Boss Tracker",
+                  style: 1,
+                  label: "🗺️ Open Boss Tracker",
                   custom_id: "btn_launch_map",
                 },
               ],
@@ -93,13 +88,9 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     return new NextResponse("Unknown command", { status: 400 });
   }
 
-  // Button click — запустить Activity
+  // Button click — launch the Activity (no voice channel needed)
   if (interaction.type === InteractionType.MESSAGE_COMPONENT) {
-    const customId = interaction.data?.custom_id;
-
-    if (customId === "btn_launch_map") {
-      // LAUNCH_ACTIVITY (type 12) — открывает Embedded App прямо в Discord
-      // без необходимости заходить в голосовой канал
+    if (interaction.data?.custom_id === "btn_launch_map") {
       return NextResponse.json({
         type: InteractionResponseType.LAUNCH_ACTIVITY,
       });

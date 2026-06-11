@@ -158,6 +158,43 @@ export interface MirageBoss {
   spawnTimes: string[]; // "HH:MM" format, UTC+8
 }
 
+/**
+ * Expands 12-hour-style Mirage spawn times to include both AM and PM equivalents.
+ * "2:00" 
+ *   → ["2:00", "14:00"]
+ * "12:00" 
+ *   → ["0:00", "12:00"]
+ * "11:30" 
+ *   → ["11:30", "23:30"]
+ */
+function expandMirageTimes(times: string[]): string[] {
+  const result: string[] = [];
+  for (const t of times) {
+    const [hStr, mStr] = t.split(":");
+    const h = parseInt(hStr, 10);
+    const m = mStr ?? "00";
+    if (Number.isNaN(h)) continue;
+    if (h === 12) {
+      // 12:xx AM = 0:xx, 12:xx PM = 12:xx
+      result.push(`0:${m}`, `12:${m}`);
+    } else {
+      // h:xx AM = h:xx, h:xx PM = (h+12):xx
+      result.push(`${h}:${m}`, `${h + 12}:${m}`);
+    }
+  }
+
+  // Sort chronologically and remove duplicates
+  return [...new Set(result)].sort((a, b) => {
+    const [ah, amStr] = a.split(":");
+    const [bh, bmStr] = b.split(":");
+    const ahNum = parseInt(ah, 10);
+    const amNum = parseInt(amStr ?? "0", 10);
+    const bhNum = parseInt(bh, 10);
+    const bmNum = parseInt(bmStr ?? "0", 10);
+    return ahNum * 60 + amNum - (bhNum * 60 + bmNum);
+  });
+}
+
 export const MIRAGE_BOSSES: MirageBoss[] = [
   // ── Layer 3 ─────────────────────────────────────────────────────────────
   // W1 — 140 below
@@ -168,7 +205,7 @@ export const MIRAGE_BOSSES: MirageBoss[] = [
     world: "W1",
     location: "Bullface Forest",
     level: "140 below",
-    spawnTimes: ["2:00", "4:00", "6:00", "8:00", "10:00", "12:00"],
+    spawnTimes: expandMirageTimes(["2:00", "4:00", "6:00", "8:00", "10:00", "12:00"]),
   },
   {
     id: "mir_l3_w1_boltox",
@@ -177,7 +214,7 @@ export const MIRAGE_BOSSES: MirageBoss[] = [
     world: "W1",
     location: "Demon Bull Temple 1F",
     level: "140 below",
-    spawnTimes: ["1:00", "3:00", "5:00", "7:00", "9:00", "11:00"],
+    spawnTimes: expandMirageTimes(["1:00", "3:00", "5:00", "7:00", "9:00", "11:00"]),
   },
   {
     id: "mir_l3_w1_bfk",
@@ -186,7 +223,7 @@ export const MIRAGE_BOSSES: MirageBoss[] = [
     world: "W1",
     location: "Bullface King Fiend Sanctuary",
     level: "140 below",
-    spawnTimes: ["3:00", "6:00", "9:00", "12:00"],
+    spawnTimes: expandMirageTimes(["3:00", "6:00", "9:00", "12:00"]),
   },
   // W8 — 140 below
   {
@@ -196,7 +233,7 @@ export const MIRAGE_BOSSES: MirageBoss[] = [
     world: "W8",
     location: "Whitemaur Sealing Circle",
     level: "140 below",
-    spawnTimes: ["1:00", "5:00", "9:00"],
+    spawnTimes: expandMirageTimes(["1:00", "5:00", "9:00"]),
   },
   // W7 — 141+
   {
@@ -206,7 +243,7 @@ export const MIRAGE_BOSSES: MirageBoss[] = [
     world: "W7",
     location: "Taehyuls Garden",
     level: "141+",
-    spawnTimes: ["1:00", "3:00", "5:00", "7:00", "9:00", "11:00"],
+    spawnTimes: expandMirageTimes(["1:00", "3:00", "5:00", "7:00", "9:00", "11:00"]),
   },
   {
     id: "mir_l3_w7_yiun",
@@ -215,7 +252,7 @@ export const MIRAGE_BOSSES: MirageBoss[] = [
     world: "W7",
     location: "Demon Cult Hall",
     level: "141+",
-    spawnTimes: ["2:00", "5:00", "8:00", "11:00"],
+    spawnTimes: expandMirageTimes(["2:00", "5:00", "8:00", "11:00"]),
   },
   // W4 — 141+
   {
@@ -225,7 +262,7 @@ export const MIRAGE_BOSSES: MirageBoss[] = [
     world: "W4",
     location: "Phantasia Desert",
     level: "141+",
-    spawnTimes: ["2:00", "4:00", "6:00", "8:00", "10:00", "12:00"],
+    spawnTimes: expandMirageTimes(["2:00", "4:00", "6:00", "8:00", "10:00", "12:00"]),
   },
   {
     id: "mir_l3_w4_kuri",
@@ -234,7 +271,7 @@ export const MIRAGE_BOSSES: MirageBoss[] = [
     world: "W4",
     location: "Overlord Sealing Circle",
     level: "141+",
-    spawnTimes: ["3:00", "6:00", "9:00", "12:00"],
+    spawnTimes: expandMirageTimes(["3:00", "6:00", "9:00", "12:00"]),
   },
   // W2 — 143+
   {
@@ -244,7 +281,7 @@ export const MIRAGE_BOSSES: MirageBoss[] = [
     world: "W2",
     location: "Redmoon Mountain",
     level: "143+",
-    spawnTimes: ["2:30", "5:30", "8:30", "11:30"],
+    spawnTimes: expandMirageTimes(["2:30", "5:30", "8:30", "11:30"]),
   },
   {
     id: "mir_l3_w5_faluk",
@@ -253,7 +290,7 @@ export const MIRAGE_BOSSES: MirageBoss[] = [
     world: "W5",
     location: "Great Sabuk Wall",
     level: "143+",
-    spawnTimes: ["3:30", "6:30", "9:30", "12:30"],
+    spawnTimes: expandMirageTimes(["3:30", "6:30", "9:30", "12:30"]),
   },
   {
     id: "mir_l3_w5_twf",
@@ -262,7 +299,7 @@ export const MIRAGE_BOSSES: MirageBoss[] = [
     world: "W5",
     location: "Illusion Temple",
     level: "143+",
-    spawnTimes: ["1:30", "4:30", "7:30", "10:30"],
+    spawnTimes: expandMirageTimes(["1:30", "4:30", "7:30", "10:30"]),
   },
   // W3 — 150+
   {
@@ -272,7 +309,7 @@ export const MIRAGE_BOSSES: MirageBoss[] = [
     world: "W3",
     location: "Nefariox Necropolis",
     level: "150+",
-    spawnTimes: ["2:30", "8:30"],
+    spawnTimes: expandMirageTimes(["2:30", "8:30"]),
   },
   {
     id: "mir_l3_w3_dae",
@@ -281,7 +318,7 @@ export const MIRAGE_BOSSES: MirageBoss[] = [
     world: "W3",
     location: "Viperbeast Plain",
     level: "150+",
-    spawnTimes: ["1:30", "3:30", "5:30", "7:30", "9:30", "11:30"],
+    spawnTimes: expandMirageTimes(["1:30", "3:30", "5:30", "7:30", "9:30", "11:30"]),
   },
   {
     id: "mir_l3_w3_boodo",
@@ -290,7 +327,7 @@ export const MIRAGE_BOSSES: MirageBoss[] = [
     world: "W3",
     location: "Rockcut Tomb",
     level: "150+",
-    spawnTimes: ["3:30", "9:30"],
+    spawnTimes: expandMirageTimes(["3:30", "9:30"]),
   },
   {
     id: "mir_l3_w3_mara",
@@ -299,7 +336,7 @@ export const MIRAGE_BOSSES: MirageBoss[] = [
     world: "W3",
     location: "Rockcut Tomb",
     level: "150+",
-    spawnTimes: ["2:30", "5:30", "8:30", "11:30"],
+    spawnTimes: expandMirageTimes(["2:30", "5:30", "8:30", "11:30"]),
   },
   // W6 — 150+
   {
@@ -309,7 +346,7 @@ export const MIRAGE_BOSSES: MirageBoss[] = [
     world: "W6",
     location: "Bincheon Town",
     level: "150+",
-    spawnTimes: ["4:30", "10:30"],
+    spawnTimes: expandMirageTimes(["4:30", "10:30"]),
   },
   {
     id: "mir_l3_w6_mok",
@@ -318,7 +355,7 @@ export const MIRAGE_BOSSES: MirageBoss[] = [
     world: "W6",
     location: "Bincheon Town",
     level: "150+",
-    spawnTimes: ["2:30", "4:30", "6:30", "8:30", "10:30", "12:30"],
+    spawnTimes: expandMirageTimes(["2:30", "4:30", "6:30", "8:30", "10:30", "12:30"]),
   },
   {
     id: "mir_l3_w6_wui",
@@ -327,7 +364,7 @@ export const MIRAGE_BOSSES: MirageBoss[] = [
     world: "W6",
     location: "Phantom Woods",
     level: "150+",
-    spawnTimes: ["5:30", "11:30"],
+    spawnTimes: expandMirageTimes(["5:30", "11:30"]),
   },
   {
     id: "mir_l3_w6_yeti",
@@ -336,7 +373,7 @@ export const MIRAGE_BOSSES: MirageBoss[] = [
     world: "W6",
     location: "Bincheon Labyrinth",
     level: "150+",
-    spawnTimes: ["6:30", "12:30"],
+    spawnTimes: expandMirageTimes(["6:30", "12:30"]),
   },
   {
     id: "mir_l3_w6_thy",
@@ -345,7 +382,7 @@ export const MIRAGE_BOSSES: MirageBoss[] = [
     world: "W6",
     location: "Demoniac Mine Deep Area",
     level: "150+",
-    spawnTimes: ["1:30", "3:30", "5:30", "7:30", "9:30", "11:30"],
+    spawnTimes: expandMirageTimes(["1:30", "3:30", "5:30", "7:30", "9:30", "11:30"]),
   },
 
   // ── Layer 1 ─────────────────────────────────────────────────────────────
@@ -357,7 +394,7 @@ export const MIRAGE_BOSSES: MirageBoss[] = [
     world: "W1",
     location: "Unseo Town",
     level: "155+",
-    spawnTimes: ["2:30", "5:30", "8:30", "11:30"],
+    spawnTimes: expandMirageTimes(["2:30", "5:30", "8:30", "11:30"]),
   },
   {
     id: "mir_l1_w1_nya",
@@ -366,7 +403,7 @@ export const MIRAGE_BOSSES: MirageBoss[] = [
     world: "W1",
     location: "Seven Valleys Mountain",
     level: "155+",
-    spawnTimes: ["3:30", "9:30"],
+    spawnTimes: expandMirageTimes(["3:30", "9:30"]),
   },
   {
     id: "mir_l1_w1_bca",
@@ -375,7 +412,7 @@ export const MIRAGE_BOSSES: MirageBoss[] = [
     world: "W1",
     location: "Seven Valleys Mountain",
     level: "155+",
-    spawnTimes: ["3:30", "6:30", "9:30", "12:30"],
+    spawnTimes: expandMirageTimes(["3:30", "6:30", "9:30", "12:30"]),
   },
   {
     id: "mir_l1_w1_bul",
@@ -384,7 +421,7 @@ export const MIRAGE_BOSSES: MirageBoss[] = [
     world: "W1",
     location: "Roaring Flame Island",
     level: "155+",
-    spawnTimes: ["4:30", "10:30"],
+    spawnTimes: expandMirageTimes(["4:30", "10:30"]),
   },
   // W2 — 155+
   {
@@ -394,7 +431,7 @@ export const MIRAGE_BOSSES: MirageBoss[] = [
     world: "W2",
     location: "Nine Dragon Ice Field",
     level: "155+",
-    spawnTimes: ["5:30", "11:30"],
+    spawnTimes: expandMirageTimes(["5:30", "11:30"]),
   },
   {
     id: "mir_l1_w2_dom",
@@ -403,7 +440,7 @@ export const MIRAGE_BOSSES: MirageBoss[] = [
     world: "W2",
     location: "Underground Jail",
     level: "155+",
-    spawnTimes: ["6:30", "12:30"],
+    spawnTimes: expandMirageTimes(["6:30", "12:30"]),
   },
   {
     id: "mir_l1_w2_mol",
@@ -412,7 +449,7 @@ export const MIRAGE_BOSSES: MirageBoss[] = [
     world: "W2",
     location: "Underground Jail",
     level: "155+",
-    spawnTimes: ["1:30", "4:30", "7:30", "10:30"],
+    spawnTimes: expandMirageTimes(["1:30", "4:30", "7:30", "10:30"]),
   },
   {
     id: "mir_l1_w2_wig",
@@ -421,7 +458,7 @@ export const MIRAGE_BOSSES: MirageBoss[] = [
     world: "W2",
     location: "Nine Dragon Palace",
     level: "155+",
-    spawnTimes: ["2:30", "5:30", "8:30", "11:30"],
+    spawnTimes: expandMirageTimes(["2:30", "5:30", "8:30", "11:30"]),
   },
 ];
 
