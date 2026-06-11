@@ -929,18 +929,41 @@ function BoostSection({
 
   return (
     <div
-      className="rounded-2xl p-5"
+      className="rounded-2xl p-4 sm:p-5"
       style={{
-        background: "rgba(255,255,255,0.03)",
-        border: "1px solid rgba(255,255,255,0.07)",
+        background:
+          "radial-gradient(circle at top left, rgba(248,113,113,0.18), transparent 55%), radial-gradient(circle at bottom right, rgba(59,130,246,0.16), transparent 55%), rgba(15,23,42,0.92)",
+        border: "1px solid rgba(148,163,184,0.35)",
+        boxShadow:
+          "0 18px 45px rgba(15,23,42,0.9), 0 0 0 1px rgba(15,23,42,1) inset",
       }}
     >
-      <h3 className="mb-4 text-sm font-semibold text-zinc-300">
-        {emoji} {title}
-      </h3>
+      <div className="mb-4 flex items-center justify-between gap-3">
+        <div className="flex items-center gap-2">
+          <div
+            className="inline-flex h-7 w-7 items-center justify-center rounded-full border text-sm"
+            style={
+              {
+                borderColor: "rgba(248,113,113,0.7)",
+                background:
+                  "radial-gradient(circle at 30% 20%, rgba(248,113,113,0.5), transparent 60%), rgba(15,23,42,0.9)",
+                boxShadow: "0 0 18px rgba(248,113,113,0.55)",
+              }
+            }
+          >
+            <span>{emoji}</span>
+          </div>
+          <div className="flex flex-col">
+            <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-zinc-500">
+              Boost calculator
+            </span>
+            <h3 className="text-sm font-semibold text-zinc-100">{title}</h3>
+          </div>
+        </div>
+      </div>
 
       {/* Boost input */}
-      <div className="mb-5 flex items-center gap-3">
+      <div className="mb-4 flex items-center gap-3">
         <input
           type="range"
           min={0}
@@ -976,13 +999,16 @@ function BoostSection({
             key={label}
             className="rounded-xl p-3 text-center"
             style={{
-              background: "rgba(255,255,255,0.05)",
-              border: "1px solid rgba(255,255,255,0.06)",
+              background:
+                "linear-gradient(145deg, rgba(15,23,42,0.9), rgba(30,64,175,0.35))",
+              border: "1px solid rgba(148,163,184,0.45)",
             }}
           >
             <p className="mb-1 text-[11px] text-zinc-500">{label}</p>
-            <p className="text-lg font-semibold text-zinc-100">{value}</p>
-            <p className="text-[11px] text-zinc-600">{unit}</p>
+            <p className="font-mono text-lg font-semibold text-zinc-50">
+              {value}
+            </p>
+            <p className="text-[11px] text-zinc-500">{unit}</p>
           </div>
         ))}
       </div>
@@ -1074,25 +1100,71 @@ function MiningNodeTable({ secPerHit }: { secPerHit: number }) {
 }
 
 function MiningCalculatorView() {
+  type BoostId = "mining" | "gathering" | "energy";
+
+  const [activeBoost, setActiveBoost] = useState<BoostId>("mining");
+
+  const config: Record<BoostId, { title: string; emoji: string; note: string }> = {
+    mining: {
+      title: "Mining Boost",
+      emoji: "⛏️",
+      note:
+        "Formula: 10 / (1 + boost/100) sec/hit — MIR4 Wiki. Roughly +10% DS for each higher floor.",
+    },
+    gathering: {
+      title: "Gathering Boost",
+      emoji: "🌿",
+      note:
+        "Same formula as Mining. Base is 10 sec per gather. Verify in game at 0%.",
+    },
+    energy: {
+      title: "Energy Gathering Boost",
+      emoji: "⚡",
+      note:
+        "May affect the amount of energy rather than speed. Numbers are approximate — verify in game.",
+    },
+  };
+
+  const segments: { id: BoostId; label: string; emoji: string }[] = [
+    { id: "mining", label: "Mining", emoji: "⛏️" },
+    { id: "gathering", label: "Gathering", emoji: "🌿" },
+    { id: "energy", label: "Energy", emoji: "⚡" },
+  ];
+
+  const current = config[activeBoost];
+
   return (
-    <div className="flex flex-col gap-5 p-4 sm:p-6">
+    <div className="flex flex-col gap-4 p-3 sm:p-5">
+      <div className="mb-1 flex flex-wrap items-center justify-between gap-3">
+        <div className="flex items-center gap-2">
+          <span className="text-xs uppercase tracking-[0.2em] text-zinc-500">
+            Calculator
+          </span>
+        </div>
+        <div className="inline-flex rounded-full border border-zinc-700/70 bg-zinc-900/80 p-1 text-xs">
+          {segments.map((seg) => (
+            <button
+              key={seg.id}
+              type="button"
+              onClick={() => setActiveBoost(seg.id)}
+              className={`flex items-center gap-1 rounded-full px-3 py-1 font-medium transition-all ${
+                activeBoost === seg.id
+                  ? "bg-zinc-100 text-zinc-900 shadow-sm"
+                  : "text-zinc-400 hover:text-zinc-100"
+              }`}
+            >
+              <span>{seg.emoji}</span>
+              <span>{seg.label}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+
       <BoostSection
-        id="mining"
-        title="Mining Boost"
-        emoji="⛏️"
-        note="Formula: 10 / (1 + boost/100) sec/hit — MIR4 Wiki. Roughly +10% DS for each higher floor."
-      />
-      <BoostSection
-        id="gathering"
-        title="Gathering Boost"
-        emoji="🌿"
-        note="Same formula as Mining. Base is 10 sec per gather. Verify in game at 0%."
-      />
-      <BoostSection
-        id="energy"
-        title="Energy Gathering Boost"
-        emoji="⚡"
-        note="May affect the amount of energy rather than speed. Numbers are approximate — verify in game."
+        id={activeBoost}
+        title={current.title}
+        emoji={current.emoji}
+        note={current.note}
       />
     </div>
   );
