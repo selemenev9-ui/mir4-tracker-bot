@@ -492,17 +492,30 @@ function MirageView() {
             <div
               key={boss.id}
               className="glass-card rounded-2xl overflow-hidden"
+              style={{ position: "relative" }}
             >
+              <div
+                style={{
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  height: "1px",
+                  background:
+                    "linear-gradient(90deg, transparent, rgba(255,255,255,0.2), rgba(168,85,247,0.4), rgba(255,255,255,0.2), transparent)",
+                  zIndex: 2,
+                }}
+              />
               {boss.rewardImage ? (
-                <div className="relative h-32 overflow-hidden">
+                <div className="relative h-36 overflow-hidden">
                   <Image
                     src={boss.rewardImage}
                     alt={`${boss.name} rewards`}
                     fill
                     className="object-cover object-top"
                     style={{
-                      opacity: 0.55,
-                      filter: "brightness(0.85) saturate(1.1)",
+                      opacity: 0.9,
+                      filter: "saturate(1.15) contrast(1.05)",
                     }}
                     unoptimized
                   />
@@ -510,7 +523,7 @@ function MirageView() {
                     className="absolute inset-0"
                     style={{
                       background:
-                        "linear-gradient(to bottom, transparent 30%, rgba(8,14,36,0.9) 100%)",
+                        "linear-gradient(to bottom, rgba(0,0,0,0.05) 0%, transparent 35%, rgba(15,22,50,0.85) 100%)",
                     }}
                   />
                   <div className="absolute bottom-2 left-3 flex items-center gap-1.5">
@@ -584,7 +597,7 @@ function MirageView() {
                 </div>
               )}
 
-              <div className="px-4 pb-4 pt-3">
+	              <div className="px-4 pb-4 pt-3">
                 <h3 className="text-sm font-bold text-zinc-100 leading-snug mb-0.5">
                   {boss.name}
                 </h3>
@@ -596,9 +609,9 @@ function MirageView() {
                       key={t}
                       className="font-mono text-[10px] px-1.5 py-0.5 rounded"
                       style={{
-                        background: "rgba(255,255,255,0.05)",
-                        border: "1px solid rgba(255,255,255,0.08)",
-                        color: "#475569",
+                        background: "rgba(255,255,255,0.07)",
+                        border: "1px solid rgba(255,255,255,0.12)",
+                        color: "#64748b",
                       }}
                     >
                       {t}
@@ -609,8 +622,9 @@ function MirageView() {
                 <div
                   className="flex items-center justify-between rounded-xl px-3 py-2.5"
                   style={{
-                    background: "rgba(0,0,0,0.35)",
-                    border: "1px solid rgba(255,255,255,0.05)",
+                    background: "rgba(0,0,0,0.5)",
+                    border: "1px solid rgba(255,255,255,0.1)",
+                    backdropFilter: "blur(8px)",
                   }}
                 >
                   <span className="text-[10px] uppercase tracking-widest font-semibold text-zinc-600">
@@ -801,7 +815,7 @@ function WorldBossesView() {
           {DAILY_WORLD_BOSSES.map((boss) => (
             <div
               key={boss.id}
-              className="rounded-2xl border border-zinc-800/60 bg-zinc-950/80 p-4 backdrop-blur-sm"
+              className="glass-card rounded-2xl p-4"
             >
               <div className="mb-3 flex items-start justify-between gap-2">
                 <div>
@@ -845,7 +859,7 @@ function WorldBossesView() {
           {WEEKLY_WORLD_BOSSES.map((boss) => (
             <div
               key={boss.id}
-              className="rounded-2xl border border-zinc-800/60 bg-zinc-950/80 p-4 backdrop-blur-sm"
+              className="glass-card rounded-2xl p-4"
             >
               <div className="mb-2 flex items-start justify-between gap-2">
                 <div className="flex-1">
