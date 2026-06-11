@@ -233,7 +233,7 @@ function SecretPeakView({
   );
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-3">
       {/* Floor selector */}
       <div className="flex flex-wrap gap-2">
         {Array.from({ length: 10 }, (_, i) => i + 1).map((f) => (
@@ -726,7 +726,7 @@ function MagicSquareView({
         ))}
       </div>
 
-      <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
+      <div className="grid grid-cols-1 gap-2 md:grid-cols-3">
         {floorBosses.map((boss) => {
           const nextSpawn = getNextSpawnForBoss(boss);
           const state = getState(boss);
@@ -811,16 +811,16 @@ function WorldBossesView() {
   const weekDays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-4">
       <div>
-        <h3 className="mb-3 text-xs font-semibold uppercase tracking-widest text-zinc-500">
+        <h3 className="mb-2 text-[10px] font-semibold uppercase tracking-widest text-zinc-500">
           Daily
         </h3>
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+        <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
           {DAILY_WORLD_BOSSES.map((boss) => (
             <div
               key={boss.id}
-              className="glass-card rounded-2xl p-4"
+              className="glass-card rounded-xl p-3"
             >
               <div className="mb-3 flex items-start justify-between gap-2">
                 <div>
@@ -857,14 +857,14 @@ function WorldBossesView() {
       </div>
 
       <div>
-        <h3 className="mb-3 text-xs font-semibold uppercase tracking-widest text-zinc-500">
+        <h3 className="mb-2 text-[10px] font-semibold uppercase tracking-widest text-zinc-500">
           Weekly
         </h3>
-        <div className="grid grid-cols-1 gap-3">
+        <div className="grid grid-cols-1 gap-2">
           {WEEKLY_WORLD_BOSSES.map((boss) => (
             <div
               key={boss.id}
-              className="glass-card rounded-2xl p-4"
+              className="glass-card rounded-xl p-3"
             >
               <div className="mb-2 flex items-start justify-between gap-2">
                 <div className="flex-1">
@@ -1337,45 +1337,38 @@ export default function DashboardPage() {
   ];
 
   return (
-    <div className="min-h-screen text-zinc-100 antialiased">
-      <main className="mx-auto flex min-h-screen max-w-6xl flex-col gap-6 px-4 pb-12 pt-6 sm:px-8">
+    <div className="text-zinc-100 antialiased">
+      <main className="mx-auto flex min-h-screen max-w-5xl flex-col gap-3 px-3 pb-4 pt-3 sm:px-5">
         <header
-          className="flex flex-col gap-3 pb-5 sm:flex-row sm:items-center sm:justify-between"
+          className="flex items-center justify-between gap-3 pb-3"
           style={{ borderBottom: "1px solid rgba(255,255,255,0.07)" }}
         >
-          <div>
-            <h1
-              className="text-xl font-bold tracking-tight sm:text-2xl"
-              style={{
-                background:
-                  "linear-gradient(135deg, #e2e8f0 0%, #94a3b8 100%)",
-                WebkitBackgroundClip: "text",
-                WebkitTextFillColor: "transparent",
-                backgroundClip: "text",
-              }}
-            >
-              ⚔️ MIR4 Boss Tracker
-            </h1>
-            <p className="mt-0.5 text-xs text-zinc-500">
-              Real-time spawn tracker · Secret Peak · Magic Square · Mirage ·
-              World Bosses
-            </p>
-          </div>
-          <div className="flex flex-col items-start gap-1.5 sm:items-end">
+          <h1
+            className="shrink-0 text-base font-bold tracking-tight"
+            style={{
+              background: "linear-gradient(135deg, #e2e8f0 0%, #94a3b8 100%)",
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+              backgroundClip: "text",
+            }}
+          >
+            ⚔️ MIR4 Boss Tracker
+          </h1>
+          <div className="flex min-w-0 items-center gap-2">
             <ServerClock />
             {currentUser ? (
-              <div className="flex items-center gap-2">
+              <>
                 <span
-                  className="text-xs"
+                  className="max-w-[120px] truncate text-xs"
                   style={{
                     background: "rgba(255,255,255,0.05)",
                     border: "1px solid rgba(255,255,255,0.1)",
                     borderRadius: "20px",
-                    padding: "3px 10px",
+                    padding: "2px 8px",
                     color: "#94a3b8",
                   }}
                 >
-                  👤 <span className="font-medium text-zinc-200">{currentUser.username}</span>
+                  {currentUser.username}
                 </span>
                 <button
                   type="button"
@@ -1388,16 +1381,16 @@ export default function DashboardPage() {
                     setShowNamePrompt(true);
                     setNameInput("");
                   }}
-                  className="text-[10px] text-zinc-600 hover:text-zinc-400 transition-colors"
+                  className="shrink-0 text-[10px] text-zinc-600 transition-colors hover:text-zinc-400"
                 >
                   change
                 </button>
-              </div>
+              </>
             ) : (
               <button
                 type="button"
                 onClick={() => setShowNamePrompt(true)}
-                className="text-xs text-zinc-500 hover:text-zinc-300 transition-colors underline underline-offset-2"
+                className="shrink-0 text-xs text-zinc-500 underline underline-offset-2 transition-colors hover:text-zinc-300"
               >
                 {sdkError ? "Login (web mode)" : "Login"}
               </button>
@@ -1405,14 +1398,14 @@ export default function DashboardPage() {
           </div>
         </header>
 
-        <nav className="flex gap-1 border-b border-zinc-800/80">
+        <nav className="flex gap-0.5 border-b border-zinc-800/80">
           {tabs.map((tab) => (
             <button
               key={tab.id}
               type="button"
               onClick={() => setActiveTab(tab.id)}
               className={[
-                "-mb-px border-b-2 px-4 py-2.5 text-sm font-semibold transition-all",
+                "-mb-px border-b-2 px-3 py-1.5 text-xs font-semibold transition-all whitespace-nowrap",
                 activeTab === tab.id
                   ? "border-red-500 text-zinc-100"
                   : "border-transparent text-zinc-500 hover:border-zinc-600 hover:text-zinc-300",
@@ -1442,11 +1435,6 @@ export default function DashboardPage() {
           {activeTab === "world_bosses" && <WorldBossesView />}
           {activeTab === "calculator" && <MiningCalculatorView />}
         </section>
-
-        <footer className="mt-6 flex items-center justify-between border-t border-zinc-900 pt-4 text-[11px] text-zinc-600">
-          <span>MIR4 Boss Tracker</span>
-          <span>Next.js · Supabase · Discord SDK</span>
-        </footer>
       </main>
 
       {/* Name Prompt Modal */}
