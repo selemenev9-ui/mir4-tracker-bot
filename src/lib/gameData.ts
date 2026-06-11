@@ -521,6 +521,16 @@ export const WEEKLY_WORLD_BOSSES: WeeklyWorldBoss[] = [
     description: "Announced at 19:00 — becomes active at 23:00",
   },
   {
+    id: "valley_capture",
+    name: "⚔️ Hidden Valley Capture",
+    zone: "Bicheon Valley 4F / Snake Valley 4F / Redmoon Valley 4F",
+    dayOfWeek: 3, // Wednesday
+    spawnHourUTC8: 22,
+    notifyMinutesBefore: 10,
+    description:
+      "22:00–23:00 — All Clan members can participate. Valley Bosses also active at 22:00.",
+  },
+  {
     id: "wraiths",
     name: "Attack of the Living Wraiths",
     zone: "All Valley Zones 4F",
