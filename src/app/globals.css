@@ -19,4 +19,103 @@ body {
   overflow-x: hidden;
 }
 
-/* ── Animated background orbs ───────────────�
+/* ── Animated background orbs ─────────────────────────────── */
+
+@keyframes orb1 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  25%  { transform: translate(4%, -7%) scale(1.06); }
+  50%  { transform: translate(-3%, 5%) scale(0.94); }
+  75%  { transform: translate(7%, 3%) scale(1.03); }
+}
+@keyframes orb2 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33%  { transform: translate(-5%, 9%) scale(1.09); }
+  66%  { transform: translate(4%, -6%) scale(0.91); }
+}
+@keyframes orb3 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50%  { transform: translate(-7%, -5%) scale(1.12); }
+}
+
+.bg-orb {
+  position: fixed;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 0;
+  will-change: transform;
+}
+.bg-orb-purple {
+  width: 900px;
+  height: 900px;
+  background: radial-gradient(circle, rgba(124,58,237,0.7) 0%, rgba(109,40,217,0.35) 45%, transparent 70%);
+  filter: blur(60px);
+  top: -200px;
+  left: -100px;
+  animation: orb1 20s ease-in-out infinite;
+}
+.bg-orb-cyan {
+  width: 700px;
+  height: 700px;
+  background: radial-gradient(circle, rgba(6,182,212,0.55) 0%, rgba(14,165,233,0.25) 50%, transparent 70%);
+  filter: blur(55px);
+  top: 20%;
+  right: -50px;
+  animation: orb2 25s ease-in-out infinite;
+}
+.bg-orb-red {
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, rgba(239,68,68,0.45) 0%, rgba(220,38,38,0.2) 50%, transparent 70%);
+  filter: blur(55px);
+  bottom: -50px;
+  left: 15%;
+  animation: orb3 18s ease-in-out infinite;
+}
+
+/* ── Timer pulse animations ────────────────────────────────── */
+
+@keyframes glow-pulse-green {
+  0%, 100% { box-shadow: 0 0 20px rgba(34,197,94,0.3), 0 0 60px rgba(34,197,94,0.1), inset 0 1px 0 rgba(255,255,255,0.08); }
+  50%       { box-shadow: 0 0 35px rgba(34,197,94,0.5), 0 0 80px rgba(34,197,94,0.2), inset 0 1px 0 rgba(255,255,255,0.08); }
+}
+@keyframes glow-pulse-red {
+  0%, 100% { box-shadow: 0 0 20px rgba(239,68,68,0.35), inset 0 1px 0 rgba(255,255,255,0.06); }
+  50%       { box-shadow: 0 0 40px rgba(239,68,68,0.6), 0 0 70px rgba(239,68,68,0.2), inset 0 1px 0 rgba(255,255,255,0.06); }
+}
+@keyframes text-flicker {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.55; }
+}
+
+.card-spawned  { animation: glow-pulse-green 2s ease-in-out infinite; }
+.card-critical { animation: glow-pulse-red   1s ease-in-out infinite; }
+.timer-spawned { animation: text-flicker 1.8s ease-in-out infinite; }
+.timer-critical{ animation: text-flicker 0.9s ease-in-out infinite; }
+
+/* ── Glassmorphism card base ───────────────────────────────── */
+
+.glass-card {
+  background: rgba(12, 18, 42, 0.45);
+  backdrop-filter: blur(28px);
+  -webkit-backdrop-filter: blur(28px);
+  border: 1px solid rgba(255,255,255,0.12);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+}
+.glass-card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(255,255,255,0.22);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.15);
+}
+.glass-card-warning {
+  border-color: rgba(245,158,11,0.3);
+  box-shadow: 0 0 24px rgba(245,158,11,0.2), 0 8px 32px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.06);
+}
+
+/* ── Scrollbar ─────────────────────────────────────────────── */
+
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
+
