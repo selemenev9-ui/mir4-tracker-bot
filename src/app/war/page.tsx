@@ -154,7 +154,7 @@ function getSupabaseUrl() {
     typeof window !== "undefined" &&
     window.location.hostname.includes("discordsays.com")
   ) {
-    return `${window.location.origin}/supabase`;
+    return `${window.location.origin}/api/supabase`;
   }
 
   return process.env.NEXT_PUBLIC_SUPABASE_URL!;
