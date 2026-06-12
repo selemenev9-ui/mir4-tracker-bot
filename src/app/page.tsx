@@ -1400,23 +1400,44 @@ export default function DashboardPage() {
           </div>
         </header>
 
-        <nav className="flex gap-0 overflow-x-auto border-b border-zinc-800/80 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              onClick={() => setActiveTab(tab.id)}
-              className={[
-                "-mb-px shrink-0 border-b-2 px-2.5 py-1.5 text-[11px] font-semibold transition-all whitespace-nowrap sm:px-3 sm:text-xs",
-                activeTab === tab.id
-                  ? "border-red-500 text-zinc-100"
-                  : "border-transparent text-zinc-500 hover:border-zinc-600 hover:text-zinc-300",
-              ].join(" ")}
+        <div className="flex items-center justify-between gap-2">
+          <nav className="flex gap-0 overflow-x-auto border-b border-zinc-800/80 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+            {tabs.map((tab) => (
+              <button
+                key={tab.id}
+                type="button"
+                onClick={() => setActiveTab(tab.id)}
+                className={[
+                  "-mb-px shrink-0 border-b-2 px-2.5 py-1.5 text-[11px] font-semibold transition-all whitespace-nowrap sm:px-3 sm:text-xs",
+                  activeTab === tab.id
+                    ? "border-red-500 text-zinc-100"
+                    : "border-transparent text-zinc-500 hover:border-zinc-600 hover:text-zinc-300",
+                ].join(" ")}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </nav>
+          <a
+            href="/war"
+            className="ml-2 flex shrink-0 items-center gap-1 rounded-full border px-3 py-1 text-[11px] font-semibold text-red-300 transition-colors hover:bg-red-500/25"
+            style={{
+              background: "rgba(239,68,68,0.15)",
+              borderColor: "rgba(239,68,68,0.4)",
+            }}
+          >
+            <svg
+              viewBox="0 0 24 24"
+              width={14}
+              height={14}
+              className="text-red-300"
             >
-              {tab.label}
-            </button>
-          ))}
-        </nav>
+              <line x1={6} y1={6} x2={18} y2={18} stroke="currentColor" strokeWidth={2} />
+              <line x1={18} y1={6} x2={6} y2={18} stroke="currentColor" strokeWidth={2} />
+            </svg>
+            <span>WAR BOARD</span>
+          </a>
+        </div>
 
         <section className="flex-1 overflow-y-auto pb-4" suppressHydrationWarning>
           {activeTab === "secret_peak" && (
