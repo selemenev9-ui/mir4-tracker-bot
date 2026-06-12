@@ -137,7 +137,6 @@ function todayUTC8(): string {
   const utc8 = new Date(now.getTime() + 8 * 60 * 60 * 1000);
   return utc8.toISOString().slice(0, 10);
 }
-
 const WAR_ZONES: WarZone[] = [
   // 
   // LABYRINTHS
@@ -708,6 +707,52 @@ const MAP_FILES: Record<string, MapFile> = {
   },
 };
 
+const MAP_SORT_ORDER: Record<string, number> = {
+  // Labyrinths — weakest to strongest
+  "demonbull-lab-4f": 1,
+  "bicheon-lab-4f": 2,
+  "snake-pit-lab-4f": 3,
+  "abandoned-mine-lab-4f": 4,
+  "heavens-way-lab-4f": 5,
+  "redmoon-lab-4f": 6,
+  "phantasia-lab-4f": 7,
+  "rockcut-lab-4f": 8,
+  "sabuk-lab-4f": 9,
+  "nine-dragon-lab-4f": 10,
+
+  // Valleys — same regional order
+  "bicheon-valley-4f": 1,
+  "snake-valley-4f": 2,
+  "redmoon-valley-4f": 3,
+  "phantasia-valley-4f": 4,
+  "sagitation-valley-4f": 5,
+
+  // Purgatory — by floor
+  "purgatory-1f": 1,
+  "purgatory-2f": 2,
+  "purgatory-3f": 3,
+  "purgatory-4f": 4,
+  "purgatory-5f": 5,
+  "purgatory-6f": 6,
+  "purgatory-7f": 7,
+
+  // Mirage — by world number
+  "world1-demon-bull-temple-3f": 1,
+  "world2-heavens-way-peak": 2,
+  "world3-rockcut-tomb": 3,
+  "world4-bladehaven-2f": 4,
+  "world5-illusion-temple": 5,
+  "world6-bicheon-lab": 6,
+  "world7-redmoon-gorge-3f": 7,
+  "world8-abandoned-mine-3f": 8,
+
+  // Tower — by floor
+  "tower-black-dragon-1f": 1,
+  "tower-black-dragon-2f": 2,
+  "tower-black-dragon-3f": 3,
+  "tower-black-dragon-4f": 4,
+};
+
 function ZoneBadge({ category }: { category: ZoneCategory }) {
   const cfg = ZONE_CATEGORY_CONFIG[category];
   return (
@@ -1070,8 +1115,12 @@ function DeployBoard({
         }
       )
       .subscribe();
+    const pollInterval = window.setInterval(() => {
+      void loadAssignments();
+    }, 5000);
     return () => {
       supabase.removeChannel(channel);
+      window.clearInterval(pollInterval);
     };
   }, [loadAssignments, selectedDate]);
 
@@ -1343,20 +1392,59 @@ function MapBoard({ username }: { username: string }) {
       x_pct: number;
       y_pct: number;
     }) => {
-      await supabase.from("war_map_markers").insert({
+      const tempId = `temp-${Date.now()}-${Math.random()
+        .toString(36)
+        .slice(2, 8)}`;
+
+      const tempMarker: MapMarker = {
+        id: tempId,
         map_id: params.mapId,
         marker_type: params.marker_type,
         x_pct: params.x_pct,
         y_pct: params.y_pct,
         color: SQUAD_COLORS[activeSquad],
+        label: null,
         placed_by: username,
-      });
+      };
+
+      setMarkers((prev) => [...prev, tempMarker]);
+
+      try {
+        const { data, error } = await supabase
+          .from("war_map_markers")
+          .insert({
+            map_id: params.mapId,
+            marker_type: params.marker_type,
+            x_pct: params.x_pct,
+            y_pct: params.y_pct,
+            color: SQUAD_COLORS[activeSquad],
+            placed_by: username,
+          })
+          .select()
+          .single();
+
+        if (error || !data) {
+          throw error ?? new Error("Failed to insert marker");
+        }
+
+        const realMarker = data as MapMarker;
+        setMarkers((prev) =>
+          prev.map((m) => (m.id === tempId ? realMarker : m))
+        );
+      } catch {
+        setMarkers((prev) => prev.filter((m) => m.id !== tempId));
+      }
     },
     [activeSquad, username]
   );
 
   const handleRemoveMarker = useCallback(async (id: string) => {
-    await supabase.from("war_map_markers").delete().eq("id", id);
+    setMarkers((prev) => prev.filter((m) => m.id !== id));
+    try {
+      await supabase.from("war_map_markers").delete().eq("id", id);
+    } catch {
+      // Realtime/polling will resync state if needed
+    }
   }, []);
 
   useEffect(() => {
@@ -1393,8 +1481,12 @@ function MapBoard({ username }: { username: string }) {
         }
       )
       .subscribe();
+    const pollInterval = window.setInterval(() => {
+      void loadMarkers(selectedMapId);
+    }, 5000);
     return () => {
       supabase.removeChannel(channel);
+      window.clearInterval(pollInterval);
     };
   }, [loadMarkers, selectedMapId]);
 
@@ -1412,10 +1504,13 @@ function MapBoard({ username }: { username: string }) {
     .filter((m) =>
       categoryFilter === "all" ? true : m.category === categoryFilter
     )
-    .filter((m, index, self) => {
+    .filter((m) => {
       if (m.category !== "tower") return true;
       return m.id === "tower-black-dragon-1f";
-    });
+    })
+    .sort(
+      (a, b) => (MAP_SORT_ORDER[a.id] ?? 99) - (MAP_SORT_ORDER[b.id] ?? 99)
+    );
 
   return (
     <div className="flex flex-col gap-3">
@@ -1450,65 +1545,27 @@ function MapBoard({ username }: { username: string }) {
           })}
         </div>
 
-        <div
-          style={{
-            width: "100%",
-            overflowY: "auto",
-            maxHeight: 260,
-            display: "flex",
-            flexDirection: "column",
-            gap: 2,
-          }}
-        >
-          {filteredMaps.map((map) => {
-            const count = markerCounts[map.id] ?? 0;
-            const isActive = selectedMapId === map.id;
-            const cfg = ZONE_CATEGORY_CONFIG[map.category];
-            return (
-              <button
-                key={map.id}
-                type="button"
-                onClick={() => setSelectedMapId(map.id)}
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                  padding: "7px 12px",
-                  borderRadius: 8,
-                  border: isActive
-                    ? `1px solid ${cfg.borderColor}`
-                    : "1px solid rgba(255,255,255,0.06)",
-                  background: isActive
-                    ? cfg.bgColor
-                    : "rgba(255,255,255,0.03)",
-                  color: isActive ? cfg.color : "#94a3b8",
-                  fontSize: 12,
-                  fontWeight: isActive ? 600 : 400,
-                  cursor: "pointer",
-                  textAlign: "left",
-                  transition: "all 0.15s ease",
-                }}
-              >
-                <span>{map.name}</span>
-                {count > 0 && (
-                  <span
-                    style={{
-                      background: cfg.color,
-                      color: "#000",
-                      borderRadius: 10,
-                      padding: "1px 7px",
-                      fontSize: 10,
-                      fontWeight: 700,
-                      marginLeft: 6,
-                      flexShrink: 0,
-                    }}
-                  >
-                    {count}
-                  </span>
-                )}
-              </button>
-            );
-          })}
+        <div style={{ width: "100%" }}>
+          <select
+            value={selectedMapId ?? ""}
+            onChange={(e) => {
+              const value = e.target.value;
+              setSelectedMapId(value === "" ? null : value);
+            }}
+            className="w-full rounded-lg border border-zinc-800 bg-zinc-950/80 px-3 py-2 text-sm text-zinc-100 outline-none focus:border-rose-500 focus:ring-1 focus:ring-rose-500"
+          >
+            <option value="">— Select a map —</option>
+            {filteredMaps.map((map) => {
+              const count = markerCounts[map.id] ?? 0;
+              const label =
+                count > 0 ? `${map.name} (${count})` : map.name;
+              return (
+                <option key={map.id} value={map.id}>
+                  {label}
+                </option>
+              );
+            })}
+          </select>
         </div>
       </div>
 
