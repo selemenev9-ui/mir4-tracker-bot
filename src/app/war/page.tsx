@@ -1859,8 +1859,9 @@ function MapBoard({
           );
           setLastActionId(realMarker.id);
         }
-      } catch {
+      } catch (err) {
         setMarkers((prev) => prev.filter((m) => m.id !== tempId));
+        console.error("supabase exception:", err);
       }
     },
     [activeSquad, username]
@@ -1870,16 +1871,20 @@ function MapBoard({
     setMarkers((prev) => prev.filter((m) => m.id !== id));
     try {
       await supabase.from("war_map_markers").delete().eq("id", id);
-    } catch {
-      // Realtime/polling will resync state if needed
+    } catch (err) {
+      console.error("supabase exception:", err);
     }
   }, []);
 
   const handleUndo = useCallback(async () => {
     if (!lastActionId) return;
     setMarkers((prev) => prev.filter((m) => m.id !== lastActionId));
-    await supabase.from("war_map_markers").delete().eq("id", lastActionId);
-    setLastActionId(null);
+    try {
+      await supabase.from("war_map_markers").delete().eq("id", lastActionId);
+      setLastActionId(null);
+    } catch (err) {
+      console.error("supabase exception:", err);
+    }
   }, [lastActionId]);
 
   // NOTE: Supabase table must allow marker_type = 'draw'
@@ -1939,8 +1944,9 @@ function MapBoard({
             prev.map((m) => (m.id === tempId ? real : m))
           );
         }
-      } catch {
+      } catch (err) {
         setMarkers((prev) => prev.filter((m) => m.id !== tempId));
+        console.error("supabase exception:", err);
       }
     },
     [username]
@@ -2304,7 +2310,7 @@ function WarPageInner() {
             target: process.env.NEXT_PUBLIC_SUPABASE_URL ?? "",
           }]);
           supabase = createClient(
-            `${window.location.origin}/supabase`,
+            process.env.NEXT_PUBLIC_SUPABASE_URL!,
             process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
           );
 
