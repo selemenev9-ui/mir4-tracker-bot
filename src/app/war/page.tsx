@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { DiscordSDK, patchUrlMappings } from "@discord/embedded-app-sdk";
+import { DiscordSDK } from "@discord/embedded-app-sdk";
 import { createClient } from "@supabase/supabase-js";
 
 // Types and constants
@@ -2301,12 +2301,8 @@ function WarPageInner() {
         .ready()
         .then(async () => {
           const discordSdk = sdk as DiscordSDKWithCommands;
-          patchUrlMappings([{
-            prefix: "/supabase",
-            target: new URL(process.env.NEXT_PUBLIC_SUPABASE_URL!).hostname,
-          }]);
           supabase = createClient(
-            process.env.NEXT_PUBLIC_SUPABASE_URL!,
+            `${window.location.origin}/supabase`,
             process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
           );
 
