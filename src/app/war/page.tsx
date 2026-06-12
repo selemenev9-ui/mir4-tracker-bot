@@ -1059,6 +1059,7 @@ function DeployBoard({
   updateSquadName: (squad: Squad, name: string) => void;
 }) {
   const [assignments, setAssignments] = useState<Assignment[]>([]);
+  const [inputValues, setInputValues] = useState<Record<Squad, string>>(squadNames);
 
   const loadAssignments = useCallback(async () => {
     const { data } = await supabase
@@ -1126,6 +1127,11 @@ function DeployBoard({
     };
   }, [loadAssignments, selectedDate]);
 
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setInputValues(squadNames);
+  }, [squadNames]);
+
   const zonesForDay = getZonesForDate(selectedDate);
 
   return (
@@ -1161,8 +1167,16 @@ function DeployBoard({
               {sq}
             </span>
             <input
-              value={squadNames[sq]}
-              onChange={(e) => updateSquadName(sq, e.target.value)}
+              value={inputValues[sq]}
+              onChange={(e) =>
+                setInputValues((prev) => ({ ...prev, [sq]: e.target.value }))
+              }
+              onBlur={() => updateSquadName(sq, inputValues[sq])}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  updateSquadName(sq, inputValues[sq]);
+                }
+              }}
               style={{
                 background: "rgba(255,255,255,0.06)",
                 border: "1px solid rgba(255,255,255,0.12)",
@@ -1317,16 +1331,19 @@ function MapCanvas({
       const container = containerRef.current;
       if (!container) return;
       const imgEl = container.querySelector("img") as HTMLImageElement | null;
-      if (!imgEl?.naturalWidth) return;
       const c = container.getBoundingClientRect();
-      if (!c.width || !c.height) return;
+      const nW = imgEl?.naturalWidth || imgEl?.clientWidth || 0;
+      const nH = imgEl?.naturalHeight || imgEl?.clientHeight || 0;
+      const cW = c.width || container.clientWidth;
+      const cH = c.height || container.clientHeight;
+      if (!nW || !nH || !cW || !cH) return;
       const scale = Math.min(
-        c.width / imgEl.naturalWidth,
-        c.height / imgEl.naturalHeight
+        cW / nW,
+        cH / nH
       );
-      const w = imgEl.naturalWidth * scale;
-      const h = imgEl.naturalHeight * scale;
-      setImgRect({ x: (c.width - w) / 2, y: (c.height - h) / 2, w, h });
+      const w = nW * scale;
+      const h = nH * scale;
+      setImgRect({ x: (cW - w) / 2, y: (cH - h) / 2, w, h });
     };
 
     const observer = new ResizeObserver(compute);
@@ -1350,14 +1367,16 @@ function MapCanvas({
     const imgEl = containerRef.current.querySelector("img") as
       | HTMLImageElement
       | null;
-    if (!imgEl?.naturalWidth) return null;
+    const nW = imgEl?.naturalWidth || imgEl?.clientWidth || 0;
+    const nH = imgEl?.naturalHeight || imgEl?.clientHeight || 0;
+    if (!nW || !nH) return null;
 
     const scale = Math.min(
-      container.width / imgEl.naturalWidth,
-      container.height / imgEl.naturalHeight
+      container.width / nW,
+      container.height / nH
     );
-    const renderedW = imgEl.naturalWidth * scale;
-    const renderedH = imgEl.naturalHeight * scale;
+    const renderedW = nW * scale;
+    const renderedH = nH * scale;
     const offsetX = (container.width - renderedW) / 2;
     const offsetY = (container.height - renderedH) / 2;
 
@@ -1377,6 +1396,7 @@ function MapCanvas({
   }
 
   const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
+    e.preventDefault();
     if (isDrawMode) {
       const pt = getCoords(e);
       if (!pt) return;
@@ -1432,6 +1452,7 @@ function MapCanvas({
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
       onMouseLeave={handleMouseLeave}
+      onDragStart={(e) => e.preventDefault()}
       className={`relative w-full ${
         isDrawMode ? "cursor-cell" : "cursor-crosshair"
       }`}
@@ -1441,6 +1462,7 @@ function MapCanvas({
         overflow: "hidden",
         border: "1px solid rgba(148,163,184,0.2)",
         background: "#020617",
+        userSelect: "none",
       }}
     >
       <Image
@@ -1448,6 +1470,8 @@ function MapCanvas({
         alt={mapFile.name}
         fill
         style={{ objectFit: "contain" }}
+        draggable={false}
+        onDragStart={(e) => e.preventDefault()}
         onLoad={(e) => {
           const img = e.currentTarget as HTMLImageElement;
           if (!containerRef.current) return;
