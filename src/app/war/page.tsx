@@ -2304,7 +2304,7 @@ function WarPageInner() {
             target: process.env.NEXT_PUBLIC_SUPABASE_URL ?? "",
           }]);
           supabase = createClient(
-            process.env.NEXT_PUBLIC_SUPABASE_URL!,
+            `${window.location.origin}/supabase`,
             process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
           );
 
