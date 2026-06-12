@@ -16,6 +16,10 @@ type DiscordAuthenticateResult = {
 };
 
 type DiscordSDKWithCommands = DiscordSDK & {
+  patchUrlMappings(mappings: Array<{
+    prefix: string;
+    target: string;
+  }>): void;
   commands: {
     authenticate(args: {
       access_token: string;
@@ -2294,8 +2298,14 @@ function WarPageInner() {
       sdk
         .ready()
         .then(async () => {
+          const discordSdk = sdk as DiscordSDKWithCommands;
+          discordSdk.patchUrlMappings([{
+            prefix: "/.proxy/supabase",
+            target: process.env.NEXT_PUBLIC_SUPABASE_URL ?? "",
+          }]);
+
           try {
-            const auth = await (sdk as DiscordSDKWithCommands).commands.authenticate({
+            const auth = await discordSdk.commands.authenticate({
               access_token: "",
             });
             setUsername(auth?.user?.username ?? "unknown");
