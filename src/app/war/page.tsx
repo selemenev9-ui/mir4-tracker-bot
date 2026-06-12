@@ -2300,7 +2300,7 @@ function WarPageInner() {
         .then(async () => {
           const discordSdk = sdk as DiscordSDKWithCommands;
           discordSdk.patchUrlMappings([{
-            prefix: "/.proxy/supabase",
+            prefix: "/supabase",
             target: process.env.NEXT_PUBLIC_SUPABASE_URL ?? "",
           }]);
 
