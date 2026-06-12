@@ -1622,24 +1622,31 @@ function WarPageInner() {
   const [selectedDate, setSelectedDate] = useState<string>(todayUTC8());
 
   useEffect(() => {
-    const clientId = process.env.NEXT_PUBLIC_DISCORD_APP_ID;
-    if (!clientId) return;
-    const sdk = new DiscordSDK(clientId);
-    sdk
-      .ready()
-      .then(async () => {
-        try {
-          const auth = await (sdk as any).commands.authenticate({
-            access_token: "",
-          });
-          setUsername(auth?.user?.username ?? "unknown");
-        } catch {
+    try {
+      const sdk = new DiscordSDK(
+        process.env.NEXT_PUBLIC_DISCORD_APP_ID ??
+          process.env.NEXT_PUBLIC_DISCORD_CLIENT_ID ??
+          "",
+      );
+      sdk
+        .ready()
+        .then(async () => {
+          try {
+            const auth = await (sdk as any).commands.authenticate({
+              access_token: "",
+            });
+            setUsername(auth?.user?.username ?? "unknown");
+          } catch {
+            setUsername("unknown");
+          }
+        })
+        .catch(() => {
           setUsername("unknown");
-        }
-      })
-      .catch(() => {
-        setUsername("unknown");
-      });
+        });
+    } catch {
+      // Not running inside Discord iframe — that's fine
+      setUsername("unknown");
+    }
   }, []);
 
   return (
