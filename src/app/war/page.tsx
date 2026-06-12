@@ -9,6 +9,20 @@ import { createClient } from "@supabase/supabase-js";
 
 type ZoneCategory = "lab" | "valley" | "purgatory" | "mirage" | "tower" | "weekly";
 
+type DiscordAuthenticateResult = {
+  user?: {
+    username?: string;
+  };
+};
+
+type DiscordSDKWithCommands = DiscordSDK & {
+  commands: {
+    authenticate(args: {
+      access_token: string;
+    }): Promise<DiscordAuthenticateResult>;
+  };
+};
+
 const ZONE_CATEGORY_CONFIG: Record<
   ZoneCategory,
   {
@@ -1172,7 +1186,9 @@ function DeployBoard({
   );
 
   useEffect(() => {
-    void loadAssignments();
+    const initialLoad = window.setTimeout(() => {
+      void loadAssignments();
+    }, 0);
     const channel = supabase
       .channel(`war-deploy-${selectedDate}`)
       .on(
@@ -1192,6 +1208,7 @@ function DeployBoard({
       void loadAssignments();
     }, 5000);
     return () => {
+      window.clearTimeout(initialLoad);
       supabase.removeChannel(channel);
       window.clearInterval(pollInterval);
     };
@@ -1771,6 +1788,8 @@ function MapBoard({
     "attack"
   );
   const [activeSquad, setActiveSquad] = useState<Squad>("A");
+  const [lastActionId, setLastActionId] = useState<string | null>(null);
+  const [clearPending, setClearPending] = useState(false);
 
   const loadMarkers = useCallback(
     async (mapId: string) => {
@@ -1831,6 +1850,7 @@ function MapBoard({
         setMarkers((prev) =>
           prev.map((m) => (m.id === tempId ? realMarker : m))
         );
+        setLastActionId(realMarker.id);
       } catch {
         setMarkers((prev) => prev.filter((m) => m.id !== tempId));
       }
@@ -1846,6 +1866,13 @@ function MapBoard({
       // Realtime/polling will resync state if needed
     }
   }, []);
+
+  const handleUndo = useCallback(async () => {
+    if (!lastActionId) return;
+    setMarkers((prev) => prev.filter((m) => m.id !== lastActionId));
+    await supabase.from("war_map_markers").delete().eq("id", lastActionId);
+    setLastActionId(null);
+  }, [lastActionId]);
 
   // NOTE: Supabase table must allow marker_type = 'draw'
   // Run this SQL in Supabase dashboard if drawings disappear:
@@ -1907,7 +1934,9 @@ function MapBoard({
 
   useEffect(() => {
     if (!selectedMapId) return;
-    void loadMarkers(selectedMapId);
+    const initialLoad = window.setTimeout(() => {
+      void loadMarkers(selectedMapId);
+    }, 0);
     const channel = supabase
       .channel(`war-map-${selectedMapId}`)
       .on(
@@ -1943,10 +1972,34 @@ function MapBoard({
       void loadMarkers(selectedMapId);
     }, 5000);
     return () => {
+      window.clearTimeout(initialLoad);
       supabase.removeChannel(channel);
       window.clearInterval(pollInterval);
     };
   }, [loadMarkers, selectedMapId]);
+
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (
+        e.target instanceof HTMLInputElement ||
+        e.target instanceof HTMLTextAreaElement
+      ) {
+        return;
+      }
+
+      if (e.key === "1") setActiveMarkerType("attack");
+      if (e.key === "2") setActiveMarkerType("defend");
+      if (e.key === "3") setActiveMarkerType("gather");
+      if (e.key === "4") setActiveMarkerType("support");
+      if (e.key === "5") setActiveMarkerType("retreat");
+      if (e.key === "d" || e.key === "D") setActiveMarkerType("draw");
+      if (e.key === "z" || e.key === "Z") void handleUndo();
+      if (e.key === "Escape") setClearPending(false);
+    };
+
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [handleUndo]);
 
   const categoryTabs: Array<{ id: ZoneCategory | "all"; label: string }> = [
     { id: "all", label: "All" },
@@ -2104,10 +2157,39 @@ function MapBoard({
                 {squadNames[activeSquad]}
               </span>
             </div>
+            {lastActionId !== null && (
+              <button
+                type="button"
+                onClick={handleUndo}
+                className="flex items-center gap-1 rounded-full border border-zinc-700 px-2.5 py-1 text-[11px] text-zinc-300 hover:bg-zinc-800/70"
+              >
+                <svg
+                  viewBox="0 0 24 24"
+                  width={14}
+                  height={14}
+                  className="text-zinc-300"
+                >
+                  <path
+                    d="M9 14L4 9l5-5M4 9h10.5a5.5 5.5 0 010 11H11"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                    fill="none"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+                <span>Undo</span>
+              </button>
+            )}
             <button
               type="button"
               onClick={async () => {
                 if (!selectedMapId) return;
+                if (!clearPending) {
+                  setClearPending(true);
+                  window.setTimeout(() => setClearPending(false), 3000);
+                  return;
+                }
                 await supabase
                   .from("war_map_markers")
                   .delete()
@@ -2117,14 +2199,23 @@ function MapBoard({
                   ...prev,
                   [selectedMapId]: 0,
                 }));
+                setLastActionId(null);
+                setClearPending(false);
               }}
               className="flex items-center gap-1 rounded-full border border-zinc-700 px-2.5 py-1 text-[11px] text-zinc-300 hover:bg-zinc-800/70"
+              style={{
+                borderColor: clearPending
+                  ? "rgba(239,68,68,0.7)"
+                  : undefined,
+                background: clearPending ? "rgba(239,68,68,0.2)" : undefined,
+                color: clearPending ? "#f9a8d4" : undefined,
+              }}
             >
               <svg
                 viewBox="0 0 24 24"
                 width={14}
                 height={14}
-                className="text-zinc-300"
+                className={clearPending ? "text-pink-300" : "text-zinc-300"}
               >
                 <path
                   d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"
@@ -2135,9 +2226,15 @@ function MapBoard({
                   strokeLinejoin="round"
                 />
               </svg>
-              <span>Clear</span>
+              <span>{clearPending ? "Confirm?" : "Clear"}</span>
             </button>
           </div>
+        </div>
+
+        <div className="hidden sm:flex gap-3 text-[10px] text-zinc-600 px-1">
+          <span>1–5 = tools</span>
+          <span>D = draw</span>
+          <span>Z = undo</span>
         </div>
 
         {selectedMapId ? (
@@ -2188,7 +2285,7 @@ function WarPageInner() {
         .ready()
         .then(async () => {
           try {
-            const auth = await (sdk as any).commands.authenticate({
+            const auth = await (sdk as DiscordSDKWithCommands).commands.authenticate({
               access_token: "",
             });
             setUsername(auth?.user?.username ?? "unknown");
@@ -2200,8 +2297,7 @@ function WarPageInner() {
           setUsername("unknown");
         });
     } catch {
-      // Not running inside Discord iframe — that's fine
-      setUsername("unknown");
+      window.setTimeout(() => setUsername("unknown"), 0);
     }
   }, []);
 
