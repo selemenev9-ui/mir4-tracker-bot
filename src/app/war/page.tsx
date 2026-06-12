@@ -103,6 +103,8 @@ interface MapFile {
   name: string;
   src: string;
   category: ZoneCategory;
+  w: number;
+  h: number;
   floor?: number;
 }
 
@@ -501,96 +503,128 @@ const MAP_FILES: Record<string, MapFile> = {
     name: "Abandoned Mine Lab 4F",
     src: "/maps/war/abandoned-mine-lab-4f.png",
     category: "lab",
+    w: 1003,
+    h: 735,
   },
   "bicheon-lab-4f": {
     id: "bicheon-lab-4f",
     name: "Bicheon Lab 4F",
     src: "/maps/war/bicheon-lab-4f.png",
     category: "lab",
+    w: 1018,
+    h: 733,
   },
   "demonbull-lab-4f": {
     id: "demonbull-lab-4f",
     name: "Demonbull Lab 4F",
     src: "/maps/war/demonbull-lab-4f.png",
     category: "lab",
+    w: 1007,
+    h: 734,
   },
   "heavens-way-lab-4f": {
     id: "heavens-way-lab-4f",
     name: "Heavens Way Lab 4F",
     src: "/maps/war/heavens-way-lab-4f.png",
     category: "lab",
+    w: 1001,
+    h: 739,
   },
   "nine-dragon-lab-4f": {
     id: "nine-dragon-lab-4f",
     name: "Nine Dragon Lab 4F",
     src: "/maps/war/nine-dragon-lab-4f.png",
     category: "lab",
+    w: 1003,
+    h: 729,
   },
   "phantasia-lab-4f": {
     id: "phantasia-lab-4f",
     name: "Phantasia Lab 4F",
     src: "/maps/war/phantasia-lab-4f.png",
     category: "lab",
+    w: 1005,
+    h: 737,
   },
   "redmoon-lab-4f": {
     id: "redmoon-lab-4f",
     name: "Redmoon Lab 4F",
     src: "/maps/war/redmoon-lab-4f.png",
     category: "lab",
+    w: 1002,
+    h: 733,
   },
   "rockcut-lab-4f": {
     id: "rockcut-lab-4f",
     name: "Rockcut Lab 4F",
     src: "/maps/war/rockcut-lab-4f.png",
     category: "lab",
+    w: 1008,
+    h: 735,
   },
   "sabuk-lab-4f": {
     id: "sabuk-lab-4f",
     name: "Sabuk Lab 4F",
     src: "/maps/war/sabuk-lab-4f.png",
     category: "lab",
+    w: 1006,
+    h: 732,
   },
   "snake-pit-lab-4f": {
     id: "snake-pit-lab-4f",
     name: "Snake Pit Lab 4F",
     src: "/maps/war/snake-pit-lab-4f.png",
     category: "lab",
+    w: 999,
+    h: 728,
   },
   "bicheon-valley-4f": {
     id: "bicheon-valley-4f",
     name: "Bicheon Valley 4F",
     src: "/maps/war/bicheon-valley-4f.png",
     category: "valley",
+    w: 995,
+    h: 724,
   },
   "phantasia-valley-4f": {
     id: "phantasia-valley-4f",
     name: "Phantasia Valley 4F",
     src: "/maps/war/phantasia-valley-4f.png",
     category: "valley",
+    w: 999,
+    h: 736,
   },
   "redmoon-valley-4f": {
     id: "redmoon-valley-4f",
     name: "Redmoon Valley 4F",
     src: "/maps/war/redmoon-valley-4f.png",
     category: "valley",
+    w: 1003,
+    h: 729,
   },
   "sagitation-valley-4f": {
     id: "sagitation-valley-4f",
     name: "Sagitation Valley 4F",
     src: "/maps/war/sagitation-valley-4f.png",
     category: "valley",
+    w: 1004,
+    h: 731,
   },
   "snake-valley-4f": {
     id: "snake-valley-4f",
     name: "Snake Valley 4F",
     src: "/maps/war/snake-valley-4f.png",
     category: "valley",
+    w: 1000,
+    h: 730,
   },
   "purgatory-1f": {
     id: "purgatory-1f",
     name: "Purgatory 1F",
     src: "/maps/war/purgatory-1f.png",
     category: "purgatory",
+    w: 928,
+    h: 688,
     floor: 1,
   },
   "purgatory-2f": {
@@ -598,6 +632,8 @@ const MAP_FILES: Record<string, MapFile> = {
     name: "Purgatory 2F",
     src: "/maps/war/purgatory-2f.png",
     category: "purgatory",
+    w: 927,
+    h: 687,
     floor: 2,
   },
   "purgatory-3f": {
@@ -605,6 +641,8 @@ const MAP_FILES: Record<string, MapFile> = {
     name: "Purgatory 3F",
     src: "/maps/war/purgatory-3f.png",
     category: "purgatory",
+    w: 925,
+    h: 687,
     floor: 3,
   },
   "purgatory-4f": {
@@ -612,6 +650,8 @@ const MAP_FILES: Record<string, MapFile> = {
     name: "Purgatory 4F",
     src: "/maps/war/purgatory-4f.png",
     category: "purgatory",
+    w: 925,
+    h: 692,
     floor: 4,
   },
   "purgatory-5f": {
@@ -619,6 +659,8 @@ const MAP_FILES: Record<string, MapFile> = {
     name: "Purgatory 5F",
     src: "/maps/war/purgatory-5f.png",
     category: "purgatory",
+    w: 930,
+    h: 689,
     floor: 5,
   },
   "purgatory-6f": {
@@ -626,6 +668,8 @@ const MAP_FILES: Record<string, MapFile> = {
     name: "Purgatory 6F",
     src: "/maps/war/purgatory-6f.png",
     category: "purgatory",
+    w: 926,
+    h: 697,
     floor: 6,
   },
   "purgatory-7f": {
@@ -633,6 +677,8 @@ const MAP_FILES: Record<string, MapFile> = {
     name: "Purgatory 7F",
     src: "/maps/war/purgatory-7f.png",
     category: "purgatory",
+    w: 925,
+    h: 676,
     floor: 7,
   },
   "world1-demon-bull-temple-3f": {
@@ -640,54 +686,72 @@ const MAP_FILES: Record<string, MapFile> = {
     name: "Demon Bull Temple 3F (W1)",
     src: "/maps/war/world1-demon-bull-temple-3f.png",
     category: "mirage",
+    w: 1003,
+    h: 749,
   },
   "world2-heavens-way-peak": {
     id: "world2-heavens-way-peak",
     name: "Heavens Way Peak (W2)",
     src: "/maps/war/world2-heavens-way-peak.png",
     category: "mirage",
+    w: 982,
+    h: 751,
   },
   "world3-rockcut-tomb": {
     id: "world3-rockcut-tomb",
     name: "Rockcut Tomb (W3)",
     src: "/maps/war/world3-rockcut-tomb.png",
     category: "mirage",
+    w: 1012,
+    h: 750,
   },
   "world4-bladehaven-2f": {
     id: "world4-bladehaven-2f",
     name: "Bladehaven 2F (W4)",
     src: "/maps/war/world4-bladehaven-2f.png",
     category: "mirage",
+    w: 1004,
+    h: 739,
   },
   "world5-illusion-temple": {
     id: "world5-illusion-temple",
     name: "Illusion Temple (W5)",
     src: "/maps/war/world5-illusion-temple.png",
     category: "mirage",
+    w: 984,
+    h: 753,
   },
   "world6-bicheon-lab": {
     id: "world6-bicheon-lab",
     name: "Bicheon Lab (W6)",
     src: "/maps/war/world6-bicheon-lab.png",
     category: "mirage",
+    w: 1006,
+    h: 745,
   },
   "world7-redmoon-gorge-3f": {
     id: "world7-redmoon-gorge-3f",
     name: "Redmoon Gorge 3F (W7)",
     src: "/maps/war/world7-redmoon-gorge-3f.png",
     category: "mirage",
+    w: 1009,
+    h: 743,
   },
   "world8-abandoned-mine-3f": {
     id: "world8-abandoned-mine-3f",
     name: "Abandoned Mine 3F (W8)",
     src: "/maps/war/world8-abandoned-mine-3f.png",
     category: "mirage",
+    w: 1006,
+    h: 740,
   },
   "tower-black-dragon-1f": {
     id: "tower-black-dragon-1f",
     name: "Tower of Black Dragon 1F",
     src: "/maps/war/tower-black-dragon.jpg",
     category: "tower",
+    w: 1016,
+    h: 603,
     floor: 1,
   },
   "tower-black-dragon-2f": {
@@ -695,6 +759,8 @@ const MAP_FILES: Record<string, MapFile> = {
     name: "Tower of Black Dragon 2F",
     src: "/maps/war/tower-black-dragon.jpg",
     category: "tower",
+    w: 1016,
+    h: 603,
     floor: 2,
   },
   "tower-black-dragon-3f": {
@@ -702,6 +768,8 @@ const MAP_FILES: Record<string, MapFile> = {
     name: "Tower of Black Dragon 3F",
     src: "/maps/war/tower-black-dragon.jpg",
     category: "tower",
+    w: 1016,
+    h: 603,
     floor: 3,
   },
   "tower-black-dragon-4f": {
@@ -709,6 +777,8 @@ const MAP_FILES: Record<string, MapFile> = {
     name: "Tower of Black Dragon 4F",
     src: "/maps/war/tower-black-dragon.jpg",
     category: "tower",
+    w: 1016,
+    h: 603,
     floor: 4,
   },
 };
@@ -1330,19 +1400,13 @@ function MapCanvas({
     const compute = () => {
       const container = containerRef.current;
       if (!container) return;
-      const imgEl = container.querySelector("img") as HTMLImageElement | null;
-      const c = container.getBoundingClientRect();
-      const nW = imgEl?.naturalWidth || imgEl?.clientWidth || 0;
-      const nH = imgEl?.naturalHeight || imgEl?.clientHeight || 0;
-      const cW = c.width || container.clientWidth;
-      const cH = c.height || container.clientHeight;
-      if (!nW || !nH || !cW || !cH) return;
-      const scale = Math.min(
-        cW / nW,
-        cH / nH
-      );
-      const w = nW * scale;
-      const h = nH * scale;
+      const rect = container.getBoundingClientRect();
+      const cW = rect.width || container.clientWidth;
+      const cH = rect.height || container.clientHeight;
+      if (!cW || !cH) return;
+      const scale = Math.min(cW / mapFile.w, cH / mapFile.h);
+      const w = mapFile.w * scale;
+      const h = mapFile.h * scale;
       setImgRect({ x: (cW - w) / 2, y: (cH - h) / 2, w, h });
     };
 
@@ -1363,25 +1427,21 @@ function MapCanvas({
     e: React.MouseEvent<HTMLDivElement>
   ): { x_pct: number; y_pct: number } | null {
     if (!containerRef.current) return null;
-    const container = containerRef.current.getBoundingClientRect();
-    const imgEl = containerRef.current.querySelector("img") as
-      | HTMLImageElement
-      | null;
-    const nW = imgEl?.naturalWidth || imgEl?.clientWidth || 0;
-    const nH = imgEl?.naturalHeight || imgEl?.clientHeight || 0;
-    if (!nW || !nH) return null;
+    const rect = containerRef.current.getBoundingClientRect();
+    const cW = rect.width || containerRef.current.clientWidth;
+    const cH = rect.height || containerRef.current.clientHeight;
+    if (!cW || !cH) return null;
 
-    const scale = Math.min(
-      container.width / nW,
-      container.height / nH
-    );
+    const nW = mapFile.w;
+    const nH = mapFile.h;
+    const scale = Math.min(cW / nW, cH / nH);
     const renderedW = nW * scale;
     const renderedH = nH * scale;
-    const offsetX = (container.width - renderedW) / 2;
-    const offsetY = (container.height - renderedH) / 2;
+    const offsetX = (cW - renderedW) / 2;
+    const offsetY = (cH - renderedH) / 2;
 
-    const clickX = e.clientX - container.left - offsetX;
-    const clickY = e.clientY - container.top - offsetY;
+    const clickX = e.clientX - rect.left - offsetX;
+    const clickY = e.clientY - rect.top - offsetY;
 
     if (clickX < 0 || clickY < 0 || clickX > renderedW || clickY > renderedH) {
       return null;
@@ -1463,6 +1523,7 @@ function MapCanvas({
         border: "1px solid rgba(148,163,184,0.2)",
         background: "#020617",
         userSelect: "none",
+        WebkitUserSelect: "none",
       }}
     >
       <Image
@@ -1473,16 +1534,16 @@ function MapCanvas({
         draggable={false}
         onDragStart={(e) => e.preventDefault()}
         onLoad={(e) => {
-          const img = e.currentTarget as HTMLImageElement;
           if (!containerRef.current) return;
-          const c = containerRef.current.getBoundingClientRect();
-          const naturalW = img.naturalWidth || c.width;
-          const naturalH = img.naturalHeight || c.height;
-          const scale = Math.min(c.width / naturalW, c.height / naturalH);
-          const renderedW = naturalW * scale;
-          const renderedH = naturalH * scale;
-          const offsetX = (c.width - renderedW) / 2;
-          const offsetY = (c.height - renderedH) / 2;
+          const rect = containerRef.current.getBoundingClientRect();
+          const cW = rect.width || containerRef.current.clientWidth;
+          const cH = rect.height || containerRef.current.clientHeight;
+          if (!cW || !cH) return;
+          const scale = Math.min(cW / mapFile.w, cH / mapFile.h);
+          const renderedW = mapFile.w * scale;
+          const renderedH = mapFile.h * scale;
+          const offsetX = (cW - renderedW) / 2;
+          const offsetY = (cH - renderedH) / 2;
           setImgRect({ x: offsetX, y: offsetY, w: renderedW, h: renderedH });
         }}
       />
@@ -1688,6 +1749,12 @@ function MapBoard({
       // Realtime/polling will resync state if needed
     }
   }, []);
+
+  // NOTE: Supabase table must allow marker_type = 'draw'
+  // Run this SQL in Supabase dashboard if drawings disappear:
+  // ALTER TABLE war_map_markers DROP CONSTRAINT IF EXISTS war_map_markers_marker_type_check;
+  // ALTER TABLE war_map_markers ADD CONSTRAINT war_map_markers_marker_type_check
+  //   CHECK (marker_type IN ('attack','defend','gather','support','retreat','draw'));
 
   const handlePlaceDraw = useCallback(
     async ({
