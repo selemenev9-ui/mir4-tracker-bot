@@ -1842,15 +1842,19 @@ function MapBoard({
           .select()
           .single();
 
-        if (error || !data) {
-          throw error ?? new Error("Failed to insert marker");
+        if (error) {
+          setMarkers((prev) => prev.filter((m) => m.id !== tempId));
+          console.error("marker insert failed:", error);
+          return;
         }
 
-        const realMarker = data as MapMarker;
-        setMarkers((prev) =>
-          prev.map((m) => (m.id === tempId ? realMarker : m))
-        );
-        setLastActionId(realMarker.id);
+        if (data) {
+          const realMarker = data as MapMarker;
+          setMarkers((prev) =>
+            prev.map((m) => (m.id === tempId ? realMarker : m))
+          );
+          setLastActionId(realMarker.id);
+        }
       } catch {
         setMarkers((prev) => prev.filter((m) => m.id !== tempId));
       }
@@ -1905,7 +1909,7 @@ function MapBoard({
       setMarkers((prev) => [...prev, optimistic]);
 
       try {
-        const { data } = await supabase
+        const { data, error } = await supabase
           .from("war_map_markers")
           .insert({
             map_id: mapId,
@@ -1918,6 +1922,12 @@ function MapBoard({
           })
           .select()
           .single();
+
+        if (error) {
+          setMarkers((prev) => prev.filter((m) => m.id !== tempId));
+          console.error("draw insert failed:", error);
+          return;
+        }
 
         if (data) {
           const real = data as MapMarker;
