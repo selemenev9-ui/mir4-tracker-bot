@@ -1232,7 +1232,7 @@ function MapCanvas({
       onClick={handleClick}
       className="relative w-full cursor-crosshair"
       style={{
-        aspectRatio: "16/9",
+        aspectRatio: "4/3",
         borderRadius: 12,
         overflow: "hidden",
         border: "1px solid rgba(148,163,184,0.2)",
@@ -1418,10 +1418,10 @@ function MapBoard({ username }: { username: string }) {
     });
 
   return (
-    <div className="flex flex-col gap-4 md:flex-row">
-      <div className="w-full md:w-64 md:shrink-0">
+    <div className="flex flex-col gap-3">
+      <div>
         <div
-          className="mb-3 flex gap-1 overflow-x-auto rounded-full border border-zinc-800 bg-zinc-950/60 px-1 py-1 text-xs [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          className="mb-2 flex gap-1 overflow-x-auto rounded-full border border-zinc-800 bg-zinc-950/60 px-1 py-1 text-xs [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
         >
           {categoryTabs.map((tab) => {
             const active = categoryFilter === tab.id;
@@ -1430,7 +1430,7 @@ function MapBoard({ username }: { username: string }) {
                 key={tab.id}
                 type="button"
                 onClick={() => setCategoryFilter(tab.id)}
-                className="rounded-full px-3 py-1 font-medium"
+                className="rounded-full font-medium"
                 style={{
                   background: active
                     ? "rgba(239,68,68,0.16)"
@@ -1440,6 +1440,8 @@ function MapBoard({ username }: { username: string }) {
                     : "1px solid transparent",
                   color: active ? "#fca5a5" : "#9ca3af",
                   whiteSpace: "nowrap",
+                  fontSize: 11,
+                  padding: "4px 10px",
                 }}
               >
                 {tab.label}
@@ -1448,54 +1450,69 @@ function MapBoard({ username }: { username: string }) {
           })}
         </div>
 
-        <div className="grid grid-cols-2 gap-2 md:grid-cols-1">
+        <div
+          style={{
+            width: "100%",
+            overflowY: "auto",
+            maxHeight: 260,
+            display: "flex",
+            flexDirection: "column",
+            gap: 2,
+          }}
+        >
           {filteredMaps.map((map) => {
-            const active = map.id === selectedMapId;
             const count = markerCounts[map.id] ?? 0;
+            const isActive = selectedMapId === map.id;
+            const cfg = ZONE_CATEGORY_CONFIG[map.category];
             return (
               <button
                 key={map.id}
                 type="button"
                 onClick={() => setSelectedMapId(map.id)}
-                className="relative overflow-hidden rounded-xl text-left text-xs"
                 style={{
-                  background: glassCard.background,
-                  border: active
-                    ? "1px solid rgba(239,68,68,0.6)"
-                    : glassCard.border,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  padding: "7px 12px",
+                  borderRadius: 8,
+                  border: isActive
+                    ? `1px solid ${cfg.borderColor}`
+                    : "1px solid rgba(255,255,255,0.06)",
+                  background: isActive
+                    ? cfg.bgColor
+                    : "rgba(255,255,255,0.03)",
+                  color: isActive ? cfg.color : "#94a3b8",
+                  fontSize: 12,
+                  fontWeight: isActive ? 600 : 400,
+                  cursor: "pointer",
+                  textAlign: "left",
+                  transition: "all 0.15s ease",
                 }}
               >
-                <div className="relative h-20 w-full">
-                  <Image
-                    src={map.src}
-                    alt={map.name}
-                    fill
-                    className="object-cover"
-                  />
-                </div>
-                <div className="flex items-center justify-between gap-1 px-2 py-2">
-                  <span className="line-clamp-2 text-[11px] text-zinc-200">
-                    {map.name}
+                <span>{map.name}</span>
+                {count > 0 && (
+                  <span
+                    style={{
+                      background: cfg.color,
+                      color: "#000",
+                      borderRadius: 10,
+                      padding: "1px 7px",
+                      fontSize: 10,
+                      fontWeight: 700,
+                      marginLeft: 6,
+                      flexShrink: 0,
+                    }}
+                  >
+                    {count}
                   </span>
-                  {count > 0 && (
-                    <span
-                      className="ml-1 rounded-full px-2 py-0.5 text-[10px] text-zinc-100"
-                      style={{
-                        background: "rgba(37,99,235,0.6)",
-                        border: "1px solid rgba(191,219,254,0.6)",
-                      }}
-                    >
-                      {count}
-                    </span>
-                  )}
-                </div>
+                )}
               </button>
             );
           })}
         </div>
       </div>
 
-      <div className="min-w-0 flex-1 space-y-3">
+      <div className="min-w-0 flex-1 space-y-2">
         <div
           className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-zinc-800 bg-zinc-950/60 px-3 py-2 text-xs"
         >
@@ -1508,7 +1525,7 @@ function MapBoard({ username }: { username: string }) {
                   key={type}
                   type="button"
                   onClick={() => setActiveMarkerType(type)}
-                  className="flex items-center gap-1 rounded-full px-2.5 py-1"
+                  className="flex items-center gap-1 rounded-full"
                   style={{
                     border: active
                       ? `1px solid ${cfg.color}`
@@ -1517,10 +1534,15 @@ function MapBoard({ username }: { username: string }) {
                       ? "rgba(15,23,42,0.9)"
                       : "transparent",
                     color: "#e5e7eb",
+                    padding: "5px 10px",
+                    fontSize: 11,
+                    borderRadius: 8,
                   }}
                 >
-                  <MarkerIcon type={type} color={cfg.color} size={16} />
-                  <span>{cfg.label}</span>
+                  <MarkerIcon type={type} color={cfg.color} size={14} />
+                  <span className="hidden sm:inline" style={{ marginLeft: 4 }}>
+                    {cfg.label}
+                  </span>
                 </button>
               );
             })}
@@ -1537,8 +1559,8 @@ function MapBoard({ username }: { username: string }) {
                     type="button"
                     onClick={() => setActiveSquad(sq)}
                     style={{
-                      width: 22,
-                      height: 22,
+                      width: 28,
+                      height: 28,
                       borderRadius: "999px",
                       background:
                         activeSquad === sq
