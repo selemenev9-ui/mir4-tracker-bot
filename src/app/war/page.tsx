@@ -78,7 +78,13 @@ const SQUAD_COLORS: Record<Squad, string> = {
 };
 
 type WarMode = "deploy" | "map";
-type MarkerType = "attack" | "defend" | "gather" | "support" | "retreat";
+type MarkerType =
+  | "attack"
+  | "defend"
+  | "gather"
+  | "support"
+  | "retreat"
+  | "draw";
 
 interface WarZone {
   id: string;
@@ -772,31 +778,6 @@ function ZoneBadge({ category }: { category: ZoneCategory }) {
   );
 }
 
-function SquadBadge({ squad }: { squad: Squad | null }) {
-  if (!squad) {
-    return (
-      <span
-        className="inline-flex h-6 w-6 items-center justify-center rounded-full border border-dashed text-xs text-zinc-500"
-        style={{ borderColor: "rgba(148,163,184,0.6)" }}
-      >
-        
-      </span>
-    );
-  }
-  return (
-    <span
-      className="inline-flex h-6 w-6 items-center justify-center rounded-full text-xs font-semibold"
-      style={{
-        background: SQUAD_COLORS[squad],
-        color: "#0b1120",
-        boxShadow: `0 0 0 1px rgba(15,23,42,0.8), 0 0 12px ${SQUAD_COLORS[squad]}`,
-      }}
-    >
-      {squad}
-    </span>
-  );
-}
-
 function MarkerIcon({
   type,
   color,
@@ -851,6 +832,19 @@ function MarkerIcon({
       </svg>
     );
   }
+  if (type === "draw") {
+    return (
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+        <path
+          d="M12 20h9M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"
+          stroke={color}
+          strokeWidth={2}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </svg>
+    );
+  }
   // retreat
   return (
     <svg {...common} stroke={color} strokeWidth={2} fill="none">
@@ -874,7 +868,6 @@ function WarClock() {
     const id = window.setInterval(update, 30000);
     return () => window.clearInterval(id);
   }, []);
-
   return (
     <span
       className="rounded-full px-3 py-1 text-xs text-zinc-400"
@@ -973,6 +966,7 @@ function RoleRow({
   roleColor,
   assignments,
   onAssign,
+  squadNames,
 }: {
   zoneId: string;
   role: "attack" | "defend" | "support";
@@ -983,6 +977,7 @@ function RoleRow({
     role: "attack" | "defend" | "support",
     squad: Squad | null
   ) => void;
+  squadNames: Record<Squad, string>;
 }) {
   const current = assignments.find(
     (a) => a.zone_id === zoneId && a.role === role
@@ -1034,6 +1029,7 @@ function RoleRow({
                   : "none",
                 transition: "all 0.15s ease",
               }}
+              title={squadNames[sq]}
             >
               {sq}
             </button>
@@ -1043,6 +1039,8 @@ function RoleRow({
       {current?.assigned_by && current.squad && (
         <span className="ml-2 text-[10px] text-zinc-500">
           {current.assigned_by}
+          {" "+"\u00b7"+" "}
+          {squadNames[current.squad]}
         </span>
       )}
     </div>
@@ -1052,9 +1050,13 @@ function RoleRow({
 function DeployBoard({
   selectedDate,
   username,
+  squadNames,
+  updateSquadName,
 }: {
   selectedDate: string;
   username: string;
+  squadNames: Record<Squad, string>;
+  updateSquadName: (squad: Squad, name: string) => void;
 }) {
   const [assignments, setAssignments] = useState<Assignment[]>([]);
 
@@ -1128,6 +1130,55 @@ function DeployBoard({
 
   return (
     <section className="grid gap-3">
+      <div
+        style={{
+          display: "flex",
+          flexWrap: "wrap",
+          gap: 8,
+          marginBottom: 12,
+        }}
+      >
+        {SQUADS.map((sq) => (
+          <div
+            key={sq}
+            style={{ display: "flex", alignItems: "center", gap: 4 }}
+          >
+            <span
+              style={{
+                width: 22,
+                height: 22,
+                borderRadius: "50%",
+                background: SQUAD_COLORS[sq],
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                fontSize: 11,
+                fontWeight: 700,
+                color: "#ffffff",
+                flexShrink: 0,
+              }}
+            >
+              {sq}
+            </span>
+            <input
+              value={squadNames[sq]}
+              onChange={(e) => updateSquadName(sq, e.target.value)}
+              style={{
+                background: "rgba(255,255,255,0.06)",
+                border: "1px solid rgba(255,255,255,0.12)",
+                borderRadius: 6,
+                color: "#e2e8f0",
+                padding: "2px 8px",
+                fontSize: 11,
+                width: 100,
+                outline: "none",
+              }}
+              maxLength={16}
+              placeholder={`Squad ${sq}`}
+            />
+          </div>
+        ))}
+      </div>
       {zonesForDay.map((zone) => {
         const colorCfg = ZONE_CATEGORY_CONFIG[zone.category];
         return (
@@ -1195,6 +1246,7 @@ function DeployBoard({
               roleColor={colorCfg.color}
               assignments={assignments}
               onAssign={handleAssign}
+              squadNames={squadNames}
             />
             <RoleRow
               zoneId={zone.id}
@@ -1202,6 +1254,7 @@ function DeployBoard({
               roleColor={colorCfg.color}
               assignments={assignments}
               onAssign={handleAssign}
+              squadNames={squadNames}
             />
             <RoleRow
               zoneId={zone.id}
@@ -1209,6 +1262,7 @@ function DeployBoard({
               roleColor={colorCfg.color}
               assignments={assignments}
               onAssign={handleAssign}
+              squadNames={squadNames}
             />
           </div>
         );
@@ -1229,6 +1283,12 @@ interface MapCanvasProps {
     y_pct: number;
   }) => void;
   onRemoveMarker: (id: string) => void;
+  isDrawMode: boolean;
+  onPlaceDraw: (p: {
+    mapId: string;
+    path: Array<{ x: number; y: number }>;
+    color: string;
+  }) => void;
 }
 
 function MapCanvas({
@@ -1238,22 +1298,66 @@ function MapCanvas({
   activeSquad,
   onPlaceMarker,
   onRemoveMarker,
+  isDrawMode,
+  onPlaceDraw,
 }: MapCanvasProps) {
   const mapFile = MAP_FILES[mapId];
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [imgRect, setImgRect] = useState({ x: 0, y: 0, w: 0, h: 0 });
+  const [isDrawing, setIsDrawing] = useState(false);
+  const [currentPath, setCurrentPath] = useState<Array<{ x: number; y: number }>>([]);
+  const pathRef = useRef<Array<{ x: number; y: number }>>([]);
 
-  const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!containerRef.current) return;
+  useEffect(() => {
+    pathRef.current = currentPath;
+  }, [currentPath]);
+
+  useEffect(() => {
+    const compute = () => {
+      const container = containerRef.current;
+      if (!container) return;
+      const imgEl = container.querySelector("img") as HTMLImageElement | null;
+      if (!imgEl?.naturalWidth) return;
+      const c = container.getBoundingClientRect();
+      if (!c.width || !c.height) return;
+      const scale = Math.min(
+        c.width / imgEl.naturalWidth,
+        c.height / imgEl.naturalHeight
+      );
+      const w = imgEl.naturalWidth * scale;
+      const h = imgEl.naturalHeight * scale;
+      setImgRect({ x: (c.width - w) / 2, y: (c.height - h) / 2, w, h });
+    };
+
+    const observer = new ResizeObserver(compute);
+    if (containerRef.current) observer.observe(containerRef.current);
+
+    const t1 = window.setTimeout(compute, 300);
+    const t2 = window.setTimeout(compute, 1000);
+
+    return () => {
+      observer.disconnect();
+      window.clearTimeout(t1);
+      window.clearTimeout(t2);
+    };
+  }, [mapId]);
+
+  function getCoords(
+    e: React.MouseEvent<HTMLDivElement>
+  ): { x_pct: number; y_pct: number } | null {
+    if (!containerRef.current) return null;
     const container = containerRef.current.getBoundingClientRect();
-    const imgEl = containerRef.current.querySelector("img");
-    if (!imgEl) return;
+    const imgEl = containerRef.current.querySelector("img") as
+      | HTMLImageElement
+      | null;
+    if (!imgEl?.naturalWidth) return null;
 
-    const naturalW = (imgEl as HTMLImageElement).naturalWidth || container.width;
-    const naturalH = (imgEl as HTMLImageElement).naturalHeight || container.height;
-    const scale = Math.min(container.width / naturalW, container.height / naturalH);
-    const renderedW = naturalW * scale;
-    const renderedH = naturalH * scale;
+    const scale = Math.min(
+      container.width / imgEl.naturalWidth,
+      container.height / imgEl.naturalHeight
+    );
+    const renderedW = imgEl.naturalWidth * scale;
+    const renderedH = imgEl.naturalHeight * scale;
     const offsetX = (container.width - renderedW) / 2;
     const offsetY = (container.height - renderedH) / 2;
 
@@ -1261,25 +1365,76 @@ function MapCanvas({
     const clickY = e.clientY - container.top - offsetY;
 
     if (clickX < 0 || clickY < 0 || clickX > renderedW || clickY > renderedH) {
-      return;
+      return null;
     }
 
     const x_pct = (clickX / renderedW) * 100;
     const y_pct = (clickY / renderedH) * 100;
 
+    setImgRect({ x: offsetX, y: offsetY, w: renderedW, h: renderedH });
+
+    return { x_pct, y_pct };
+  }
+
+  const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (isDrawMode) {
+      const pt = getCoords(e);
+      if (!pt) return;
+      setIsDrawing(true);
+      setCurrentPath([{ x: pt.x_pct, y: pt.y_pct }]);
+      return;
+    }
+
+    if (e.button !== 0) return;
+    const pt = getCoords(e);
+    if (!pt) return;
     onPlaceMarker({
       mapId,
       marker_type: activeMarkerType,
-      x_pct,
-      y_pct,
+      x_pct: pt.x_pct,
+      y_pct: pt.y_pct,
     });
+  };
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!isDrawMode || !isDrawing) return;
+    const pt = getCoords(e);
+    if (!pt) return;
+    setCurrentPath((prev) => [...prev, { x: pt.x_pct, y: pt.y_pct }]);
+  };
+
+  const handleMouseUp = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!isDrawMode || !isDrawing) return;
+    setIsDrawing(false);
+    const path = pathRef.current;
+    if (!path || path.length < 2) {
+      setCurrentPath([]);
+      return;
+    }
+    onPlaceDraw({
+      mapId,
+      path,
+      color: SQUAD_COLORS[activeSquad],
+    });
+    setCurrentPath([]);
+  };
+
+  const handleMouseLeave = () => {
+    if (!isDrawMode) return;
+    setIsDrawing(false);
+    setCurrentPath([]);
   };
 
   return (
     <div
       ref={containerRef}
-      onClick={handleClick}
-      className="relative w-full cursor-crosshair"
+      onMouseDown={handleMouseDown}
+      onMouseMove={handleMouseMove}
+      onMouseUp={handleMouseUp}
+      onMouseLeave={handleMouseLeave}
+      className={`relative w-full ${
+        isDrawMode ? "cursor-cell" : "cursor-crosshair"
+      }`}
       style={{
         aspectRatio: "4/3",
         borderRadius: 12,
@@ -1319,6 +1474,42 @@ function MapCanvas({
         }}
       >
         {markers.map((m) => {
+          if (m.marker_type === "draw" && m.label && imgRect.w && imgRect.h) {
+            let pts: Array<{ x: number; y: number }> = [];
+            try {
+              pts = JSON.parse(m.label) as Array<{ x: number; y: number }>;
+            } catch {
+              pts = [];
+            }
+            if (pts.length < 2) return null;
+            const points = pts
+              .map(
+                (p) =>
+                  `${(p.x / 100) * imgRect.w},${(p.y / 100) * imgRect.h}`
+              )
+              .join(" ");
+            return (
+              <g
+                key={m.id}
+                style={{ cursor: "pointer", pointerEvents: "all" }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onRemoveMarker(m.id);
+                }}
+              >
+                <polyline
+                  points={points}
+                  fill="none"
+                  stroke={m.color}
+                  strokeWidth={3}
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  opacity={0.85}
+                />
+              </g>
+            );
+          }
+
           const isPrimarySquad = m.color === SQUAD_COLORS[activeSquad];
           return (
             <g
@@ -1338,6 +1529,26 @@ function MapCanvas({
             </g>
           );
         })}
+
+        {isDrawMode &&
+          currentPath.length > 1 &&
+          imgRect.w > 0 &&
+          imgRect.h > 0 && (
+            <polyline
+              points={currentPath
+                .map(
+                  (p) =>
+                    `${(p.x / 100) * imgRect.w},${(p.y / 100) * imgRect.h}`
+                )
+                .join(" ")}
+              fill="none"
+              stroke={SQUAD_COLORS[activeSquad]}
+              strokeWidth={3}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              opacity={0.5}
+            />
+          )}
       </svg>
     </div>
   );
@@ -1355,9 +1566,16 @@ const MARKER_CONFIG: Record<
   gather: { label: "Gather", color: "#22c55e" },
   support: { label: "Support", color: "#eab308" },
   retreat: { label: "Retreat", color: "#a78bfa" },
+  draw: { label: "Draw", color: "#f8fafc" },
 };
 
-function MapBoard({ username }: { username: string }) {
+function MapBoard({
+  username,
+  squadNames,
+}: {
+  username: string;
+  squadNames: Record<Squad, string>;
+}) {
   const [categoryFilter, setCategoryFilter] = useState<ZoneCategory | "all">(
     "all"
   );
@@ -1446,6 +1664,58 @@ function MapBoard({ username }: { username: string }) {
       // Realtime/polling will resync state if needed
     }
   }, []);
+
+  const handlePlaceDraw = useCallback(
+    async ({
+      mapId,
+      path,
+      color,
+    }: {
+      mapId: string;
+      path: Array<{ x: number; y: number }>;
+      color: string;
+    }) => {
+      const tempId = `temp-draw-${Date.now()}`;
+      const optimistic: MapMarker = {
+        id: tempId,
+        map_id: mapId,
+        marker_type: "draw",
+        x_pct: path[0]?.x ?? 0,
+        y_pct: path[0]?.y ?? 0,
+        color,
+        label: JSON.stringify(path),
+        placed_by: username,
+      };
+
+      setMarkers((prev) => [...prev, optimistic]);
+
+      try {
+        const { data } = await supabase
+          .from("war_map_markers")
+          .insert({
+            map_id: mapId,
+            marker_type: "draw" as MarkerType,
+            x_pct: path[0]?.x ?? 0,
+            y_pct: path[0]?.y ?? 0,
+            color,
+            label: JSON.stringify(path),
+            placed_by: username,
+          })
+          .select()
+          .single();
+
+        if (data) {
+          const real = data as MapMarker;
+          setMarkers((prev) =>
+            prev.map((m) => (m.id === tempId ? real : m))
+          );
+        }
+      } catch {
+        setMarkers((prev) => prev.filter((m) => m.id !== tempId));
+      }
+    },
+    [username]
+  );
 
   useEffect(() => {
     if (!selectedMapId) return;
@@ -1636,6 +1906,15 @@ function MapBoard({ username }: { username: string }) {
                   </button>
                 ))}
               </div>
+              <span
+                style={{
+                  fontSize: 10,
+                  color: SQUAD_COLORS[activeSquad],
+                  marginLeft: 4,
+                }}
+              >
+                {squadNames[activeSquad]}
+              </span>
             </div>
             <button
               type="button"
@@ -1681,6 +1960,8 @@ function MapBoard({ username }: { username: string }) {
             activeSquad={activeSquad}
             onPlaceMarker={handlePlaceMarker}
             onRemoveMarker={handleRemoveMarker}
+            isDrawMode={activeMarkerType === "draw"}
+            onPlaceDraw={handlePlaceDraw}
           />
         ) : (
           <div
@@ -1699,6 +1980,14 @@ function WarPageInner() {
   const [mode, setMode] = useState<WarMode>("deploy");
   const [username, setUsername] = useState<string>("unknown");
   const [selectedDate, setSelectedDate] = useState<string>(todayUTC8());
+  const [squadNames, setSquadNames] = useState<Record<Squad, string>>({
+    A: "Squad A",
+    B: "Squad B",
+    C: "Squad C",
+    D: "Squad D",
+    E: "Squad E",
+    F: "Squad F",
+  });
 
   useEffect(() => {
     try {
@@ -1726,6 +2015,31 @@ function WarPageInner() {
       // Not running inside Discord iframe — that's fine
       setUsername("unknown");
     }
+  }, []);
+
+  useEffect(() => {
+    try {
+      const saved = window.localStorage.getItem("mir4_squad_names");
+      if (saved) {
+        const parsed = JSON.parse(saved) as Partial<Record<Squad, string>>;
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        setSquadNames((prev) => ({ ...prev, ...parsed }));
+      }
+    } catch {
+      /* ignore */
+    }
+  }, []);
+
+  const updateSquadName = useCallback((squad: Squad, name: string) => {
+    setSquadNames((prev) => {
+      const next = { ...prev, [squad]: name.trim() || `Squad ${squad}` };
+      try {
+        window.localStorage.setItem("mir4_squad_names", JSON.stringify(next));
+      } catch {
+        /* ignore */
+      }
+      return next;
+    });
   }, []);
 
   return (
@@ -1819,9 +2133,14 @@ function WarPageInner() {
 
         <section className="flex-1 pb-4">
           {mode === "deploy" ? (
-            <DeployBoard selectedDate={selectedDate} username={username} />
+            <DeployBoard
+              selectedDate={selectedDate}
+              username={username}
+              squadNames={squadNames}
+              updateSquadName={updateSquadName}
+            />
           ) : (
-            <MapBoard username={username} />
+            <MapBoard username={username} squadNames={squadNames} />
           )}
         </section>
       </div>
