@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { DiscordSDK } from "@discord/embedded-app-sdk";
-import { getSupabaseClient } from "@/lib/supabase";
+import { createClient } from "@supabase/supabase-js";
 
 // Types and constants
 
@@ -127,7 +127,10 @@ const glassCard = {
   borderRadius: 12,
 } as const;
 
-const supabase = getSupabaseClient();
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+);
 
 function todayUTC8(): string {
   const now = new Date();
