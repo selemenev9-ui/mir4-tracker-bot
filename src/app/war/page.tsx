@@ -2303,7 +2303,7 @@ function WarPageInner() {
           const discordSdk = sdk as DiscordSDKWithCommands;
           patchUrlMappings([{
             prefix: "/supabase",
-            target: process.env.NEXT_PUBLIC_SUPABASE_URL ?? "",
+            target: new URL(process.env.NEXT_PUBLIC_SUPABASE_URL!).hostname,
           }]);
           supabase = createClient(
             process.env.NEXT_PUBLIC_SUPABASE_URL!,
