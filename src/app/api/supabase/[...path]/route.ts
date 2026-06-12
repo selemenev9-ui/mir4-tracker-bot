@@ -44,28 +44,32 @@ async function proxyToSupabase(req: NextRequest, params: { path: string[] }) {
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { path: string[] } },
+  context: { params: Promise<{ path: string[] }> },
 ) {
+  const params = await context.params;
   return proxyToSupabase(req, params);
 }
 
 export async function POST(
   req: NextRequest,
-  { params }: { params: { path: string[] } },
+  context: { params: Promise<{ path: string[] }> },
 ) {
+  const params = await context.params;
   return proxyToSupabase(req, params);
 }
 
 export async function PATCH(
   req: NextRequest,
-  { params }: { params: { path: string[] } },
+  context: { params: Promise<{ path: string[] }> },
 ) {
+  const params = await context.params;
   return proxyToSupabase(req, params);
 }
 
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { path: string[] } },
+  context: { params: Promise<{ path: string[] }> },
 ) {
+  const params = await context.params;
   return proxyToSupabase(req, params);
 }
