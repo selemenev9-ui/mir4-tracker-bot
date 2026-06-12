@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { DiscordSDK } from "@discord/embedded-app-sdk";
+import { DiscordSDK, patchUrlMappings } from "@discord/embedded-app-sdk";
 import { createClient } from "@supabase/supabase-js";
 
 // Types and constants
@@ -16,10 +16,6 @@ type DiscordAuthenticateResult = {
 };
 
 type DiscordSDKWithCommands = DiscordSDK & {
-  patchUrlMappings(mappings: Array<{
-    prefix: string;
-    target: string;
-  }>): void;
   commands: {
     authenticate(args: {
       access_token: string;
@@ -2305,7 +2301,7 @@ function WarPageInner() {
         .ready()
         .then(async () => {
           const discordSdk = sdk as DiscordSDKWithCommands;
-          discordSdk.patchUrlMappings([{
+          patchUrlMappings([{
             prefix: "/supabase",
             target: process.env.NEXT_PUBLIC_SUPABASE_URL ?? "",
           }]);
