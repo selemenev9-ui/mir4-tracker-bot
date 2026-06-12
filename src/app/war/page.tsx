@@ -153,7 +153,7 @@ const glassCard = {
   borderRadius: 12,
 } as const;
 
-const supabase = createClient(
+let supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
 );
@@ -2303,6 +2303,10 @@ function WarPageInner() {
             prefix: "/supabase",
             target: process.env.NEXT_PUBLIC_SUPABASE_URL ?? "",
           }]);
+          supabase = createClient(
+            process.env.NEXT_PUBLIC_SUPABASE_URL!,
+            process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+          );
 
           try {
             const auth = await discordSdk.commands.authenticate({
