@@ -1388,13 +1388,14 @@ function MapCanvas({
   const mapFile = MAP_FILES[mapId];
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [imgRect, setImgRect] = useState({ x: 0, y: 0, w: 0, h: 0 });
-  const [isDrawing, setIsDrawing] = useState(false);
-  const [currentPath, setCurrentPath] = useState<Array<{ x: number; y: number }>>([]);
-  const pathRef = useRef<Array<{ x: number; y: number }>>([]);
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const rawPathRef = useRef<Array<{ x: number; y: number }>>([]);
+  const isDrawingRef = useRef(false);
+  const activeSquadRef = useRef(activeSquad);
 
   useEffect(() => {
-    pathRef.current = currentPath;
-  }, [currentPath]);
+    activeSquadRef.current = activeSquad;
+  }, [activeSquad]);
 
   useEffect(() => {
     const compute = () => {
@@ -1455,54 +1456,153 @@ function MapCanvas({
     return { x_pct, y_pct };
   }
 
+  function getCanvasCoords(clientX: number, clientY: number): { x: number; y: number } | null {
+    if (!containerRef.current) return null;
+    const rect = containerRef.current.getBoundingClientRect();
+    const cW = rect.width || containerRef.current.clientWidth;
+    const cH = rect.height || containerRef.current.clientHeight;
+    if (!cW || !cH) return null;
+    const scale = Math.min(cW / mapFile.w, cH / mapFile.h);
+    const renderedW = mapFile.w * scale;
+    const renderedH = mapFile.h * scale;
+    const offsetX = (cW - renderedW) / 2;
+    const offsetY = (cH - renderedH) / 2;
+    const x = clientX - rect.left - offsetX;
+    const y = clientY - rect.top - offsetY;
+    if (x < 0 || y < 0 || x > renderedW || y > renderedH) return null;
+    return { x: (x / renderedW) * 100, y: (y / renderedH) * 100 };
+  }
+
+  function redrawCanvas() {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    const pts = rawPathRef.current;
+    if (pts.length < 2) return;
+    const cW = canvas.width;
+    const cH = canvas.height;
+    ctx.beginPath();
+    ctx.strokeStyle = SQUAD_COLORS[activeSquadRef.current];
+    ctx.lineWidth = 3;
+    ctx.lineCap = "round";
+    ctx.lineJoin = "round";
+    ctx.globalAlpha = 0.85;
+    ctx.moveTo((pts[0].x / 100) * cW, (pts[0].y / 100) * cH);
+    for (let i = 1; i < pts.length; i++) {
+      ctx.lineTo((pts[i].x / 100) * cW, (pts[i].y / 100) * cH);
+    }
+    ctx.stroke();
+  }
+
+  function finishDrawing() {
+    isDrawingRef.current = false;
+    const path = rawPathRef.current;
+    rawPathRef.current = [];
+    const canvas = canvasRef.current;
+    if (canvas) {
+      const ctx = canvas.getContext("2d");
+      ctx?.clearRect(0, 0, canvas.width, canvas.height);
+    }
+    if (path.length >= 2) {
+      onPlaceDraw({
+        mapId,
+        path,
+        color: SQUAD_COLORS[activeSquadRef.current],
+      });
+    }
+  }
+
   const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
     e.preventDefault();
     if (isDrawMode) {
-      const pt = getCoords(e);
+      const pt = getCanvasCoords(e.clientX, e.clientY);
       if (!pt) return;
-      setIsDrawing(true);
-      setCurrentPath([{ x: pt.x_pct, y: pt.y_pct }]);
+      isDrawingRef.current = true;
+      rawPathRef.current = [pt];
       return;
     }
 
     if (e.button !== 0) return;
-    const pt = getCoords(e);
-    if (!pt) return;
+    const coords = getCoords(e);
+    if (!coords) return;
     onPlaceMarker({
       mapId,
       marker_type: activeMarkerType,
-      x_pct: pt.x_pct,
-      y_pct: pt.y_pct,
+      x_pct: coords.x_pct,
+      y_pct: coords.y_pct,
     });
   };
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!isDrawMode || !isDrawing) return;
-    const pt = getCoords(e);
+    if (!isDrawMode || !isDrawingRef.current) return;
+    const pt = getCanvasCoords(e.clientX, e.clientY);
     if (!pt) return;
-    setCurrentPath((prev) => [...prev, { x: pt.x_pct, y: pt.y_pct }]);
+    rawPathRef.current.push(pt);
+    redrawCanvas();
   };
 
   const handleMouseUp = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!isDrawMode || !isDrawing) return;
-    setIsDrawing(false);
-    const path = pathRef.current;
-    if (!path || path.length < 2) {
-      setCurrentPath([]);
-      return;
-    }
-    onPlaceDraw({
-      mapId,
-      path,
-      color: SQUAD_COLORS[activeSquad],
-    });
-    setCurrentPath([]);
+    if (!isDrawMode || !isDrawingRef.current) return;
+    finishDrawing();
   };
 
   const handleMouseLeave = () => {
-    if (!isDrawMode) return;
-    setIsDrawing(false);
-    setCurrentPath([]);
+    if (isDrawMode && isDrawingRef.current) {
+      finishDrawing();
+    }
+  };
+
+  const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    const touch = e.touches[0];
+    if (!touch) return;
+    if (isDrawMode) {
+      const pt = getCanvasCoords(touch.clientX, touch.clientY);
+      if (!pt) return;
+      isDrawingRef.current = true;
+      rawPathRef.current = [pt];
+      return;
+    }
+    const container = containerRef.current;
+    if (!container) return;
+    const rect = container.getBoundingClientRect();
+    const cW = rect.width || container.clientWidth;
+    const cH = rect.height || container.clientHeight;
+    if (!cW || !cH) return;
+    const scale = Math.min(cW / mapFile.w, cH / mapFile.h);
+    const renderedW = mapFile.w * scale;
+    const renderedH = mapFile.h * scale;
+    const offsetX = (cW - renderedW) / 2;
+    const offsetY = (cH - renderedH) / 2;
+    const x = touch.clientX - rect.left - offsetX;
+    const y = touch.clientY - rect.top - offsetY;
+    if (x < 0 || y < 0 || x > renderedW || y > renderedH) return;
+    setImgRect({ x: offsetX, y: offsetY, w: renderedW, h: renderedH });
+    onPlaceMarker({
+      mapId,
+      marker_type: activeMarkerType,
+      x_pct: (x / renderedW) * 100,
+      y_pct: (y / renderedH) * 100,
+    });
+  };
+
+  const handleTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    if (!isDrawMode || !isDrawingRef.current) return;
+    const touch = e.touches[0];
+    if (!touch) return;
+    const pt = getCanvasCoords(touch.clientX, touch.clientY);
+    if (!pt) return;
+    rawPathRef.current.push(pt);
+    redrawCanvas();
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    if (!isDrawMode || !isDrawingRef.current) return;
+    finishDrawing();
   };
 
   return (
@@ -1512,6 +1612,9 @@ function MapCanvas({
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
       onMouseLeave={handleMouseLeave}
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
       onDragStart={(e) => e.preventDefault()}
       className={`relative w-full ${
         isDrawMode ? "cursor-cell" : "cursor-crosshair"
@@ -1524,6 +1627,7 @@ function MapCanvas({
         background: "#020617",
         userSelect: "none",
         WebkitUserSelect: "none",
+        touchAction: "none",
       }}
     >
       <Image
@@ -1614,27 +1718,20 @@ function MapCanvas({
             </g>
           );
         })}
-
-        {isDrawMode &&
-          currentPath.length > 1 &&
-          imgRect.w > 0 &&
-          imgRect.h > 0 && (
-            <polyline
-              points={currentPath
-                .map(
-                  (p) =>
-                    `${(p.x / 100) * imgRect.w},${(p.y / 100) * imgRect.h}`
-                )
-                .join(" ")}
-              fill="none"
-              stroke={SQUAD_COLORS[activeSquad]}
-              strokeWidth={3}
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              opacity={0.5}
-            />
-          )}
       </svg>
+      <canvas
+        ref={canvasRef}
+        width={imgRect.w || 800}
+        height={imgRect.h || 600}
+        style={{
+          position: "absolute",
+          left: imgRect.x,
+          top: imgRect.y,
+          width: imgRect.w || "100%",
+          height: imgRect.h || "100%",
+          pointerEvents: "none",
+        }}
+      />
     </div>
   );
 }
