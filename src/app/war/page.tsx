@@ -160,6 +160,12 @@ function getSupabaseUrl() {
   return process.env.NEXT_PUBLIC_SUPABASE_URL!;
 }
 
+const POLL_INTERVAL =
+  typeof window !== "undefined" &&
+  window.location.hostname.includes("discordsays.com")
+    ? 1500
+    : 5000;
+
 let supabase = createClient(
   getSupabaseUrl(),
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
@@ -1217,7 +1223,7 @@ function DeployBoard({
       .subscribe();
     const pollInterval = window.setInterval(() => {
       void loadAssignments();
-    }, 5000);
+    }, POLL_INTERVAL);
     return () => {
       window.clearTimeout(initialLoad);
       supabase.removeChannel(channel);
@@ -1997,7 +2003,7 @@ function MapBoard({
       .subscribe();
     const pollInterval = window.setInterval(() => {
       void loadMarkers(selectedMapId);
-    }, 5000);
+    }, POLL_INTERVAL);
     return () => {
       window.clearTimeout(initialLoad);
       supabase.removeChannel(channel);
