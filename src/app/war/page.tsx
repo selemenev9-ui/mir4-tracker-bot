@@ -149,8 +149,19 @@ const glassCard = {
   borderRadius: 12,
 } as const;
 
+function getSupabaseUrl() {
+  if (
+    typeof window !== "undefined" &&
+    window.location.hostname.includes("discordsays.com")
+  ) {
+    return `${window.location.origin}/supabase`;
+  }
+
+  return process.env.NEXT_PUBLIC_SUPABASE_URL!;
+}
+
 let supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  getSupabaseUrl(),
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
 );
 
