@@ -49,7 +49,7 @@ type DynamicTimerMap = Record<
 >;
 // ─── Fixed-Hour Events Views (Square 11, Dragon Tower, Event Mirage, Purgatory, Server) ──
 
-function Square11View() {
+function Square11View({ userId }: { userId: string | null }) {
 	return (
 		<div className="flex flex-col gap-3">
 			<h3 className="mb-1 text-xs font-semibold uppercase tracking-widest text-zinc-500">
@@ -80,13 +80,16 @@ function Square11View() {
 								</span>
 							))}
 						</div>
-						<div className="flex items-center justify-between">
-							<span className="text-[10px] uppercase tracking-wide text-zinc-500">
-								Next spawn
-							</span>
-							<CountdownBadge
-								nextSpawn={getNextFixedSpawn(event.spawnHoursUTC8)}
-							/>
+						<div className="flex items-center justify-between gap-2">
+							<div className="flex items-center gap-2">
+								<span className="text-[10px] uppercase tracking-wide text-zinc-500">
+									Next spawn
+								</span>
+								<CountdownBadge
+									nextSpawn={getNextFixedSpawn(event.spawnHoursUTC8)}
+								/>
+							</div>
+							<BellToggle bossId={event.id} userId={userId} />
 						</div>
 					</div>
 				))}
@@ -95,7 +98,7 @@ function Square11View() {
 	);
 }
 
-function DragonTowerView() {
+function DragonTowerView({ userId }: { userId: string | null }) {
 	return (
 		<div className="flex flex-col gap-3">
 			<h3 className="mb-1 text-xs font-semibold uppercase tracking-widest text-zinc-500">
@@ -126,13 +129,16 @@ function DragonTowerView() {
 								</span>
 							))}
 						</div>
-						<div className="flex items-center justify-between">
-							<span className="text-[10px] uppercase tracking-wide text-zinc-500">
-								Next spawn
-							</span>
-							<CountdownBadge
-								nextSpawn={getNextFixedSpawn(event.spawnHoursUTC8)}
-							/>
+						<div className="flex items-center justify-between gap-2">
+							<div className="flex items-center gap-2">
+								<span className="text-[10px] uppercase tracking-wide text-zinc-500">
+									Next spawn
+								</span>
+								<CountdownBadge
+									nextSpawn={getNextFixedSpawn(event.spawnHoursUTC8)}
+								/>
+							</div>
+							<BellToggle bossId={event.id} userId={userId} />
 						</div>
 					</div>
 				))}
@@ -141,7 +147,7 @@ function DragonTowerView() {
 	);
 }
 
-function EventMirageView() {
+function EventMirageView({ userId }: { userId: string | null }) {
 	return (
 		<div className="flex flex-col gap-3">
 			<h3 className="mb-1 text-xs font-semibold uppercase tracking-widest text-zinc-500">
@@ -172,13 +178,16 @@ function EventMirageView() {
 								</span>
 							))}
 						</div>
-						<div className="flex items-center justify-between">
-							<span className="text-[10px] uppercase tracking-wide text-zinc-500">
-								Next spawn
-							</span>
-							<CountdownBadge
-								nextSpawn={getNextFixedSpawn(event.spawnHoursUTC8)}
-							/>
+						<div className="flex items-center justify-between gap-2">
+							<div className="flex items-center gap-2">
+								<span className="text-[10px] uppercase tracking-wide text-zinc-500">
+									Next spawn
+								</span>
+								<CountdownBadge
+									nextSpawn={getNextFixedSpawn(event.spawnHoursUTC8)}
+								/>
+							</div>
+							<BellToggle bossId={event.id} userId={userId} />
 						</div>
 					</div>
 				))}
@@ -187,7 +196,7 @@ function EventMirageView() {
 	);
 }
 
-function PurgatoryView() {
+function PurgatoryView({ userId }: { userId: string | null }) {
 	return (
 		<div className="flex flex-col gap-3">
 			<h3 className="mb-1 text-xs font-semibold uppercase tracking-widest text-zinc-500">
@@ -218,13 +227,16 @@ function PurgatoryView() {
 								</span>
 							))}
 						</div>
-						<div className="flex items-center justify-between">
-							<span className="text-[10px] uppercase tracking-wide text-zinc-500">
-								Next spawn
-							</span>
-							<CountdownBadge
-								nextSpawn={getNextFixedSpawn(event.spawnHoursUTC8)}
-							/>
+						<div className="flex items-center justify-between gap-2">
+							<div className="flex items-center gap-2">
+								<span className="text-[10px] uppercase tracking-wide text-zinc-500">
+									Next spawn
+								</span>
+								<CountdownBadge
+									nextSpawn={getNextFixedSpawn(event.spawnHoursUTC8)}
+								/>
+							</div>
+							<BellToggle bossId={event.id} userId={userId} />
 						</div>
 					</div>
 				))}
@@ -233,7 +245,7 @@ function PurgatoryView() {
 	);
 }
 
-function ServerView() {
+function ServerView({ userId }: { userId: string | null }) {
 	return (
 		<div className="flex flex-col gap-3">
 			<h3 className="mb-1 text-xs font-semibold uppercase tracking-widest text-zinc-500">
@@ -269,13 +281,16 @@ function ServerView() {
 								</span>
 							))}
 						</div>
-						<div className="flex items-center justify-between">
-							<span className="text-[10px] uppercase tracking-wide text-zinc-500">
-								Next spawn
-							</span>
-							<CountdownBadge
-								nextSpawn={getNextFixedSpawn(event.spawnHoursUTC8)}
-							/>
+						<div className="flex items-center justify-between gap-2">
+							<div className="flex items-center gap-2">
+								<span className="text-[10px] uppercase tracking-wide text-zinc-500">
+									Next spawn
+								</span>
+								<CountdownBadge
+									nextSpawn={getNextFixedSpawn(event.spawnHoursUTC8)}
+								/>
+							</div>
+							<BellToggle bossId={event.id} userId={userId} />
 						</div>
 					</div>
 				))}
@@ -387,6 +402,69 @@ function CountdownBadge({
     >
       {label}
     </span>
+  );
+}
+
+function BellToggle({
+  bossId,
+  userId,
+  initialSubscribed = false,
+}: {
+  bossId: string;
+  userId: string | null;
+  initialSubscribed?: boolean;
+}) {
+  const [subscribed, setSubscribed] = useState(initialSubscribed);
+  const [loading, setLoading] = useState(false);
+
+  if (!userId) return null;
+
+  async function toggle() {
+    setLoading(true);
+    try {
+      if (subscribed) {
+        await fetch("/api/reminders", {
+          method: "DELETE",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ user_id: userId, boss_id: bossId }),
+        });
+        setSubscribed(false);
+      } else {
+        await fetch("/api/reminders", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            user_id: userId,
+            boss_id: bossId,
+            notify_minutes_before: 10,
+          }),
+        });
+        setSubscribed(true);
+      }
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return (
+    <button
+      type="button"
+      onClick={() => {
+        void toggle();
+      }}
+      disabled={loading}
+      title={subscribed ? "Отключить уведомление" : "Уведомить за 10 мин"}
+      style={{
+        background: "none",
+        border: "none",
+        cursor: loading ? "wait" : "pointer",
+        fontSize: 16,
+        opacity: loading ? 0.5 : 1,
+        padding: "2px 4px",
+      }}
+    >
+      {subscribed ? "🔔" : "🔕"}
+    </button>
   );
 }
 
@@ -659,7 +737,15 @@ function SecretPeakView({
                   {boss.type === "red_upper" && "Fixed — Upper"}
                 </p>
               </div>
-              <CountdownBadge nextSpawn={nextSpawn ?? null} />
+              <div className="flex items-center gap-2">
+                <CountdownBadge nextSpawn={nextSpawn ?? null} />
+                {state === "cooldown" && (
+                  <BellToggle
+                    bossId={boss.id}
+                    userId={currentUser ? currentUser.id : null}
+                  />
+                )}
+              </div>
             </div>
           );
         })}
@@ -1008,11 +1094,17 @@ function MagicSquareView({
                 </span>
               </div>
 
-              <div className="flex items-center justify-between">
-                <span className="text-[10px] uppercase tracking-wide text-zinc-500">
-                  Next spawn
-                </span>
-                <CountdownBadge nextSpawn={nextSpawn ?? null} />
+              <div className="flex items-center justify-between gap-2">
+                <div className="flex items-center gap-2">
+                  <span className="text-[10px] uppercase tracking-wide text-zinc-500">
+                    Next spawn
+                  </span>
+                  <CountdownBadge nextSpawn={nextSpawn ?? null} />
+                </div>
+                <BellToggle
+                  bossId={boss.id}
+                  userId={currentUser ? currentUser.id : null}
+                />
               </div>
 
               {canReport ? (
@@ -1091,11 +1183,14 @@ function WorldBossesView() {
                   </span>
                 ))}
               </div>
-              <div className="flex items-center justify-between">
-                <span className="text-[10px] uppercase tracking-wide text-zinc-500">
-                  Next spawn
-                </span>
-                <CountdownBadge nextSpawn={getNextFixedSpawn(boss.spawnHoursUTC8)} />
+              <div className="flex items-center justify-between gap-2">
+                <div className="flex items-center gap-2">
+                  <span className="text-[10px] uppercase tracking-wide text-zinc-500">
+                    Next spawn
+                  </span>
+                  <CountdownBadge nextSpawn={getNextFixedSpawn(boss.spawnHoursUTC8)} />
+                </div>
+                <BellToggle bossId={boss.id} userId={null} />
               </div>
             </div>
           ))}
@@ -1144,6 +1239,7 @@ function WorldBossesView() {
                       boss.spawnHourUTC8
                     )}
                   />
+                  <BellToggle bossId={boss.id} userId={null} />
                 </div>
               </div>
             </div>
@@ -1707,11 +1803,21 @@ export default function DashboardPage() {
           )}
           {activeTab === "mirage" && <MirageView />}
           {activeTab === "world_bosses" && <WorldBossesView />}
-          {activeTab === "square_11" && <Square11View />}
-          {activeTab === "dragon_tower" && <DragonTowerView />}
-          {activeTab === "event_mirage" && <EventMirageView />}
-          {activeTab === "purgatory" && <PurgatoryView />}
-          {activeTab === "server" && <ServerView />}
+          {activeTab === "square_11" && (
+            <Square11View userId={currentUser?.id ?? null} />
+          )}
+          {activeTab === "dragon_tower" && (
+            <DragonTowerView userId={currentUser?.id ?? null} />
+          )}
+          {activeTab === "event_mirage" && (
+            <EventMirageView userId={currentUser?.id ?? null} />
+          )}
+          {activeTab === "purgatory" && (
+            <PurgatoryView userId={currentUser?.id ?? null} />
+          )}
+          {activeTab === "server" && (
+            <ServerView userId={currentUser?.id ?? null} />
+          )}
           {activeTab === "calculator" && <MiningCalculatorView />}
         </section>
       </main>
