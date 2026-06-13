@@ -55,7 +55,10 @@ function Square11View({ userId }: { userId: string | null }) {
 			<h3 className="mb-1 text-xs font-semibold uppercase tracking-widest text-zinc-500">
 				Square 11
 			</h3>
-			<div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
+			<div
+				className="grid gap-2"
+				style={{ gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))" }}
+			>
 				{SQUARE_11_EVENTS.map((event) => (
 					<div
 						key={event.id}
@@ -104,7 +107,10 @@ function DragonTowerView({ userId }: { userId: string | null }) {
 			<h3 className="mb-1 text-xs font-semibold uppercase tracking-widest text-zinc-500">
 				Dragon Tower
 			</h3>
-			<div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
+			<div
+				className="grid gap-2"
+				style={{ gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))" }}
+			>
 				{DRAGON_TOWER_EVENTS.map((event) => (
 					<div
 						key={event.id}
@@ -153,7 +159,10 @@ function EventMirageView({ userId }: { userId: string | null }) {
 			<h3 className="mb-1 text-xs font-semibold uppercase tracking-widest text-zinc-500">
 				Event — Mirage
 			</h3>
-			<div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
+			<div
+				className="grid gap-2"
+				style={{ gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))" }}
+			>
 				{EVENT_MIRAGE_EVENTS.map((event) => (
 					<div
 						key={event.id}
@@ -202,7 +211,10 @@ function PurgatoryView({ userId }: { userId: string | null }) {
 			<h3 className="mb-1 text-xs font-semibold uppercase tracking-widest text-zinc-500">
 				Purgatory
 			</h3>
-			<div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
+			<div
+				className="grid gap-2"
+				style={{ gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))" }}
+			>
 				{PURGATORY_EVENTS.map((event) => (
 					<div
 						key={event.id}
@@ -251,7 +263,10 @@ function ServerView({ userId }: { userId: string | null }) {
 			<h3 className="mb-1 text-xs font-semibold uppercase tracking-widest text-zinc-500">
 				Server &amp; System
 			</h3>
-			<div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
+			<div
+				className="grid gap-2"
+				style={{ gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))" }}
+			>
 				{SERVER_EVENTS.map((event) => (
 					<div
 						key={event.id}
@@ -504,7 +519,7 @@ function secretPeakPinClasses(boss: SecretPeakBoss, state: SecretPeakBossState) 
 
 function secretPeakCardClasses(boss: SecretPeakBoss, state: SecretPeakBossState) {
   const base =
-    "flex items-center justify-between rounded-xl px-4 py-3 glass-card";
+    "flex items-center justify-between rounded-xl px-3 py-2.5 glass-card";
 
   if (state === "cooldown") return base;
 
@@ -717,7 +732,10 @@ function SecretPeakView({
       </div>
 
       {/* Boss list below map */}
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+      <div
+        className="grid gap-2"
+        style={{ gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))" }}
+      >
         {floorBosses.map((boss) => {
           const nextSpawn = getNextSpawnForBoss(boss);
           const state = getSecretPeakBossState(nextSpawn);
@@ -822,7 +840,10 @@ function MirageView({ userId }: { userId: string | null }) {
         ))}
       </div>
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <div
+        className="grid gap-2"
+        style={{ gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))" }}
+      >
         {filtered.map((boss: MirageBoss) => {
           const nextSpawn = getNextSpawnFromTimes(boss.spawnTimes);
           return (
@@ -1019,7 +1040,7 @@ function MagicSquareView({
 
   const cardClasses = (boss: MagicSquareBoss, state: SecretPeakBossState) => {
     const base =
-      "rounded-2xl border p-4 backdrop-blur-sm transition-all flex flex-col gap-2";
+      "rounded-2xl border p-3 backdrop-blur-sm transition-all flex flex-col gap-2";
     if (state === "cooldown") {
       return `${base} border-zinc-700/60 bg-zinc-900/80 text-zinc-300`;
     }
@@ -1061,7 +1082,10 @@ function MagicSquareView({
         ))}
       </div>
 
-      <div className="grid grid-cols-1 gap-2 md:grid-cols-3">
+      <div
+        className="grid gap-2"
+        style={{ gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))" }}
+      >
         {floorBosses.map((boss) => {
           const nextSpawn = getNextSpawnForBoss(boss);
           const state = getState(boss);
@@ -1152,12 +1176,15 @@ function WorldBossesView() {
   const weekDays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-3">
       <div>
         <h3 className="mb-2 text-[10px] font-semibold uppercase tracking-widest text-zinc-500">
           Daily
         </h3>
-        <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+        <div
+          className="grid gap-2"
+          style={{ gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))" }}
+        >
           {DAILY_WORLD_BOSSES.map((boss) => (
             <div
               key={boss.id}
@@ -1204,7 +1231,10 @@ function WorldBossesView() {
         <h3 className="mb-2 text-[10px] font-semibold uppercase tracking-widest text-zinc-500">
           Weekly
         </h3>
-        <div className="grid grid-cols-1 gap-2">
+        <div
+          className="grid gap-2"
+          style={{ gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))" }}
+        >
           {WEEKLY_WORLD_BOSSES.map((boss) => (
             <div
               key={boss.id}
