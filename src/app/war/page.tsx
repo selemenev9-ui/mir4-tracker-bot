@@ -2345,30 +2345,30 @@ function WarPageInner() {
               access_token: "",
             });
             setUsername(auth?.user?.username ?? "unknown");
-
-            if (
-              typeof window !== "undefined" &&
-              window.location.hostname.includes("discordsays.com")
-            ) {
-              const wsUrl = `wss://${window.location.host}/supabase/realtime/v1`;
-              console.log("[ws-test] Trying WebSocket via Discord mapping:", wsUrl);
-
-              const testClient = new RealtimeClient(wsUrl, {
-                params: {
-                  apikey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-                },
-              });
-
-              testClient.connect();
-
-              window.setTimeout(() => {
-                const state = testClient.connectionState();
-                console.log("[ws-test] Connection state after 3s:", state);
-                testClient.disconnect();
-              }, 3000);
-            }
           } catch {
             setUsername("unknown");
+          }
+
+          if (
+            typeof window !== "undefined" &&
+            window.location.hostname.includes("discordsays.com")
+          ) {
+            const wsUrl = `wss://${window.location.host}/supabase/realtime/v1`;
+            console.log("[ws-test] Trying WebSocket via Discord mapping:", wsUrl);
+
+            const testClient = new RealtimeClient(wsUrl, {
+              params: {
+                apikey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+              },
+            });
+
+            testClient.connect();
+
+            window.setTimeout(() => {
+              const state = testClient.connectionState();
+              console.log("[ws-test] Connection state after 3s:", state);
+              testClient.disconnect();
+            }, 3000);
           }
         })
         .catch(() => {
