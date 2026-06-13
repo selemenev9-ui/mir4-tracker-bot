@@ -9,6 +9,11 @@ import {
   MAGIC_SQUARE_BOSSES,
   SECRET_PEAK_BOSSES,
   WEEKLY_WORLD_BOSSES,
+  SQUARE_11_EVENTS,
+  DRAGON_TOWER_EVENTS,
+  EVENT_MIRAGE_EVENTS,
+  PURGATORY_EVENTS,
+  SERVER_EVENTS,
   formatCountdown,
   getNextFixedSpawn,
   getNextSpawnFromTimes,
@@ -27,6 +32,11 @@ type Tab =
   | "mirage"
   | "world_bosses"
   | "magic_square"
+  | "square_11"
+  | "dragon_tower"
+  | "event_mirage"
+  | "purgatory"
+  | "server"
   | "calculator";
 
 type DynamicTimerMap = Record<
@@ -37,6 +47,242 @@ type DynamicTimerMap = Record<
     updatedBy: string;
   }
 >;
+// ─── Fixed-Hour Events Views (Square 11, Dragon Tower, Event Mirage, Purgatory, Server) ──
+
+function Square11View() {
+	return (
+		<div className="flex flex-col gap-3">
+			<h3 className="mb-1 text-xs font-semibold uppercase tracking-widest text-zinc-500">
+				Square 11
+			</h3>
+			<div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
+				{SQUARE_11_EVENTS.map((event) => (
+					<div
+						key={event.id}
+						className="glass-card flex flex-col justify-between rounded-xl p-3"
+					>
+						<div className="mb-2 flex items-center justify-between gap-2">
+							<h4 className="text-sm font-semibold text-zinc-100">
+								{event.name}
+							</h4>
+							<span className="rounded-full bg-indigo-500/20 px-2 py-0.5 text-[9px] font-bold uppercase tracking-widest text-indigo-300">
+								Square 11
+							</span>
+						</div>
+						<div className="mb-2 flex flex-wrap gap-1.5">
+							{event.spawnHoursUTC8.map((h) => (
+								<span
+									key={h}
+									className="rounded bg-zinc-800/80 px-2 py-0.5 text-[11px] font-mono text-zinc-300"
+								>
+									{String(h).padStart(2, "0")}:
+									00
+								</span>
+							))}
+						</div>
+						<div className="flex items-center justify-between">
+							<span className="text-[10px] uppercase tracking-wide text-zinc-500">
+								Next spawn
+							</span>
+							<CountdownBadge
+								nextSpawn={getNextFixedSpawn(event.spawnHoursUTC8)}
+							/>
+						</div>
+					</div>
+				))}
+			</div>
+		</div>
+	);
+}
+
+function DragonTowerView() {
+	return (
+		<div className="flex flex-col gap-3">
+			<h3 className="mb-1 text-xs font-semibold uppercase tracking-widest text-zinc-500">
+				Dragon Tower
+			</h3>
+			<div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
+				{DRAGON_TOWER_EVENTS.map((event) => (
+					<div
+						key={event.id}
+						className="glass-card flex flex-col justify-between rounded-xl p-3"
+					>
+						<div className="mb-2 flex items-center justify-between gap-2">
+							<h4 className="text-sm font-semibold text-zinc-100">
+								{event.name}
+							</h4>
+							<span className="rounded-full bg-emerald-500/20 px-2 py-0.5 text-[9px] font-bold uppercase tracking-widest text-emerald-300">
+								Tower
+							</span>
+						</div>
+						<div className="mb-2 flex flex-wrap gap-1.5">
+							{event.spawnHoursUTC8.map((h) => (
+								<span
+									key={h}
+									className="rounded bg-zinc-800/80 px-2 py-0.5 text-[11px] font-mono text-zinc-300"
+								>
+									{String(h).padStart(2, "0")}:
+									00
+								</span>
+							))}
+						</div>
+						<div className="flex items-center justify-between">
+							<span className="text-[10px] uppercase tracking-wide text-zinc-500">
+								Next spawn
+							</span>
+							<CountdownBadge
+								nextSpawn={getNextFixedSpawn(event.spawnHoursUTC8)}
+							/>
+						</div>
+					</div>
+				))}
+			</div>
+		</div>
+	);
+}
+
+function EventMirageView() {
+	return (
+		<div className="flex flex-col gap-3">
+			<h3 className="mb-1 text-xs font-semibold uppercase tracking-widest text-zinc-500">
+				Event — Mirage
+			</h3>
+			<div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
+				{EVENT_MIRAGE_EVENTS.map((event) => (
+					<div
+						key={event.id}
+						className="glass-card flex flex-col justify-between rounded-xl p-3"
+					>
+						<div className="mb-2 flex items-center justify-between gap-2">
+							<h4 className="text-sm font-semibold text-zinc-100">
+								{event.name}
+							</h4>
+							<span className="rounded-full bg-fuchsia-500/20 px-2 py-0.5 text-[9px] font-bold uppercase tracking-widest text-fuchsia-300">
+								Event Mirage
+							</span>
+						</div>
+						<div className="mb-2 flex flex-wrap gap-1.5">
+							{event.spawnHoursUTC8.map((h) => (
+								<span
+									key={h}
+									className="rounded bg-zinc-800/80 px-2 py-0.5 text-[11px] font-mono text-zinc-300"
+								>
+									{String(h).padStart(2, "0")}:
+									00
+								</span>
+							))}
+						</div>
+						<div className="flex items-center justify-between">
+							<span className="text-[10px] uppercase tracking-wide text-zinc-500">
+								Next spawn
+							</span>
+							<CountdownBadge
+								nextSpawn={getNextFixedSpawn(event.spawnHoursUTC8)}
+							/>
+						</div>
+					</div>
+				))}
+			</div>
+		</div>
+	);
+}
+
+function PurgatoryView() {
+	return (
+		<div className="flex flex-col gap-3">
+			<h3 className="mb-1 text-xs font-semibold uppercase tracking-widest text-zinc-500">
+				Purgatory
+			</h3>
+			<div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
+				{PURGATORY_EVENTS.map((event) => (
+					<div
+						key={event.id}
+						className="glass-card flex flex-col justify-between rounded-xl p-3"
+					>
+						<div className="mb-2 flex items-center justify-between gap-2">
+							<h4 className="text-sm font-semibold text-zinc-100">
+								{event.name}
+							</h4>
+							<span className="rounded-full bg-red-500/20 px-2 py-0.5 text-[9px] font-bold uppercase tracking-widest text-red-300">
+								Purgatory
+							</span>
+						</div>
+						<div className="mb-2 flex flex-wrap gap-1.5">
+							{event.spawnHoursUTC8.map((h) => (
+								<span
+									key={h}
+									className="rounded bg-zinc-800/80 px-2 py-0.5 text-[11px] font-mono text-zinc-300"
+								>
+									{String(h).padStart(2, "0")}:
+									00
+								</span>
+							))}
+						</div>
+						<div className="flex items-center justify-between">
+							<span className="text-[10px] uppercase tracking-wide text-zinc-500">
+								Next spawn
+							</span>
+							<CountdownBadge
+								nextSpawn={getNextFixedSpawn(event.spawnHoursUTC8)}
+							/>
+						</div>
+					</div>
+				))}
+			</div>
+		</div>
+	);
+}
+
+function ServerView() {
+	return (
+		<div className="flex flex-col gap-3">
+			<h3 className="mb-1 text-xs font-semibold uppercase tracking-widest text-zinc-500">
+				Server &amp; System
+			</h3>
+			<div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
+				{SERVER_EVENTS.map((event) => (
+					<div
+						key={event.id}
+						className="glass-card flex flex-col justify-between rounded-xl p-3"
+					>
+						<div className="mb-2 flex items-center justify-between gap-2">
+							<div>
+								<h4 className="text-sm font-semibold text-zinc-100">
+									{event.name}
+								</h4>
+								<p className="mt-0.5 text-[11px] text-zinc-500">
+									{event.category === "server" ? "Server event" : "System"}
+								</p>
+							</div>
+							<span className="rounded-full bg-zinc-700/40 px-2 py-0.5 text-[9px] font-bold uppercase tracking-widest text-zinc-300">
+								{event.category}
+							</span>
+						</div>
+						<div className="mb-2 flex flex-wrap gap-1.5">
+							{event.spawnHoursUTC8.map((h) => (
+								<span
+									key={h}
+									className="rounded bg-zinc-800/80 px-2 py-0.5 text-[11px] font-mono text-zinc-300"
+								>
+									{String(h).padStart(2, "0")}:
+									00
+								</span>
+							))}
+						</div>
+						<div className="flex items-center justify-between">
+							<span className="text-[10px] uppercase tracking-wide text-zinc-500">
+								Next spawn
+							</span>
+							<CountdownBadge
+								nextSpawn={getNextFixedSpawn(event.spawnHoursUTC8)}
+							/>
+						</div>
+					</div>
+				))}
+			</div>
+		</div>
+	);
+}
 
 // ─── Sub-components ─────────────────────────────────────────────────────────
 
@@ -1333,6 +1579,11 @@ export default function DashboardPage() {
     { id: "secret_peak", label: "Secret Peak" },
     { id: "magic_square", label: "Magic Square" },
     { id: "mirage", label: "Mirage" },
+    { id: "square_11", label: "Square 11" },
+    { id: "dragon_tower", label: "Dragon Tower" },
+    { id: "event_mirage", label: "Event Mirage" },
+    { id: "purgatory", label: "Purgatory" },
+    { id: "server", label: "Server" },
     { id: "calculator", label: "⛏ Calculator" },
   ];
 
@@ -1456,6 +1707,11 @@ export default function DashboardPage() {
           )}
           {activeTab === "mirage" && <MirageView />}
           {activeTab === "world_bosses" && <WorldBossesView />}
+          {activeTab === "square_11" && <Square11View />}
+          {activeTab === "dragon_tower" && <DragonTowerView />}
+          {activeTab === "event_mirage" && <EventMirageView />}
+          {activeTab === "purgatory" && <PurgatoryView />}
+          {activeTab === "server" && <ServerView />}
           {activeTab === "calculator" && <MiningCalculatorView />}
         </section>
       </main>
