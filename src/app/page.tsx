@@ -49,7 +49,15 @@ type DynamicTimerMap = Record<
 >;
 // ─── Fixed-Hour Events Views (Square 11, Dragon Tower, Event Mirage, Purgatory, Server) ──
 
-function Square11View({ userId }: { userId: string | null }) {
+function Square11View({
+	userId,
+	subscribedBossIds,
+	onBellToggle,
+}: {
+	userId: string | null;
+	subscribedBossIds: Set<string>;
+	onBellToggle: (bossId: string, newState: boolean) => void;
+}) {
 	return (
 		<div className="flex flex-col gap-3">
 			<h3 className="mb-1 text-xs font-semibold uppercase tracking-widest text-zinc-500">
@@ -92,7 +100,12 @@ function Square11View({ userId }: { userId: string | null }) {
 									nextSpawn={getNextFixedSpawn(event.spawnHoursUTC8)}
 								/>
 							</div>
-							<BellToggle bossId={event.id} userId={userId} />
+							<BellToggle
+								bossId={event.id}
+								userId={userId}
+								initialSubscribed={subscribedBossIds.has(event.id)}
+								onToggle={onBellToggle}
+							/>
 						</div>
 					</div>
 				))}
@@ -101,7 +114,15 @@ function Square11View({ userId }: { userId: string | null }) {
 	);
 }
 
-function DragonTowerView({ userId }: { userId: string | null }) {
+function DragonTowerView({
+	userId,
+	subscribedBossIds,
+	onBellToggle,
+}: {
+	userId: string | null;
+	subscribedBossIds: Set<string>;
+	onBellToggle: (bossId: string, newState: boolean) => void;
+}) {
 	return (
 		<div className="flex flex-col gap-3">
 			<h3 className="mb-1 text-xs font-semibold uppercase tracking-widest text-zinc-500">
@@ -144,7 +165,12 @@ function DragonTowerView({ userId }: { userId: string | null }) {
 									nextSpawn={getNextFixedSpawn(event.spawnHoursUTC8)}
 								/>
 							</div>
-							<BellToggle bossId={event.id} userId={userId} />
+							<BellToggle
+								bossId={event.id}
+								userId={userId}
+								initialSubscribed={subscribedBossIds.has(event.id)}
+								onToggle={onBellToggle}
+							/>
 						</div>
 					</div>
 				))}
@@ -153,7 +179,15 @@ function DragonTowerView({ userId }: { userId: string | null }) {
 	);
 }
 
-function EventMirageView({ userId }: { userId: string | null }) {
+function EventMirageView({
+	userId,
+	subscribedBossIds,
+	onBellToggle,
+}: {
+	userId: string | null;
+	subscribedBossIds: Set<string>;
+	onBellToggle: (bossId: string, newState: boolean) => void;
+}) {
 	return (
 		<div className="flex flex-col gap-3">
 			<h3 className="mb-1 text-xs font-semibold uppercase tracking-widest text-zinc-500">
@@ -196,7 +230,12 @@ function EventMirageView({ userId }: { userId: string | null }) {
 									nextSpawn={getNextFixedSpawn(event.spawnHoursUTC8)}
 								/>
 							</div>
-							<BellToggle bossId={event.id} userId={userId} />
+							<BellToggle
+								bossId={event.id}
+								userId={userId}
+								initialSubscribed={subscribedBossIds.has(event.id)}
+								onToggle={onBellToggle}
+							/>
 						</div>
 					</div>
 				))}
@@ -205,7 +244,15 @@ function EventMirageView({ userId }: { userId: string | null }) {
 	);
 }
 
-function PurgatoryView({ userId }: { userId: string | null }) {
+function PurgatoryView({
+	userId,
+	subscribedBossIds,
+	onBellToggle,
+}: {
+	userId: string | null;
+	subscribedBossIds: Set<string>;
+	onBellToggle: (bossId: string, newState: boolean) => void;
+}) {
 	return (
 		<div className="flex flex-col gap-3">
 			<h3 className="mb-1 text-xs font-semibold uppercase tracking-widest text-zinc-500">
@@ -248,7 +295,12 @@ function PurgatoryView({ userId }: { userId: string | null }) {
 									nextSpawn={getNextFixedSpawn(event.spawnHoursUTC8)}
 								/>
 							</div>
-							<BellToggle bossId={event.id} userId={userId} />
+							<BellToggle
+								bossId={event.id}
+								userId={userId}
+								initialSubscribed={subscribedBossIds.has(event.id)}
+								onToggle={onBellToggle}
+							/>
 						</div>
 					</div>
 				))}
@@ -257,7 +309,15 @@ function PurgatoryView({ userId }: { userId: string | null }) {
 	);
 }
 
-function ServerView({ userId }: { userId: string | null }) {
+function ServerView({
+	userId,
+	subscribedBossIds,
+	onBellToggle,
+}: {
+	userId: string | null;
+	subscribedBossIds: Set<string>;
+	onBellToggle: (bossId: string, newState: boolean) => void;
+}) {
 	return (
 		<div className="flex flex-col gap-3">
 			<h3 className="mb-1 text-xs font-semibold uppercase tracking-widest text-zinc-500">
@@ -305,7 +365,12 @@ function ServerView({ userId }: { userId: string | null }) {
 									nextSpawn={getNextFixedSpawn(event.spawnHoursUTC8)}
 								/>
 							</div>
-							<BellToggle bossId={event.id} userId={userId} />
+							<BellToggle
+								bossId={event.id}
+								userId={userId}
+								initialSubscribed={subscribedBossIds.has(event.id)}
+								onToggle={onBellToggle}
+							/>
 						</div>
 					</div>
 				))}
@@ -424,10 +489,12 @@ function BellToggle({
   bossId,
   userId,
   initialSubscribed = false,
+  onToggle,
 }: {
   bossId: string;
   userId: string | null;
   initialSubscribed?: boolean;
+  onToggle?: (bossId: string, newState: boolean) => void;
 }) {
   const [subscribed, setSubscribed] = useState(initialSubscribed);
   const [loading, setLoading] = useState(false);
@@ -444,6 +511,7 @@ function BellToggle({
           body: JSON.stringify({ user_id: userId, boss_id: bossId }),
         });
         setSubscribed(false);
+        onToggle?.(bossId, false);
       } else {
         await fetch("/api/reminders", {
           method: "POST",
@@ -455,6 +523,7 @@ function BellToggle({
           }),
         });
         setSubscribed(true);
+        onToggle?.(bossId, true);
       }
     } finally {
       setLoading(false);
@@ -542,10 +611,14 @@ function SecretPeakView({
   dynamicTimers,
   currentUser,
   onReportKill,
+  subscribedBossIds,
+  onBellToggle,
 }: {
   dynamicTimers: DynamicTimerMap;
   currentUser: { id: string; username: string } | null;
   onReportKill: (bossId: string, bossName: string, floor: number) => Promise<void>;
+  subscribedBossIds: Set<string>;
+  onBellToggle: (bossId: string, newState: boolean) => void;
 }) {
   const [selectedFloor, setSelectedFloor] = useState(1);
   const [activePin, setActivePin] = useState<SecretPeakBoss | null>(null);
@@ -761,6 +834,8 @@ function SecretPeakView({
                   <BellToggle
                     bossId={boss.id}
                     userId={currentUser ? currentUser.id : null}
+                    initialSubscribed={subscribedBossIds.has(boss.id)}
+                    onToggle={onBellToggle}
                   />
                 )}
               </div>
@@ -774,7 +849,15 @@ function SecretPeakView({
 
 // ─── Mirage View ───────────────────────────────────────────────────────────
 
-function MirageView({ userId }: { userId: string | null }) {
+function MirageView({
+	  userId,
+	  subscribedBossIds,
+	  onBellToggle,
+	}: {
+	  userId: string | null;
+	  subscribedBossIds: Set<string>;
+	  onBellToggle: (bossId: string, newState: boolean) => void;
+	}) {
   const [selectedLayer, setSelectedLayer] = useState<number | "all">("all");
 
   const layers = useMemo(
@@ -991,7 +1074,12 @@ function MirageView({ userId }: { userId: string | null }) {
                     </span>
                     <CountdownBadge nextSpawn={nextSpawn} large />
                   </div>
-                  <BellToggle bossId={boss.id} userId={userId} />
+                  <BellToggle
+                    bossId={boss.id}
+                    userId={userId}
+                    initialSubscribed={subscribedBossIds.has(boss.id)}
+                    onToggle={onBellToggle}
+                  />
                 </div>
               </div>
             </div>
@@ -1008,10 +1096,14 @@ function MagicSquareView({
   dynamicTimers,
   currentUser,
   onReportKill,
+  subscribedBossIds,
+  onBellToggle,
 }: {
   dynamicTimers: DynamicTimerMap;
   currentUser: { id: string; username: string } | null;
   onReportKill: (bossId: string, bossName: string, floor: number) => Promise<void>;
+  subscribedBossIds: Set<string>;
+  onBellToggle: (bossId: string, newState: boolean) => void;
 }) {
   const [selectedFloor, setSelectedFloor] = useState(1);
   const [reportingId, setReportingId] = useState<string | null>(null);
@@ -1131,6 +1223,8 @@ function MagicSquareView({
                 <BellToggle
                   bossId={boss.id}
                   userId={currentUser ? currentUser.id : null}
+                  initialSubscribed={subscribedBossIds.has(boss.id)}
+                  onToggle={onBellToggle}
                 />
               </div>
 
@@ -1172,7 +1266,15 @@ function MagicSquareView({
 
 // ─── World Bosses View ────────────────────────────────────────────────────
 
-function WorldBossesView() {
+function WorldBossesView({
+	userId,
+	subscribedBossIds,
+	onBellToggle,
+}: {
+	userId: string | null;
+	subscribedBossIds: Set<string>;
+	onBellToggle: (bossId: string, newState: boolean) => void;
+}) {
   const weekDays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
   return (
@@ -1220,7 +1322,12 @@ function WorldBossesView() {
                   </span>
                   <CountdownBadge nextSpawn={getNextFixedSpawn(boss.spawnHoursUTC8)} />
                 </div>
-                <BellToggle bossId={boss.id} userId={null} />
+                <BellToggle
+                  bossId={boss.id}
+                  userId={userId}
+                  initialSubscribed={subscribedBossIds.has(boss.id)}
+                  onToggle={onBellToggle}
+                />
               </div>
             </div>
           ))}
@@ -1272,7 +1379,12 @@ function WorldBossesView() {
                       boss.spawnHourUTC8
                     )}
                   />
-                  <BellToggle bossId={boss.id} userId={null} />
+                  <BellToggle
+                    bossId={boss.id}
+                    userId={userId}
+                    initialSubscribed={subscribedBossIds.has(boss.id)}
+                    onToggle={onBellToggle}
+                  />
                 </div>
               </div>
             </div>
@@ -1555,6 +1667,9 @@ export default function DashboardPage() {
   const [sdkReady, setSdkReady] = useState(false);
   const [sdkError, setSdkError] = useState(false);
   const [dynamicTimers, setDynamicTimers] = useState<DynamicTimerMap>({});
+  const [subscribedBossIds, setSubscribedBossIds] = useState<Set<string>>(
+    () => new Set(),
+  );
   const [showNamePrompt, setShowNamePrompt] = useState(false);
   const [nameInput, setNameInput] = useState("");
 
@@ -1637,6 +1752,49 @@ export default function DashboardPage() {
       clearInterval(id);
     };
   }, [fetchTimers]);
+
+  useEffect(() => {
+    if (!currentUser?.id) {
+      setSubscribedBossIds(new Set());
+      return;
+    }
+
+    let cancelled = false;
+
+    const load = async () => {
+      try {
+        const res = await fetch(`/api/reminders?user_id=${currentUser.id}`);
+        if (!res.ok) return;
+        const data = (await res.json()) as string[];
+        if (!cancelled) {
+          setSubscribedBossIds(new Set(data));
+        }
+      } catch {
+        // silent
+      }
+    };
+
+    void load();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [currentUser?.id]);
+
+  const handleBellToggle = useCallback(
+    (bossId: string, newState: boolean) => {
+      setSubscribedBossIds((prev) => {
+        const next = new Set(prev);
+        if (newState) {
+          next.add(bossId);
+        } else {
+          next.delete(bossId);
+        }
+        return next;
+      });
+    },
+    [],
+  );
 
   const handleReportKill = useCallback(
     async (bossId: string, bossName: string, floor: number) => {
@@ -1833,6 +1991,8 @@ export default function DashboardPage() {
               dynamicTimers={dynamicTimers}
               currentUser={currentUser}
               onReportKill={handleReportKill}
+              subscribedBossIds={subscribedBossIds}
+              onBellToggle={handleBellToggle}
             />
           )}
           {activeTab === "magic_square" && (
@@ -1840,26 +2000,58 @@ export default function DashboardPage() {
               dynamicTimers={dynamicTimers}
               currentUser={currentUser}
               onReportKill={handleReportKill}
+              subscribedBossIds={subscribedBossIds}
+              onBellToggle={handleBellToggle}
             />
           )}
           {activeTab === "mirage" && (
-            <MirageView userId={currentUser?.id ?? null} />
+            <MirageView
+              userId={currentUser?.id ?? null}
+              subscribedBossIds={subscribedBossIds}
+              onBellToggle={handleBellToggle}
+            />
           )}
-          {activeTab === "world_bosses" && <WorldBossesView />}
+          {activeTab === "world_bosses" && (
+            <WorldBossesView
+              userId={currentUser?.id ?? null}
+              subscribedBossIds={subscribedBossIds}
+              onBellToggle={handleBellToggle}
+            />
+          )}
           {activeTab === "square_11" && (
-            <Square11View userId={currentUser?.id ?? null} />
+            <Square11View
+              userId={currentUser?.id ?? null}
+              subscribedBossIds={subscribedBossIds}
+              onBellToggle={handleBellToggle}
+            />
           )}
           {activeTab === "dragon_tower" && (
-            <DragonTowerView userId={currentUser?.id ?? null} />
+            <DragonTowerView
+              userId={currentUser?.id ?? null}
+              subscribedBossIds={subscribedBossIds}
+              onBellToggle={handleBellToggle}
+            />
           )}
           {activeTab === "event_mirage" && (
-            <EventMirageView userId={currentUser?.id ?? null} />
+            <EventMirageView
+              userId={currentUser?.id ?? null}
+              subscribedBossIds={subscribedBossIds}
+              onBellToggle={handleBellToggle}
+            />
           )}
           {activeTab === "purgatory" && (
-            <PurgatoryView userId={currentUser?.id ?? null} />
+            <PurgatoryView
+              userId={currentUser?.id ?? null}
+              subscribedBossIds={subscribedBossIds}
+              onBellToggle={handleBellToggle}
+            />
           )}
           {activeTab === "server" && (
-            <ServerView userId={currentUser?.id ?? null} />
+            <ServerView
+              userId={currentUser?.id ?? null}
+              subscribedBossIds={subscribedBossIds}
+              onBellToggle={handleBellToggle}
+            />
           )}
           {activeTab === "calculator" && <MiningCalculatorView />}
         </section>
