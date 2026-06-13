@@ -166,9 +166,30 @@ const POLL_INTERVAL =
     ? 1500
     : 5000;
 
+type SupabaseClientOptions = Parameters<typeof createClient>[2] & {
+  realtime?: {
+    url?: string;
+  };
+};
+
+function getRealtimeUrl() {
+  if (
+    typeof window !== "undefined" &&
+    window.location.hostname.includes("discordsays.com")
+  ) {
+    return `wss://${window.location.host}/supabase/realtime/v1`;
+  }
+  return undefined;
+}
+
 let supabase = createClient(
   getSupabaseUrl(),
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+  {
+    realtime: {
+      url: getRealtimeUrl(),
+    },
+  } as SupabaseClientOptions,
 );
 
 function todayUTC8(): string {
@@ -2321,6 +2342,11 @@ function WarPageInner() {
           supabase = createClient(
             `${window.location.origin}/supabase`,
             process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+            {
+              realtime: {
+                url: getRealtimeUrl(),
+              },
+            } as SupabaseClientOptions,
           );
 
           try {
