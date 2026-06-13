@@ -734,3 +734,116 @@ export const REDMOON_BOSSES: RedmoonBoss[] = [
     dayOfWeek: 3, // Wednesday
   },
 ];
+
+// ─── MAGIC SQUARE 11F EVENTS ────────────────────────────────────────────────
+
+export interface Square11Event {
+  id: string;
+  name: string;
+  spawnHoursUTC8: number[];
+}
+
+export const SQUARE_11_EVENTS: Square11Event[] = [
+  {
+    id: "sq11_chamber_void",
+    name: "Chamber of Void",
+    spawnHoursUTC8: [0, 6, 12, 18],
+  },
+  {
+    id: "sq11_chamber_frenzy",
+    name: "Chamber of Frenzy",
+    spawnHoursUTC8: [2, 8, 14, 20],
+  },
+  {
+    id: "sq11_alive_apparition",
+    name: "Alive Apparition",
+    spawnHoursUTC8: [4, 10, 16, 22],
+  },
+  {
+    id: "sq11_chamber_fury",
+    name: "Chamber of Fury",
+    spawnHoursUTC8: [5, 11, 17, 23],
+  },
+];
+
+// ─── DRAGON TOWER EVENTS ─────────────────────────────────────────────────────
+
+export interface DragonTowerEvent {
+  id: string;
+  name: string;
+  spawnHoursUTC8: number[];
+}
+
+export const DRAGON_TOWER_EVENTS: DragonTowerEvent[] = [
+  {
+    id: "dt_tower_event",
+    name: "Tower Event",
+    spawnHoursUTC8: [0, 10, 12, 16, 18, 22],
+  },
+  {
+    id: "dt_salamander",
+    name: "Salamander Boss",
+    spawnHoursUTC8: [5, 11, 17, 23],
+  },
+];
+
+// ─── EVENT MIRAGE EVENTS ─────────────────────────────────────────────────────
+
+export interface EventMirageEvent {
+  id: string;
+  name: string;
+  spawnHoursUTC8: number[];
+}
+
+export const EVENT_MIRAGE_EVENTS: EventMirageEvent[] = [
+  {
+    id: "event_void_orb_fire_island",
+    name: "Void Orb — Fire Island World 1",
+    spawnHoursUTC8: [3, 9, 15, 21],
+  },
+  {
+    id: "event_void_orb_palace",
+    name: "Void Orb — Palace World 2",
+    spawnHoursUTC8: [5, 11, 17, 23],
+  },
+];
+
+// ─── PURGATORY EVENTS ────────────────────────────────────────────────────────
+
+export interface PurgatoryEvent {
+  id: string;
+  name: string;
+  spawnHoursUTC8: number[];
+}
+
+export const PURGATORY_EVENTS: PurgatoryEvent[] = [
+  {
+    id: "purgatory_bosses",
+    name: "Purgatory Bosses",
+    spawnHoursUTC8: [0, 6, 12, 18],
+  },
+];
+
+// ─── SERVER-WIDE EVENTS ──────────────────────────────────────────────────────
+
+export interface ServerEvent {
+  id: string;
+  name: string;
+  category: "server" | "system";
+  spawnHoursUTC8: number[];
+}
+
+export const SERVER_EVENTS: ServerEvent[] = [
+  {
+    id: "server_expedition",
+    name: "Expedition",
+    category: "server",
+    spawnHoursUTC8: [21],
+  },
+  {
+    id: "server_restart",
+    name: "Server Restart",
+    category: "system",
+    spawnHoursUTC8: [0],
+  },
+];
