@@ -31,6 +31,60 @@ async function sendWebhook(message: string): Promise<void> {
   });
 }
 
+const DISCORD_API = "https://discord.com/api/v10";
+const BOT_TOKEN = process.env.DISCORD_BOT_TOKEN ?? "";
+
+async function openDmChannel(userId: string): Promise<string | null> {
+  if (!BOT_TOKEN) return null;
+
+  const res = await fetch(`${DISCORD_API}/users/@me/channels`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bot ${BOT_TOKEN}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ recipient_id: userId }),
+  });
+  if (!res.ok) return null;
+  const data = (await res.json()) as { id?: string };
+  return data.id ?? null;
+}
+
+async function sendDM(channelId: string, message: string): Promise<void> {
+  if (!BOT_TOKEN) return;
+
+  await fetch(`${DISCORD_API}/channels/${channelId}/messages`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bot ${BOT_TOKEN}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ content: message }),
+  });
+}
+
+async function sendPersonalDMs(
+  supabase: ReturnType<typeof getSupabaseClient>,
+  bossId: string,
+  message: string
+): Promise<void> {
+  if (!BOT_TOKEN) return;
+
+  const { data: reminders } = await supabase
+    .from("personal_reminders")
+    .select("user_id")
+    .eq("boss_id", bossId);
+
+  if (!reminders?.length) return;
+
+  for (const row of reminders as Array<{ user_id: string }>) {
+    const channelId = await openDmChannel(row.user_id);
+    if (channelId) {
+      await sendDM(channelId, message);
+    }
+  }
+}
+
 async function hasNotified(
   supabase: ReturnType<typeof getSupabaseClient>,
   key: string
@@ -87,11 +141,11 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       if (diff === boss.notifyMinutesBefore) {
         const key = `${boss.id}_${spawnHour}_${today}`;
         if (!(await hasNotified(supabase, key))) {
-          await sendWebhook(
-            `@here ⚔️ **${boss.name}** spawns in **${boss.notifyMinutesBefore} min** — ${boss.zone} (${fmtHour(
-              spawnHour
-            )})`
-          );
+          const message = `@here ⚔️ **${boss.name}** spawns in **${boss.notifyMinutesBefore} min** — ${boss.zone} (${fmtHour(
+            spawnHour
+          )})`;
+          await sendWebhook(message);
+          await sendPersonalDMs(supabase, boss.id, message);
           await markNotified(supabase, key);
           notifications.push(key);
         }
@@ -114,9 +168,9 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
         const key = `${boss.id}_${today}`;
         if (!(await hasNotified(supabase, key))) {
           const desc = boss.description ? `\n> ${boss.description}` : "";
-          await sendWebhook(
-            `@here 🏆 **${boss.name}** spawns in **${boss.notifyMinutesBefore} min** — ${boss.zone}${desc}`
-          );
+          const message = `@here 🏆 **${boss.name}** spawns in **${boss.notifyMinutesBefore} min** — ${boss.zone}${desc}`;
+          await sendWebhook(message);
+          await sendPersonalDMs(supabase, boss.id, message);
           await markNotified(supabase, key);
           notifications.push(key);
         }
