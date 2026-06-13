@@ -2356,7 +2356,7 @@ function WarPageInner() {
               response_type: "code",
               state: "",
               prompt: "none",
-              scope: ["identify"],
+              scope: ["identify", "guilds.members.read"],
             });
 
             const tokenRes = await fetch("/api/token", {
@@ -2369,16 +2369,48 @@ function WarPageInner() {
               access_token?: string;
             };
 
-            if (!tokenRes.ok || !tokenData.access_token) {
+            const accessToken = tokenData.access_token;
+
+            if (!tokenRes.ok || !accessToken) {
               throw new Error("token_exchange_failed");
             }
 
             const auth = await discordSdk.commands.authenticate({
-              access_token: tokenData.access_token,
+              access_token: accessToken,
             });
 
             const user = auth?.user;
-            setUsername(user?.global_name ?? user?.username ?? "unknown");
+            let displayName = user?.global_name ?? user?.username ?? "unknown";
+
+            // Попытка получить ник на текущем сервере (guild nickname)
+            try {
+              const guildId = (discordSdk as DiscordSDKWithCommands).guildId as
+                | string
+                | undefined;
+              if (guildId && accessToken) {
+                const memberRes = await fetch(
+                  `https://discord.com/api/v10/users/@me/guilds/${guildId}/member`,
+                  {
+                    headers: { Authorization: `Bearer ${accessToken}` },
+                  },
+                );
+                if (memberRes.ok) {
+                  const member = (await memberRes.json()) as {
+                    nick?: string | null;
+                    user?: { global_name?: string | null; username?: string | null };
+                  };
+                  if (member?.nick) {
+                    displayName = member.nick;
+                  } else if (member?.user?.global_name) {
+                    displayName = member.user.global_name;
+                  }
+                }
+              }
+            } catch {
+              // оставляем displayName как есть при ошибке
+            }
+
+            setUsername(displayName);
             setDiscordUserId(user?.id ?? null);
           } catch {
             setUsername("unknown");
