@@ -12,12 +12,21 @@ type ZoneCategory = "lab" | "valley" | "purgatory" | "mirage" | "tower" | "weekl
 
 type DiscordAuthenticateResult = {
   user?: {
+    id?: string;
     username?: string;
+    global_name?: string;
   };
 };
 
 type DiscordSDKWithCommands = DiscordSDK & {
   commands: {
+    authorize(args: {
+      client_id: string;
+      response_type: "code";
+      state: string;
+      prompt: "none";
+      scope: string[];
+    }): Promise<{ code: string }>;
     authenticate(args: {
       access_token: string;
     }): Promise<DiscordAuthenticateResult>;
@@ -2319,6 +2328,7 @@ function MapBoard({
 function WarPageInner() {
   const [mode, setMode] = useState<WarMode>("deploy");
   const [username, setUsername] = useState<string>("unknown");
+  const [discordUserId, setDiscordUserId] = useState<string | null>(null);
   const [selectedDate, setSelectedDate] = useState<string>(todayUTC8());
   const [squadNames, setSquadNames] = useState<Record<Squad, string>>({
     A: "Squad A",
@@ -2341,12 +2351,38 @@ function WarPageInner() {
         .then(async () => {
           const discordSdk = sdk as DiscordSDKWithCommands;
           try {
-            const auth = await discordSdk.commands.authenticate({
-              access_token: "",
+            const { code } = await discordSdk.commands.authorize({
+              client_id: process.env.NEXT_PUBLIC_DISCORD_APP_ID!,
+              response_type: "code",
+              state: "",
+              prompt: "none",
+              scope: ["identify"],
             });
-            setUsername(auth?.user?.username ?? "unknown");
+
+            const tokenRes = await fetch("/api/token", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ code }),
+            });
+
+            const tokenData = (await tokenRes.json()) as {
+              access_token?: string;
+            };
+
+            if (!tokenRes.ok || !tokenData.access_token) {
+              throw new Error("token_exchange_failed");
+            }
+
+            const auth = await discordSdk.commands.authenticate({
+              access_token: tokenData.access_token,
+            });
+
+            const user = auth?.user;
+            setUsername(user?.global_name ?? user?.username ?? "unknown");
+            setDiscordUserId(user?.id ?? null);
           } catch {
             setUsername("unknown");
+            setDiscordUserId(null);
           }
 
           if (
