@@ -756,7 +756,7 @@ function SecretPeakView({
 
 // ─── Mirage View ───────────────────────────────────────────────────────────
 
-function MirageView() {
+function MirageView({ userId }: { userId: string | null }) {
   const [selectedLayer, setSelectedLayer] = useState<number | "all">("all");
 
   const layers = useMemo(
@@ -957,17 +957,20 @@ function MirageView() {
                 </div>
 
                 <div
-                  className="flex items-center justify-between rounded-xl px-3 py-2.5"
+                  className="flex items-center justify-between rounded-xl px-3 py-2.5 gap-2"
                   style={{
                     background: "rgba(0,0,0,0.5)",
                     border: "1px solid rgba(255,255,255,0.1)",
                     backdropFilter: "blur(8px)",
                   }}
                 >
-                  <span className="text-[10px] uppercase tracking-widest font-semibold text-zinc-600">
-                    Next Spawn
-                  </span>
-                  <CountdownBadge nextSpawn={nextSpawn} large />
+                  <div className="flex items-center gap-2">
+                    <span className="text-[10px] uppercase tracking-widest font-semibold text-zinc-600">
+                      Next Spawn
+                    </span>
+                    <CountdownBadge nextSpawn={nextSpawn} large />
+                  </div>
+                  <BellToggle bossId={boss.id} userId={userId} />
                 </div>
               </div>
             </div>
@@ -1748,7 +1751,15 @@ export default function DashboardPage() {
         </header>
 
         <div className="flex items-center justify-between gap-2">
-          <nav className="flex gap-0 overflow-x-auto border-b border-zinc-800/80 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          <nav
+            className="flex gap-0 overflow-x-auto border-b border-zinc-800/80 hide-scrollbar"
+            style={{
+              overflowX: "auto",
+              flexWrap: "nowrap",
+              msOverflowStyle: "none",
+              scrollbarWidth: "none",
+            }}
+          >
             {tabs.map((tab) => (
               <button
                 key={tab.id}
@@ -1801,7 +1812,9 @@ export default function DashboardPage() {
               onReportKill={handleReportKill}
             />
           )}
-          {activeTab === "mirage" && <MirageView />}
+          {activeTab === "mirage" && (
+            <MirageView userId={currentUser?.id ?? null} />
+          )}
           {activeTab === "world_bosses" && <WorldBossesView />}
           {activeTab === "square_11" && (
             <Square11View userId={currentUser?.id ?? null} />
