@@ -182,7 +182,7 @@ function getRealtimeUrl() {
   return undefined;
 }
 
-let supabase = createClient(
+const supabase = createClient(
   getSupabaseUrl(),
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
   {
@@ -2339,16 +2339,6 @@ function WarPageInner() {
         .ready()
         .then(async () => {
           const discordSdk = sdk as DiscordSDKWithCommands;
-          supabase = createClient(
-            `${window.location.origin}/supabase`,
-            process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-            {
-              realtime: {
-                url: getRealtimeUrl(),
-              },
-            } as SupabaseClientOptions,
-          );
-
           try {
             const auth = await discordSdk.commands.authenticate({
               access_token: "",
