@@ -176,7 +176,6 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       const key = `${event.id}_${today}`;
       if (!(await hasNotified(supabase, key))) {
         const msg = `🏛️ **${event.name}** (Square 11) starts in **${NOTIFY_BEFORE} min**`;
-        await sendWebhook(msg);
         await sendPersonalDMs(supabase, event.id, msg);
         await markNotified(supabase, key);
         notifications.push(key);
@@ -190,7 +189,6 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       const key = `${event.id}_${today}`;
       if (!(await hasNotified(supabase, key))) {
         const msg = `🐉 **${event.name}** (Dragon Tower) starts in **${NOTIFY_BEFORE} min**`;
-        await sendWebhook(msg);
         await sendPersonalDMs(supabase, event.id, msg);
         await markNotified(supabase, key);
         notifications.push(key);
@@ -204,7 +202,6 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       const key = `${event.id}_${today}`;
       if (!(await hasNotified(supabase, key))) {
         const msg = `🌀 **${event.name}** (Event Mirage) starts in **${NOTIFY_BEFORE} min**`;
-        await sendWebhook(msg);
         await sendPersonalDMs(supabase, event.id, msg);
         await markNotified(supabase, key);
         notifications.push(key);
@@ -218,7 +215,6 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       const key = `${event.id}_${today}`;
       if (!(await hasNotified(supabase, key))) {
         const msg = `💀 **${event.name}** (Purgatory) starts in **${NOTIFY_BEFORE} min**`;
-        await sendWebhook(msg);
         await sendPersonalDMs(supabase, event.id, msg);
         await markNotified(supabase, key);
         notifications.push(key);
@@ -233,12 +229,6 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       if (!(await hasNotified(supabase, key))) {
         const kindLabel = event.category === "server" ? "Server" : "System";
         const msg = `⚙️ **${event.name}** (${kindLabel}) in **${NOTIFY_BEFORE} min**`;
-
-        // Для server_restart - только личные DM, без webhook
-        if (event.id !== "server_restart") {
-          await sendWebhook(msg);
-        }
-
         await sendPersonalDMs(supabase, event.id, msg);
         await markNotified(supabase, key);
         notifications.push(key);
