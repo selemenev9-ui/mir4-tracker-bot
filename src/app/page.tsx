@@ -757,40 +757,54 @@ function SecretPeakView({
               )}
 
               {(activePin.type === "teal" || activePin.type === "gold") && (
-                <button
-                  type="button"
-                  disabled={reporting || !currentUser}
-                  onClick={async () => {
-                    if (!currentUser || !activePin) return;
-                    setReporting(true);
-                    setReportMsg(null);
-                    try {
-                      await onReportKill(
-                        activePin.id,
-                        activePin.name,
-                        activePin.floor
+                <>
+                  {(() => {
+                    const nextSpawn = getNextSpawnForBoss(activePin);
+                    if (nextSpawn) {
+                      return (
+                        <p className="text-center text-[10px] text-zinc-500">
+                          ⏳ Cooldown active
+                        </p>
                       );
-                      setReportMsg({
-                        type: "ok",
-                        text: "Kill reported — timer started.",
-                      });
-                    } catch {
-                      setReportMsg({
-                        type: "err",
-                        text: "Failed to report kill.",
-                      });
-                    } finally {
-                      setReporting(false);
                     }
-                  }}
-                  className="w-full rounded-xl border border-emerald-500/80 bg-emerald-500/20 py-1.5 text-xs font-semibold text-emerald-300 transition-colors hover:bg-emerald-500/30 disabled:cursor-not-allowed disabled:opacity-40"
-                >
-                  {reporting
-                    ? "Reporting..."
-                    : currentUser
-                    ? "Report Kill"
-                    : "Login required"}
-                </button>
+                    return (
+                      <button
+                        type="button"
+                        disabled={reporting || !currentUser}
+                        onClick={async () => {
+                          if (!currentUser || !activePin) return;
+                          setReporting(true);
+                          setReportMsg(null);
+                          try {
+                            await onReportKill(
+                              activePin.id,
+                              activePin.name,
+                              activePin.floor
+                            );
+                            setReportMsg({
+                              type: "ok",
+                              text: "Kill reported — timer started.",
+                            });
+                          } catch {
+                            setReportMsg({
+                              type: "err",
+                              text: "Failed to report kill.",
+                            });
+                          } finally {
+                            setReporting(false);
+                          }
+                        }}
+                        className="w-full rounded-xl border border-emerald-500/80 bg-emerald-500/20 py-1.5 text-xs font-semibold text-emerald-300 transition-colors hover:bg-emerald-500/30 disabled:cursor-not-allowed disabled:opacity-40"
+                      >
+                        {reporting
+                          ? "Reporting..."
+                          : currentUser
+                          ? "Report Kill"
+                          : "Login required"}
+                      </button>
+                    );
+                  })()}
+                </>
               )}
 
               {(activePin.type === "red_lower" ||
