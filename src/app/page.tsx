@@ -1749,7 +1749,6 @@ export default function DashboardPage() {
               response_type: "code",
               state: "",
               scope: ["identify"],
-              redirect_uri: "https://mir4-tracker-bot.vercel.app",
             } as any);
             code = authorizeRes.code;
             console.log("[OAuth] authorize() returned code:", code ? "yes" : "no");
