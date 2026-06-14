@@ -1,5 +1,4 @@
 @import "tailwindcss";
-@plugin "@tailwindcss/container-queries";
 
 :root {
   --background: #030711;
