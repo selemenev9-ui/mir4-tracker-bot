@@ -2198,7 +2198,7 @@ export default function DashboardPage() {
         </header>
 
         {/* Wide container — tab bar */}
-        <div className="hidden @[600px]:flex items-center gap-1">
+        <div className="hidden @[600px]/app:flex items-center gap-1">
           <nav
             ref={tabsRef}
             className="tabs-scroll flex flex-1 gap-0 overflow-x-auto border-b border-zinc-800/80"
@@ -2248,7 +2248,7 @@ export default function DashboardPage() {
         </div>
 
         {/* Narrow container — dropdown */}
-        <div className="flex @[600px]:hidden items-center gap-1 w-full">
+        <div className="flex @[600px]/app:hidden items-center gap-1 w-full">
           <select
             value={activeTab}
             onChange={(e) => setActiveTab(e.target.value as Tab)}
