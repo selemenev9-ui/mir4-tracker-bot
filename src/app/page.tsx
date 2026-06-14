@@ -2186,19 +2186,13 @@ export default function DashboardPage() {
     <div className="@container/app flex h-screen flex-col overflow-hidden text-zinc-100 antialiased">
       <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col overflow-hidden p-2 pt-2 @[480px]/app:p-4">
         <header
-          className="flex items-center justify-between gap-3 pb-3"
+          className="flex items-center justify-between gap-2 pb-1.5"
           style={{ borderBottom: "1px solid rgba(255,255,255,0.07)" }}
         >
           <h1
-            className="shrink-0 text-sm @[500px]/app:text-base font-bold tracking-tight"
-            style={{
-              background: "linear-gradient(135deg, #e2e8f0 0%, #94a3b8 100%)",
-              WebkitBackgroundClip: "text",
-              WebkitTextFillColor: "transparent",
-              backgroundClip: "text",
-            }}
+            className="shrink-0 text-sm @[500px]/app:text-base font-bold tracking-tight text-zinc-100"
           >
-            ⚔️ MIR4 Boss Tracker
+            MIR4 Boss Tracker
           </h1>
           <div className="flex min-w-0 items-center gap-2">
             <span className="hidden @[500px]/app:block">
@@ -2272,7 +2266,7 @@ export default function DashboardPage() {
               color: "#71717a",
               cursor: "pointer",
               fontSize: 12,
-              padding: "2px 6px",
+              padding: "1px 5px",
               flexShrink: 0,
               lineHeight: 1,
             }}
@@ -2285,7 +2279,7 @@ export default function DashboardPage() {
             }} />
             <nav
               ref={tabsRef}
-              className="tabs-scroll flex gap-0 overflow-x-auto border-b border-zinc-800/80"
+              className="tabs-scroll flex gap-0 overflow-x-auto border-b border-zinc-800/50"
               style={{
                 flexWrap: "nowrap",
                 scrollbarWidth: "none",
@@ -2315,7 +2309,7 @@ export default function DashboardPage() {
                   draggable={false}
                   onClick={() => setActiveTab(tab.id)}
                   className={[
-                    "-mb-px shrink-0 border-b-2 px-2 py-1 text-[11px] font-semibold transition-all whitespace-nowrap",
+                    "-mb-px shrink-0 border-b-2 px-2 py-0.5 text-[11px] font-semibold transition-all whitespace-nowrap",
                     activeTab === tab.id
                       ? "border-red-500 text-zinc-100"
                       : "border-transparent text-zinc-500 hover:border-zinc-600 hover:text-zinc-300",
@@ -2336,7 +2330,7 @@ export default function DashboardPage() {
               color: "#71717a",
               cursor: "pointer",
               fontSize: 12,
-              padding: "2px 6px",
+              padding: "1px 5px",
               flexShrink: 0,
               lineHeight: 1,
             }}
