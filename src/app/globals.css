@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 :root {
-  --background: #030711;
+  --background: #04080f;
   --foreground: #e2e8f0;
 }
 
@@ -13,63 +13,10 @@
 }
 
 body {
-  background: var(--background);
+  background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(99,40,220,0.18) 0%, #04080f 60%);
   color: var(--foreground);
   font-family: var(--font-geist-sans, system-ui);
   overflow-x: hidden;
-}
-
-/* ── Animated background orbs ─────────────────────────────── */
-
-@keyframes orb1 {
-  0%, 100% { transform: translate(0, 0) scale(1); }
-  25%  { transform: translate(4%, -7%) scale(1.06); }
-  50%  { transform: translate(-3%, 5%) scale(0.94); }
-  75%  { transform: translate(7%, 3%) scale(1.03); }
-}
-@keyframes orb2 {
-  0%, 100% { transform: translate(0, 0) scale(1); }
-  33%  { transform: translate(-5%, 9%) scale(1.09); }
-  66%  { transform: translate(4%, -6%) scale(0.91); }
-}
-@keyframes orb3 {
-  0%, 100% { transform: translate(0, 0) scale(1); }
-  50%  { transform: translate(-7%, -5%) scale(1.12); }
-}
-
-.bg-orb {
-  position: fixed;
-  border-radius: 50%;
-  pointer-events: none;
-  z-index: 0;
-  will-change: transform;
-}
-.bg-orb-purple {
-  width: 900px;
-  height: 900px;
-  background: radial-gradient(circle, rgba(124,58,237,0.7) 0%, rgba(109,40,217,0.35) 45%, transparent 70%);
-  filter: blur(60px);
-  top: -200px;
-  left: -100px;
-  animation: orb1 20s ease-in-out infinite;
-}
-.bg-orb-cyan {
-  width: 700px;
-  height: 700px;
-  background: radial-gradient(circle, rgba(6,182,212,0.55) 0%, rgba(14,165,233,0.25) 50%, transparent 70%);
-  filter: blur(55px);
-  top: 20%;
-  right: -50px;
-  animation: orb2 25s ease-in-out infinite;
-}
-.bg-orb-red {
-  width: 600px;
-  height: 600px;
-  background: radial-gradient(circle, rgba(239,68,68,0.45) 0%, rgba(220,38,38,0.2) 50%, transparent 70%);
-  filter: blur(55px);
-  bottom: -50px;
-  left: 15%;
-  animation: orb3 18s ease-in-out infinite;
 }
 
 /* ── Timer pulse animations ────────────────────────────────── */
@@ -120,4 +67,33 @@ body {
 ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
 
 .tabs-scroll::-webkit-scrollbar { display: none; }
+
+/* ── Bell animation ────────────────────────────────────────── */
+
+@keyframes bell-ring {
+  0%   { transform: rotate(0deg); }
+  15%  { transform: rotate(18deg); }
+  30%  { transform: rotate(-14deg); }
+  45%  { transform: rotate(10deg); }
+  60%  { transform: rotate(-7deg); }
+  75%  { transform: rotate(4deg); }
+  100% { transform: rotate(0deg); }
+}
+.bell-ring {
+  animation: bell-ring 0.65s cubic-bezier(0.36, 0.07, 0.19, 0.97);
+  transform-origin: top center;
+}
+
+@keyframes bell-pulse {
+  0%   { transform: scale(1); opacity: 0.7; }
+  70%  { transform: scale(1.6); opacity: 0; }
+  100% { transform: scale(1.6); opacity: 0; }
+}
+
+/* ── Card stagger ──────────────────────────────────────────── */
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
 

@@ -85,11 +85,13 @@ function Square11View({
 				Square 11
 			</h3>
 			<div className="grid grid-cols-[repeat(auto-fit,minmax(280px,1fr))] gap-2">
-				{SQUARE_11_EVENTS.map((event) => (
+				{SQUARE_11_EVENTS.map((event, index) => (
 					<div
 						key={event.id}
-						className="@container/card glass-card flex flex-col justify-between rounded-xl p-2 sm:p-3"
+						className="@container/card relative overflow-hidden glass-card flex flex-col justify-between rounded-xl p-2 @[480px]/app:p-3"
+						style={{ animation: "fadeInUp 0.25s ease both", animationDelay: `${Math.min(index * 40, 200)}ms` }}
 					>
+						<div style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: 3, borderRadius: "12px 0 0 12px", background: accentColor(getNextFixedSpawn(event.spawnHoursUTC8)) }} />
 						<div className="mb-2 flex items-center justify-between gap-2">
 							<h4 className="text-sm font-semibold text-zinc-100">
 								{event.name}
@@ -147,11 +149,13 @@ function DragonTowerView({
 				Dragon Tower
 			</h3>
 			<div className="grid grid-cols-[repeat(auto-fit,minmax(280px,1fr))] gap-2">
-				{DRAGON_TOWER_EVENTS.map((event) => (
+				{DRAGON_TOWER_EVENTS.map((event, index) => (
 					<div
 						key={event.id}
-						className="@container/card glass-card flex flex-col justify-between rounded-xl p-2 sm:p-3"
+						className="@container/card relative overflow-hidden glass-card flex flex-col justify-between rounded-xl p-2 @[480px]/app:p-3"
+						style={{ animation: "fadeInUp 0.25s ease both", animationDelay: `${Math.min(index * 40, 200)}ms` }}
 					>
+						<div style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: 3, borderRadius: "12px 0 0 12px", background: accentColor(getNextFixedSpawn(event.spawnHoursUTC8)) }} />
 						<div className="mb-2 flex items-center justify-between gap-2">
 							<h4 className="text-sm font-semibold text-zinc-100">
 								{event.name}
@@ -209,11 +213,13 @@ function EventMirageView({
 				Event — Mirage
 			</h3>
 			<div className="grid grid-cols-[repeat(auto-fit,minmax(280px,1fr))] gap-2">
-				{EVENT_MIRAGE_EVENTS.map((event) => (
+				{EVENT_MIRAGE_EVENTS.map((event, index) => (
 					<div
 						key={event.id}
-						className="@container/card glass-card flex flex-col justify-between rounded-xl p-2 sm:p-3"
+						className="@container/card relative overflow-hidden glass-card flex flex-col justify-between rounded-xl p-2 @[480px]/app:p-3"
+						style={{ animation: "fadeInUp 0.25s ease both", animationDelay: `${Math.min(index * 40, 200)}ms` }}
 					>
+						<div style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: 3, borderRadius: "12px 0 0 12px", background: accentColor(getNextFixedSpawn(event.spawnHoursUTC8)) }} />
 						<div className="mb-2 flex items-center justify-between gap-2">
 							<h4 className="text-sm font-semibold text-zinc-100">
 								{event.name}
@@ -271,11 +277,13 @@ function PurgatoryView({
 				Purgatory
 			</h3>
 			<div className="grid grid-cols-[repeat(auto-fit,minmax(280px,1fr))] gap-2">
-				{PURGATORY_EVENTS.map((event) => (
+				{PURGATORY_EVENTS.map((event, index) => (
 					<div
 						key={event.id}
-						className="@container/card glass-card flex flex-col justify-between rounded-xl p-2 sm:p-3"
+						className="@container/card relative overflow-hidden glass-card flex flex-col justify-between rounded-xl p-2 @[480px]/app:p-3"
+						style={{ animation: "fadeInUp 0.25s ease both", animationDelay: `${Math.min(index * 40, 200)}ms` }}
 					>
+						<div style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: 3, borderRadius: "12px 0 0 12px", background: accentColor(getNextFixedSpawn(event.spawnHoursUTC8)) }} />
 						<div className="mb-2 flex items-center justify-between gap-2">
 							<h4 className="text-sm font-semibold text-zinc-100">
 								{event.name}
@@ -333,11 +341,13 @@ function ServerView({
 				Server &amp; System
 			</h3>
 			<div className="grid grid-cols-[repeat(auto-fit,minmax(280px,1fr))] gap-2">
-				{SERVER_EVENTS.map((event) => (
+				{SERVER_EVENTS.map((event, index) => (
 					<div
 						key={event.id}
-						className="@container/card glass-card flex flex-col justify-between rounded-xl p-2 sm:p-3"
+						className="@container/card relative overflow-hidden glass-card flex flex-col justify-between rounded-xl p-2 @[480px]/app:p-3"
+						style={{ animation: "fadeInUp 0.25s ease both", animationDelay: `${Math.min(index * 40, 200)}ms` }}
 					>
+						<div style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: 3, borderRadius: "12px 0 0 12px", background: accentColor(getNextFixedSpawn(event.spawnHoursUTC8)) }} />
 						<div className="mb-2 flex items-center justify-between gap-2">
 							<div>
 								<h4 className="text-sm font-semibold text-zinc-100">
@@ -424,11 +434,14 @@ function ServerClock() {
 
 function CountdownBadge({
   nextSpawn,
-  large = false,
+  size = "sm",
+  large,
 }: {
   nextSpawn: Date | null;
+  size?: "sm" | "lg";
   large?: boolean;
 }) {
+  const isLarge = size === "lg" || large;
   const [ms, setMs] = useState<number>(
     () => (nextSpawn ? nextSpawn.getTime() - Date.now() : -1)
   );
@@ -454,7 +467,7 @@ function CountdownBadge({
     return (
       <span
         className={`timer-spawned font-semibold tracking-wider ${
-          large ? "text-base" : "text-sm"
+          isLarge ? "text-base" : "text-sm"
         }`}
         style={{
           color: "#4ade80",
@@ -482,7 +495,7 @@ function CountdownBadge({
     <span
       className={`font-mono font-semibold tabular-nums tracking-wider ${
         isCritical ? "timer-critical" : ""
-      } ${large ? "text-xl" : "text-sm"}`}
+      } ${isLarge ? "text-xl" : "text-sm"}`}
       style={{ color, textShadow: shadow }}
       suppressHydrationWarning
     >
@@ -504,6 +517,7 @@ function BellToggle({
 }) {
   const [subscribed, setSubscribed] = useState(initialSubscribed);
   const [loading, setLoading] = useState(false);
+  const [ringing, setRinging] = useState(false);
 
   if (!userId) return null;
 
@@ -536,26 +550,68 @@ function BellToggle({
     }
   }
 
+  function handleClick() {
+    if (!subscribed) {
+      setRinging(true);
+      setTimeout(() => setRinging(false), 700);
+    }
+    void toggle();
+  }
+
   return (
     <button
       type="button"
-      onClick={() => {
-        void toggle();
-      }}
+      onClick={handleClick}
       disabled={loading}
       title={subscribed ? "Отключить уведомление" : "Уведомить за 10 мин"}
       style={{
         background: "none",
         border: "none",
         cursor: loading ? "wait" : "pointer",
-        fontSize: 16,
+        padding: "4px",
+        position: "relative",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
         opacity: loading ? 0.5 : 1,
-        padding: "2px 4px",
       }}
     >
-      {subscribed ? "🔔" : "🔕"}
+      {subscribed && (
+        <span style={{
+          position: "absolute",
+          inset: -2,
+          borderRadius: "50%",
+          border: "1.5px solid rgba(251,191,36,0.5)",
+          animation: "bell-pulse 2s ease-out infinite",
+        }} />
+      )}
+      <svg
+        width={18} height={18}
+        viewBox="0 0 24 24"
+        fill={subscribed ? "#fbbf24" : "none"}
+        stroke={subscribed ? "#fbbf24" : "#71717a"}
+        strokeWidth={2}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        className={ringing ? "bell-ring" : ""}
+        style={{ filter: subscribed ? "drop-shadow(0 0 6px rgba(251,191,36,0.6))" : "none" }}
+      >
+        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+        <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+      </svg>
     </button>
   );
+}
+
+// ─── Helpers ────────────────────────────────────────────────────────────────
+
+function accentColor(nextSpawn: Date | null): string {
+  if (!nextSpawn) return "rgba(255,255,255,0.06)";
+  const ms = nextSpawn.getTime() - Date.now();
+  if (ms <= 0) return "#22c55e";
+  if (ms < 10 * 60 * 1000) return "#ef4444";
+  if (ms < 60 * 60 * 1000) return "#f59e0b";
+  return "rgba(255,255,255,0.06)";
 }
 
 // ─── Secret Peak View ──────────────────────────────────────────────────────
@@ -594,7 +650,7 @@ function secretPeakPinClasses(boss: SecretPeakBoss, state: SecretPeakBossState) 
 
 function secretPeakCardClasses(boss: SecretPeakBoss, state: SecretPeakBossState) {
   const base =
-    "@container/card flex items-center justify-between rounded-xl px-2 sm:px-3 py-2 sm:py-2.5 glass-card";
+    "@container/card relative overflow-hidden flex items-center justify-between rounded-xl px-2 @[480px]/app:px-3 py-2 @[480px]/app:py-2.5 glass-card";
 
   if (state === "cooldown") return base;
 
@@ -822,14 +878,16 @@ function SecretPeakView({
 
       {/* Boss list below map */}
       <div className="grid grid-cols-[repeat(auto-fit,minmax(280px,1fr))] gap-2">
-        {floorBosses.map((boss) => {
+        {floorBosses.map((boss, index) => {
           const nextSpawn = getNextSpawnForBoss(boss);
           const state = getSecretPeakBossState(nextSpawn);
           return (
             <div
               key={boss.id}
               className={secretPeakCardClasses(boss, state)}
+              style={{ animation: "fadeInUp 0.25s ease both", animationDelay: `${Math.min(index * 40, 200)}ms` }}
             >
+              <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: 3, borderRadius: "12px 0 0 12px", background: accentColor(nextSpawn ?? null) }} />
               {/* Compact row */}
               <div className="flex @[480px]/app:hidden items-center gap-2 flex-1">
                 {state === "cooldown" && (
@@ -863,7 +921,7 @@ function SecretPeakView({
                   </p>
                 </div>
                 <div className="flex items-center gap-2">
-                  <CountdownBadge nextSpawn={nextSpawn ?? null} />
+                  <CountdownBadge nextSpawn={nextSpawn ?? null} size="lg" />
                   {state === "cooldown" && (
                     <BellToggle
                       bossId={boss.id}
@@ -959,14 +1017,15 @@ function MirageView({
       </div>
 
       <div className="grid grid-cols-[repeat(auto-fit,minmax(280px,1fr))] gap-2">
-        {filtered.map((boss: MirageBoss) => {
+        {filtered.map((boss: MirageBoss, index) => {
           const nextSpawn = getNextSpawnFromTimes(boss.spawnTimes);
           return (
             <div
               key={boss.id}
               className="@container/card glass-card rounded-2xl overflow-hidden"
-              style={{ position: "relative" }}
+              style={{ position: "relative", animation: "fadeInUp 0.25s ease both", animationDelay: `${Math.min(index * 40, 200)}ms` }}
             >
+              <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: 3, borderRadius: "12px 0 0 12px", background: accentColor(nextSpawn), zIndex: 1 }} />
               {/* Compact row */}
               <div className="flex @[480px]/app:hidden items-center gap-2 px-3 py-2.5">
                 <BellToggle
@@ -1050,7 +1109,7 @@ function MirageView({
                     </div>
                   </div>
                 ) : (
-                  <div className="flex items-center gap-2 px-3 sm:px-4 pt-3 sm:pt-4">
+                  <div className="flex items-center gap-2 px-3 @[480px]/app:px-4 pt-3 @[480px]/app:pt-4">
                     <span
                       className="text-[10px] font-semibold uppercase tracking-widest px-2 py-0.5 rounded-full"
                       style={{
@@ -1084,7 +1143,7 @@ function MirageView({
                   </div>
                 )}
 
-                <div className="px-3 sm:px-4 pb-3 sm:pb-4 pt-2 sm:pt-3">
+                <div className="px-3 @[480px]/app:px-4 pb-3 @[480px]/app:pb-4 pt-2 @[480px]/app:pt-3">
                   <h3 className="text-sm font-bold text-zinc-100 leading-snug mb-0.5">
                     {boss.name}
                   </h3>
@@ -1118,7 +1177,7 @@ function MirageView({
                       <span className="text-[10px] uppercase tracking-widest font-semibold text-zinc-600">
                         Next Spawn
                       </span>
-                      <CountdownBadge nextSpawn={nextSpawn} large />
+                      <CountdownBadge nextSpawn={nextSpawn} size="lg" />
                     </div>
                     <BellToggle
                       bossId={boss.id}
@@ -1179,7 +1238,7 @@ function MagicSquareView({
 
   const cardClasses = (boss: MagicSquareBoss, state: SecretPeakBossState) => {
     const base =
-      "@container/card rounded-2xl border p-2 sm:p-3 backdrop-blur-sm transition-all flex flex-col gap-2";
+      "@container/card relative overflow-hidden rounded-2xl border p-2 @[480px]/app:p-3 backdrop-blur-sm transition-all flex flex-col gap-2";
     if (state === "cooldown") {
       return `${base} border-zinc-700/60 bg-zinc-900/80 text-zinc-300`;
     }
@@ -1222,14 +1281,15 @@ function MagicSquareView({
       </div>
 
       <div className="grid grid-cols-[repeat(auto-fit,minmax(280px,1fr))] gap-2">
-        {floorBosses.map((boss) => {
+        {floorBosses.map((boss, index) => {
           const nextSpawn = getNextSpawnForBoss(boss);
           const state = getState(boss);
           const canReport =
             boss.type === "chamber1" || boss.type === "chamber2";
 
           return (
-            <div key={boss.id} className={cardClasses(boss, state)}>
+            <div key={boss.id} className={cardClasses(boss, state)} style={{ animation: "fadeInUp 0.25s ease both", animationDelay: `${Math.min(index * 40, 200)}ms` }}>
+              <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: 3, borderRadius: "12px 0 0 12px", background: accentColor(nextSpawn ?? null) }} />
               {/* Compact row */}
               <div className="flex @[480px]/app:hidden items-center gap-2 flex-1">
                 <BellToggle
@@ -1295,7 +1355,7 @@ function MagicSquareView({
                     <span className="text-[10px] uppercase tracking-wide text-zinc-500">
                       Next spawn
                     </span>
-                    <CountdownBadge nextSpawn={nextSpawn ?? null} />
+                    <CountdownBadge nextSpawn={nextSpawn ?? null} size="lg" />
                   </div>
                   <BellToggle
                     bossId={boss.id}
@@ -1362,11 +1422,13 @@ function WorldBossesView({
           Daily
         </h3>
         <div className="grid grid-cols-[repeat(auto-fit,minmax(280px,1fr))] gap-2">
-          {DAILY_WORLD_BOSSES.map((boss) => (
+          {DAILY_WORLD_BOSSES.map((boss, index) => (
             <div
               key={boss.id}
-              className="@container/card glass-card rounded-xl p-2 sm:p-3"
+              className="@container/card relative overflow-hidden glass-card rounded-xl p-2 @[480px]/app:p-3"
+              style={{ animation: "fadeInUp 0.25s ease both", animationDelay: `${Math.min(index * 40, 200)}ms` }}
             >
+              <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: 3, borderRadius: "12px 0 0 12px", background: accentColor(getNextFixedSpawn(boss.spawnHoursUTC8)) }} />
               {/* Compact row */}
               <div className="flex @[480px]/app:hidden items-center gap-2 flex-1">
                 <BellToggle
@@ -1405,12 +1467,7 @@ function WorldBossesView({
                   ))}
                 </div>
                 <div className="flex items-center justify-between gap-2">
-                  <div className="flex items-center gap-2">
-                    <span className="text-[10px] uppercase tracking-wide text-zinc-500">
-                      Next spawn
-                    </span>
-                    <CountdownBadge nextSpawn={getNextFixedSpawn(boss.spawnHoursUTC8)} />
-                  </div>
+                  <CountdownBadge nextSpawn={getNextFixedSpawn(boss.spawnHoursUTC8)} size="lg" />
                   <BellToggle
                     bossId={boss.id}
                     userId={userId}
@@ -1429,11 +1486,13 @@ function WorldBossesView({
           Weekly
         </h3>
         <div className="grid grid-cols-[repeat(auto-fit,minmax(280px,1fr))] gap-2">
-          {WEEKLY_WORLD_BOSSES.map((boss) => (
+          {WEEKLY_WORLD_BOSSES.map((boss, index) => (
             <div
               key={boss.id}
-              className="@container/card glass-card rounded-xl p-2 sm:p-3"
+              className="@container/card relative overflow-hidden glass-card rounded-xl p-2 @[480px]/app:p-3"
+              style={{ animation: "fadeInUp 0.25s ease both", animationDelay: `${Math.min(index * 40, 200)}ms` }}
             >
+              <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: 3, borderRadius: "12px 0 0 12px", background: accentColor(getNextWeeklySpawn(boss.dayOfWeek, boss.spawnHourUTC8)) }} />
               {/* Compact row */}
               <div className="flex @[480px]/app:hidden items-center gap-2 flex-1">
                 <BellToggle
@@ -1484,6 +1543,7 @@ function WorldBossesView({
                         boss.dayOfWeek,
                         boss.spawnHourUTC8
                       )}
+                      size="lg"
                     />
                     <BellToggle
                       bossId={boss.id}
@@ -1523,7 +1583,7 @@ function BoostSection({
 
   return (
     <div
-      className="rounded-2xl p-4 sm:p-5"
+      className="rounded-2xl p-4 @[480px]/app:p-5"
       style={{
         background:
           "radial-gradient(circle at top left, rgba(248,113,113,0.18), transparent 55%), radial-gradient(circle at bottom right, rgba(59,130,246,0.16), transparent 55%), rgba(15,23,42,0.92)",
@@ -1728,7 +1788,7 @@ function MiningCalculatorView() {
   const current = config[activeBoost];
 
   return (
-    <div className="flex flex-col gap-4 p-3 sm:p-5">
+    <div className="flex flex-col gap-4 p-3 @[480px]/app:p-5">
       <div className="mb-1 flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-2">
           <span className="text-xs uppercase tracking-[0.2em] text-zinc-500">
@@ -1781,6 +1841,9 @@ export default function DashboardPage() {
   const [nameInput, setNameInput] = useState("");
   const [discordAuthDone, setDiscordAuthDone] = useState(false);
   const tabsRef = useRef<HTMLDivElement>(null);
+  const isDragging = useRef(false);
+  const dragStartX = useRef(0);
+  const dragScrollLeft = useRef(0);
 
   useEffect(() => {
     if (!tabsRef.current) return;
@@ -2121,7 +2184,7 @@ export default function DashboardPage() {
 
   return (
     <div className="@container/app flex h-screen flex-col overflow-hidden text-zinc-100 antialiased">
-      <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col overflow-hidden p-2 pt-2 sm:p-4">
+      <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col overflow-hidden p-2 pt-2 @[480px]/app:p-4">
         <header
           className="flex items-center justify-between gap-3 pb-3"
           style={{ borderBottom: "1px solid rgba(255,255,255,0.07)" }}
@@ -2197,95 +2260,74 @@ export default function DashboardPage() {
           </div>
         </header>
 
-        {/* Wide container — tab bar */}
-        <div className="hidden @[600px]/app:flex items-center gap-1">
-          <nav
-            ref={tabsRef}
-            className="tabs-scroll flex flex-1 gap-0 overflow-x-auto border-b border-zinc-800/80"
-            style={{
-              flexWrap: "nowrap",
-              msOverflowStyle: "none",
-              scrollbarWidth: "none",
-              WebkitOverflowScrolling: "touch",
-            }}
-          >
-            {tabs.map((tab) => (
-              <button
-                key={tab.id}
-                data-tab-id={tab.id}
-                type="button"
-                onClick={() => setActiveTab(tab.id)}
-                className={[
-                  "-mb-px shrink-0 border-b-2 px-2 py-1 text-[11px] font-semibold transition-all whitespace-nowrap",
-                  activeTab === tab.id
-                    ? "border-red-500 text-zinc-100"
-                    : "border-transparent text-zinc-500 hover:border-zinc-600 hover:text-zinc-300",
-                ].join(" ")}
-              >
-                {tab.label}
-              </button>
-            ))}
-          </nav>
+        {/* Tab bar — always visible, drag-to-scroll */}
+        <div className="flex items-center gap-1">
+          <div style={{ position: "relative", flex: 1, minWidth: 0 }}>
+            <div style={{
+              position: "absolute", inset: 0, pointerEvents: "none", zIndex: 1,
+              maskImage: "linear-gradient(to right, transparent, black 28px, black calc(100% - 28px), transparent)",
+              WebkitMaskImage: "linear-gradient(to right, transparent, black 28px, black calc(100% - 28px), transparent)",
+            }} />
+            <nav
+              ref={tabsRef}
+              className="tabs-scroll flex gap-0 overflow-x-auto border-b border-zinc-800/80"
+              style={{
+                flexWrap: "nowrap",
+                scrollbarWidth: "none",
+                WebkitOverflowScrolling: "touch",
+                userSelect: "none",
+                cursor: isDragging.current ? "grabbing" : "grab",
+              }}
+              onMouseDown={(e) => {
+                isDragging.current = true;
+                dragStartX.current = e.pageX - (tabsRef.current?.offsetLeft ?? 0);
+                dragScrollLeft.current = tabsRef.current?.scrollLeft ?? 0;
+              }}
+              onMouseMove={(e) => {
+                if (!isDragging.current || !tabsRef.current) return;
+                e.preventDefault();
+                const x = e.pageX - tabsRef.current.offsetLeft;
+                tabsRef.current.scrollLeft = dragScrollLeft.current - (x - dragStartX.current);
+              }}
+              onMouseUp={() => { isDragging.current = false; }}
+              onMouseLeave={() => { isDragging.current = false; }}
+            >
+              {tabs.map((tab) => (
+                <button
+                  key={tab.id}
+                  data-tab-id={tab.id}
+                  type="button"
+                  draggable={false}
+                  onClick={() => setActiveTab(tab.id)}
+                  className={[
+                    "-mb-px shrink-0 border-b-2 px-2 py-1 text-[11px] font-semibold transition-all whitespace-nowrap",
+                    activeTab === tab.id
+                      ? "border-red-500 text-zinc-100"
+                      : "border-transparent text-zinc-500 hover:border-zinc-600 hover:text-zinc-300",
+                  ].join(" ")}
+                >
+                  {tab.label}
+                </button>
+              ))}
+            </nav>
+          </div>
           <a
             href="/war"
-            className="ml-1 flex shrink-0 items-center gap-1 rounded-full border px-3 py-1 text-[11px] font-semibold text-red-300 transition-colors hover:bg-red-500/25"
+            className="ml-1 flex shrink-0 items-center gap-1 rounded-full border px-2 @[600px]/app:px-3 py-1 text-[11px] font-semibold text-red-300 transition-colors hover:bg-red-500/25"
             style={{
               background: "rgba(239,68,68,0.15)",
               borderColor: "rgba(239,68,68,0.4)",
             }}
           >
-            <svg
-              viewBox="0 0 24 24"
-              width={14}
-              height={14}
-              className="text-red-300"
-            >
+            <svg viewBox="0 0 24 24" width={14} height={14} className="text-red-300">
               <line x1={6} y1={6} x2={18} y2={18} stroke="currentColor" strokeWidth={2} />
               <line x1={18} y1={6} x2={6} y2={18} stroke="currentColor" strokeWidth={2} />
             </svg>
-            <span>WAR BOARD</span>
+            <span className="hidden @[600px]/app:inline">WAR BOARD</span>
           </a>
         </div>
 
-        {/* Narrow container — dropdown */}
-        <div className="flex @[600px]/app:hidden items-center gap-1 w-full">
-          <select
-            value={activeTab}
-            onChange={(e) => setActiveTab(e.target.value as Tab)}
-            className="flex-1 rounded-lg bg-zinc-800 border border-zinc-700 text-white text-sm px-3 py-2 focus:outline-none focus:ring-1 focus:ring-indigo-500"
-          >
-            <option value="world_bosses">🌍 World Bosses</option>
-            <option value="secret_peak">⛰️ Secret Peak</option>
-            <option value="magic_square">🏛️ Magic Square</option>
-            <option value="mirage">⚔️ Mirage</option>
-            <option value="square_11">🔲 Square 11</option>
-            <option value="dragon_tower">🐉 Dragon Tower</option>
-            <option value="event_mirage">🌀 Event Mirage</option>
-            <option value="purgatory">💀 Purgatory</option>
-            <option value="server">⚙️ Server</option>
-            <option value="calculator">🔢 Calculator</option>
-          </select>
-          <a
-            href="/war"
-            className="flex shrink-0 items-center gap-1 rounded-full border px-2 py-1 text-[10px] font-semibold text-red-300 transition-colors hover:bg-red-500/25"
-            style={{
-              background: "rgba(239,68,68,0.15)",
-              borderColor: "rgba(239,68,68,0.4)",
-            }}
-          >
-            <svg
-              viewBox="0 0 24 24"
-              width={12}
-              height={12}
-              className="text-red-300"
-            >
-              <line x1={6} y1={6} x2={18} y2={18} stroke="currentColor" strokeWidth={2} />
-              <line x1={18} y1={6} x2={6} y2={18} stroke="currentColor" strokeWidth={2} />
-            </svg>
-          </a>
-        </div>
-
-        <section className="flex-1 overflow-y-auto pb-2 sm:pb-4" suppressHydrationWarning>
+        <section className="flex-1 overflow-y-auto pb-2 @[480px]/app:pb-4" suppressHydrationWarning>
           {activeTab === "secret_peak" && (
             <SecretPeakView
               dynamicTimers={dynamicTimers}

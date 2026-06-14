@@ -30,10 +30,7 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="h-full flex flex-col">
-        <div className="bg-orb bg-orb-purple" aria-hidden="true" />
-        <div className="bg-orb bg-orb-cyan" aria-hidden="true" />
-        <div className="bg-orb bg-orb-red" aria-hidden="true" />
-        <div className="relative z-10 flex flex-col min-h-full">{children}</div>
+        {children}
       </body>
     </html>
   );
