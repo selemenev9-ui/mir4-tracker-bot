@@ -7,6 +7,8 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "missing_code" }, { status: 400 });
   }
 
+  console.log("[Token] Exchanging code for token...");
+
   const response = await fetch("https://discord.com/api/oauth2/token", {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -22,11 +24,14 @@ export async function POST(req: NextRequest) {
   const data = (await response.json()) as {
     access_token?: string;
     error?: string;
+    error_description?: string;
   };
+
+  console.log("[Token] Discord response status:", response.status, "error:", data.error ?? "none");
 
   if (!response.ok || !data.access_token) {
     return NextResponse.json(
-      { error: data.error ?? "token_exchange_failed" },
+      { error: data.error ?? "token_exchange_failed", description: data.error_description },
       { status: 400 },
     );
   }

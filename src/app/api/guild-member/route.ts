@@ -12,8 +12,11 @@ export async function GET(req: NextRequest) {
   }
 
   if (!BOT_TOKEN) {
+    console.error("[GuildMember] DISCORD_BOT_TOKEN not set");
     return NextResponse.json({ error: "Bot token not configured" }, { status: 500 });
   }
+
+  console.log("[GuildMember] Fetching member:", userId, "guild:", guildId);
 
   const res = await fetch(`${DISCORD_API}/guilds/${guildId}/members/${userId}`, {
     headers: {
@@ -22,8 +25,12 @@ export async function GET(req: NextRequest) {
     next: { revalidate: 0 },
   });
 
+  console.log("[GuildMember] Discord API status:", res.status);
+
   if (!res.ok) {
-    return NextResponse.json({ error: "Failed to fetch guild member" }, { status: res.status });
+    const errText = await res.text();
+    console.error("[GuildMember] Discord API error:", res.status, errText);
+    return NextResponse.json({ error: "Failed to fetch guild member", discordError: errText }, { status: res.status });
   }
 
   const member = await res.json();

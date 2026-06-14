@@ -1739,15 +1739,26 @@ export default function DashboardPage() {
         // Full Discord OAuth for real user ID and guild nickname
         try {
           const discordSdk = sdk as DiscordSDKWithCommands;
+          console.log("[OAuth] Starting Discord OAuth flow...");
 
-          const { code } = await discordSdk.commands.authorize({
-            client_id: clientId,
-            response_type: "code",
-            state: "",
-            scope: ["identify"],
-            redirect_uri: "https://mir4-tracker-bot.vercel.app",
-          } as any);
+          // Step 1: authorize
+          let code: string;
+          try {
+            const authorizeRes = await discordSdk.commands.authorize({
+              client_id: clientId,
+              response_type: "code",
+              state: "",
+              scope: ["identify"],
+              redirect_uri: "https://mir4-tracker-bot.vercel.app",
+            } as any);
+            code = authorizeRes.code;
+            console.log("[OAuth] authorize() returned code:", code ? "yes" : "no");
+          } catch (authorizeErr) {
+            console.error("[OAuth] authorize() FAILED:", authorizeErr);
+            throw new Error("authorize_failed");
+          }
 
+          // Step 2: exchange code for token
           const tokenRes = await fetch("/api/token", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -1756,34 +1767,48 @@ export default function DashboardPage() {
 
           const tokenData = (await tokenRes.json()) as {
             access_token?: string;
+            error?: string;
           };
-          const accessToken = tokenData.access_token;
+          console.log("[OAuth] /api/token response:", tokenRes.status, tokenData.error ?? "ok");
 
+          const accessToken = tokenData.access_token;
           if (!tokenRes.ok || !accessToken) {
-            throw new Error("token_exchange_failed");
+            throw new Error("token_exchange_failed: " + (tokenData.error ?? tokenRes.status));
           }
 
-          const auth = await discordSdk.commands.authenticate({
-            access_token: accessToken,
-          });
+          // Step 3: authenticate with Discord SDK
+          let auth: { user?: { id?: string; username?: string; global_name?: string | null } };
+          try {
+            auth = await discordSdk.commands.authenticate({
+              access_token: accessToken,
+            });
+            console.log("[OAuth] authenticate() returned user:", auth?.user?.id ?? "no user");
+          } catch (authErr) {
+            console.error("[OAuth] authenticate() FAILED:", authErr);
+            throw new Error("authenticate_failed");
+          }
 
           const user = auth?.user;
           let displayName = user?.global_name ?? user?.username ?? "unknown";
           let avatarUrl: string | null = null;
+          console.log("[OAuth] User from Discord:", user?.id, displayName);
 
-          // Get nick and avatar via bot token (no user consent)
+          // Step 4: Get nick and avatar via bot token (no user consent)
           try {
             const guildId = (discordSdk as unknown as { guildId?: string }).guildId;
+            console.log("[OAuth] guildId:", guildId ?? "none");
             if (guildId && user?.id) {
               const memberRes = await fetch(
                 `/api/guild-member?userId=${user.id}&guildId=${guildId}`,
               );
+              console.log("[OAuth] /api/guild-member response:", memberRes.status);
               if (memberRes.ok) {
                 const member = (await memberRes.json()) as {
                   nick?: string | null;
                   globalName?: string | null;
                   avatarUrl?: string | null;
                 };
+                console.log("[OAuth] member data:", member);
                 if (member?.nick) {
                   displayName = member.nick;
                 } else if (member?.globalName) {
@@ -1792,10 +1817,12 @@ export default function DashboardPage() {
                 if (member?.avatarUrl) {
                   avatarUrl = member.avatarUrl;
                 }
+              } else {
+                console.error("[OAuth] /api/guild-member failed:", memberRes.status, await memberRes.text());
               }
             }
-          } catch {
-            // fallback
+          } catch (memberErr) {
+            console.error("[OAuth] guild-member fetch error:", memberErr);
           }
 
           if (mounted && user?.id) {
@@ -1803,14 +1830,17 @@ export default function DashboardPage() {
             setDiscordAuthDone(true);
             localStorage.setItem("mir4_username", displayName);
             localStorage.setItem("mir4_user_id", user.id);
+            console.log("[OAuth] User set successfully:", displayName, user.id);
           }
-        } catch {
+        } catch (err) {
+          console.error("[OAuth] Overall OAuth flow failed:", err);
           // OAuth failed — fall back to manual name prompt
           if (mounted && !savedUsername) {
             setSdkError(true);
           }
         }
-      } catch {
+      } catch (outerErr) {
+        console.error("[OAuth] Discord SDK init failed:", outerErr);
         // Not in Discord (browser/web mode) — still allow use with saved username
         if (mounted && !savedUsername) {
           setSdkError(true);
