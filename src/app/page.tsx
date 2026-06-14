@@ -2377,6 +2377,17 @@ export default function DashboardPage() {
             }}
           >›</button>
           <a
+            href="/crafting"
+            className="ml-1 flex shrink-0 items-center gap-1 rounded-full border px-2 @[600px]/app:px-3 py-1 text-[11px] font-semibold text-amber-300 transition-colors hover:bg-amber-500/25"
+            style={{
+              background: "rgba(245,158,11,0.12)",
+              borderColor: "rgba(245,158,11,0.35)",
+            }}
+          >
+            <span>⛏</span>
+            <span className="hidden @[500px]/app:inline">Crafting</span>
+          </a>
+          <a
             href="/war"
             className="ml-1 flex shrink-0 items-center gap-1 rounded-full border px-2 @[600px]/app:px-3 py-1 text-[11px] font-semibold text-red-300 transition-colors hover:bg-red-500/25"
             style={{
