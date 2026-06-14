@@ -1741,17 +1741,23 @@ export default function DashboardPage() {
           const discordSdk = sdk as DiscordSDKWithCommands;
           console.log("[OAuth] Starting Discord OAuth flow...");
 
-          // Step 1: Try authenticate WITHOUT access_token — Discord SDK may use its own cache
+          // Step 1: Try reusing saved access_token from localStorage
           let auth: { user?: { id?: string; username?: string; global_name?: string | null } } | null = null;
-          try {
-            auth = await (discordSdk.commands.authenticate as any)({});
-            console.log("[OAuth] authenticate({}) succeeded, user:", auth?.user?.id ?? "none");
-          } catch (silentErr) {
-            console.log("[OAuth] authenticate({}) failed:", silentErr);
+          let accessToken: string | null = localStorage.getItem("mir4_discord_access_token");
+
+          if (accessToken) {
+            try {
+              auth = await discordSdk.commands.authenticate({ access_token: accessToken });
+              console.log("[OAuth] reused cached token, user:", auth?.user?.id ?? "none");
+            } catch (reuseErr) {
+              console.log("[OAuth] cached token expired or invalid, doing full flow:", reuseErr);
+              localStorage.removeItem("mir4_discord_access_token");
+              accessToken = null;
+              auth = null;
+            }
           }
 
-          // Step 2: If silent auth failed, do full authorize + token exchange
-          let accessToken: string | null = null;
+          // Step 2: If no valid cached token — do full authorize + token exchange
           if (!auth?.user?.id) {
             let code: string;
             try {
@@ -1786,6 +1792,9 @@ export default function DashboardPage() {
             }
 
             accessToken = newToken;
+
+            // Save token to localStorage — skip popup on next Activity open
+            localStorage.setItem("mir4_discord_access_token", accessToken);
 
             try {
               auth = await discordSdk.commands.authenticate({

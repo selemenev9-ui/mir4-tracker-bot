@@ -2359,17 +2359,23 @@ function WarPageInner() {
         .then(async () => {
           const discordSdk = sdk as DiscordSDKWithCommands;
           try {
-            // Step 1: Try authenticate WITHOUT access_token — Discord SDK may use its own cache
+            // Step 1: Try reusing saved access_token from localStorage
             let auth: { user?: { id?: string; username?: string; global_name?: string | null } } | null = null;
-            try {
-              auth = await (discordSdk.commands.authenticate as any)({});
-              console.log("[OAuth] war authenticate({}) succeeded:", auth?.user?.id ?? "none");
-            } catch (silentErr) {
-              console.log("[OAuth] war authenticate({}) failed:", silentErr);
+            let accessToken: string | null = localStorage.getItem("mir4_discord_access_token");
+
+            if (accessToken) {
+              try {
+                auth = await discordSdk.commands.authenticate({ access_token: accessToken });
+                console.log("[OAuth] war reused cached token, user:", auth?.user?.id ?? "none");
+              } catch (reuseErr) {
+                console.log("[OAuth] war cached token expired or invalid:", reuseErr);
+                localStorage.removeItem("mir4_discord_access_token");
+                accessToken = null;
+                auth = null;
+              }
             }
 
-            // Step 2: If silent auth failed, do full authorize flow
-            let accessToken: string | null = null;
+            // Step 2: If no valid cached token — do full authorize + token exchange
             if (!auth?.user?.id) {
               const { code } = await discordSdk.commands.authorize({
                 client_id: process.env.NEXT_PUBLIC_DISCORD_APP_ID!,
@@ -2394,6 +2400,10 @@ function WarPageInner() {
               }
 
               accessToken = newToken;
+
+              // Save token to localStorage — skip popup on next Activity open
+              localStorage.setItem("mir4_discord_access_token", accessToken);
+
               auth = await discordSdk.commands.authenticate({
                 access_token: accessToken,
               });
