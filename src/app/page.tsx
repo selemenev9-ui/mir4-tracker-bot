@@ -54,7 +54,6 @@ type DiscordSDKWithCommands = DiscordSDK & {
       client_id: string;
       response_type: "code";
       state: string;
-      prompt: "none";
       scope: string[];
     }): Promise<{ code: string }>;
     authenticate(args: {
@@ -1745,7 +1744,6 @@ export default function DashboardPage() {
             client_id: clientId,
             response_type: "code",
             state: "",
-            prompt: "none",
             scope: ["identify"],
           });
 

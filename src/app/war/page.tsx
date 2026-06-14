@@ -24,7 +24,6 @@ type DiscordSDKWithCommands = DiscordSDK & {
       client_id: string;
       response_type: "code";
       state: string;
-      prompt: "none";
       scope: string[];
     }): Promise<{ code: string }>;
     authenticate(args: {
@@ -2355,7 +2354,6 @@ function WarPageInner() {
               client_id: process.env.NEXT_PUBLIC_DISCORD_APP_ID!,
               response_type: "code",
               state: "",
-              prompt: "none",
               scope: ["identify"],
             });
 
