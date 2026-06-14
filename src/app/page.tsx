@@ -1741,23 +1741,17 @@ export default function DashboardPage() {
           const discordSdk = sdk as DiscordSDKWithCommands;
           console.log("[OAuth] Starting Discord OAuth flow...");
 
-          // Step 1: Try reusing saved access token from localStorage
-          let accessToken = localStorage.getItem("mir4_discord_access_token");
+          // Step 1: Try authenticate WITHOUT access_token — Discord SDK may use its own cache
           let auth: { user?: { id?: string; username?: string; global_name?: string | null } } | null = null;
-
-          if (accessToken) {
-            try {
-              auth = await discordSdk.commands.authenticate({ access_token: accessToken });
-              console.log("[OAuth] Reused saved token, user:", auth?.user?.id ?? "none");
-            } catch (reuseErr) {
-              console.log("[OAuth] Saved token expired, clearing...");
-              localStorage.removeItem("mir4_discord_access_token");
-              accessToken = null;
-              auth = null;
-            }
+          try {
+            auth = await (discordSdk.commands.authenticate as any)({});
+            console.log("[OAuth] authenticate({}) succeeded, user:", auth?.user?.id ?? "none");
+          } catch (silentErr) {
+            console.log("[OAuth] authenticate({}) failed:", silentErr);
           }
 
-          // Step 2: If no valid saved token, do full authorize + token exchange
+          // Step 2: If silent auth failed, do full authorize + token exchange
+          let accessToken: string | null = null;
           if (!auth?.user?.id) {
             let code: string;
             try {
@@ -1797,7 +1791,7 @@ export default function DashboardPage() {
               auth = await discordSdk.commands.authenticate({
                 access_token: accessToken,
               });
-              console.log("[OAuth] authenticate() returned user:", auth?.user?.id ?? "no user");
+              console.log("[OAuth] authenticate(token) returned user:", auth?.user?.id ?? "no user");
             } catch (authErr) {
               console.error("[OAuth] authenticate() FAILED:", authErr);
               throw new Error("authenticate_failed");
@@ -1850,9 +1844,6 @@ export default function DashboardPage() {
             setDiscordAuthDone(true);
             localStorage.setItem("mir4_username", displayName);
             localStorage.setItem("mir4_user_id", user.id);
-            if (accessToken) {
-              localStorage.setItem("mir4_discord_access_token", accessToken);
-            }
             console.log("[OAuth] User set successfully:", displayName, user.id);
           }
         } catch (err) {

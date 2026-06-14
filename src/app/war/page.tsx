@@ -2350,21 +2350,17 @@ function WarPageInner() {
         .then(async () => {
           const discordSdk = sdk as DiscordSDKWithCommands;
           try {
-            // Step 1: Try reusing saved access token from localStorage
-            let accessToken = localStorage.getItem("mir4_discord_access_token");
+            // Step 1: Try authenticate WITHOUT access_token — Discord SDK may use its own cache
             let auth: { user?: { id?: string; username?: string; global_name?: string | null } } | null = null;
-
-            if (accessToken) {
-              try {
-                auth = await discordSdk.commands.authenticate({ access_token: accessToken });
-              } catch {
-                localStorage.removeItem("mir4_discord_access_token");
-                accessToken = null;
-                auth = null;
-              }
+            try {
+              auth = await (discordSdk.commands.authenticate as any)({});
+              console.log("[OAuth] war authenticate({}) succeeded:", auth?.user?.id ?? "none");
+            } catch (silentErr) {
+              console.log("[OAuth] war authenticate({}) failed:", silentErr);
             }
 
-            // Step 2: If no valid saved token, do full authorize flow
+            // Step 2: If silent auth failed, do full authorize flow
+            let accessToken: string | null = null;
             if (!auth?.user?.id) {
               const { code } = await discordSdk.commands.authorize({
                 client_id: process.env.NEXT_PUBLIC_DISCORD_APP_ID!,
@@ -2427,9 +2423,6 @@ function WarPageInner() {
 
             setUsername(displayName);
             setDiscordUserId(user?.id ?? null);
-            if (accessToken) {
-              localStorage.setItem("mir4_discord_access_token", accessToken);
-            }
             // TODO: использовать avatarUrl если добавлено состояние аватарки
           } catch {
             setUsername("unknown");
