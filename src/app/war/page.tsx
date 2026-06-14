@@ -1834,6 +1834,18 @@ function MapBoard({
   const [categoryFilter, setCategoryFilter] = useState<ZoneCategory | "all">(
     "all"
   );
+  const tabsRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!tabsRef.current) return;
+    const activeBtn = tabsRef.current.querySelector(
+      `[data-tab-id="${categoryFilter}"]`
+    ) as HTMLElement | null;
+    if (activeBtn) {
+      activeBtn.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+    }
+  }, [categoryFilter]);
+
   const [selectedMapId, setSelectedMapId] = useState<string | null>(() => {
     const keys = Object.keys(MAP_FILES);
     return keys.length > 0 ? keys[0] : null;
@@ -2097,15 +2109,27 @@ function MapBoard({
 
   return (
     <div className="flex flex-col gap-3">
-      <div>
+      <div className="flex items-center gap-1">
+        <button
+          type="button"
+          aria-label="Scroll tabs left"
+          onClick={() => {
+            tabsRef.current?.scrollBy({ left: -150, behavior: "smooth" });
+          }}
+          className="shrink-0 rounded-md border border-zinc-700/60 bg-zinc-900/70 px-1.5 py-1 text-xs text-zinc-400 backdrop-blur-sm transition-colors hover:bg-zinc-800 hover:text-zinc-200"
+        >
+          &lt;
+        </button>
         <div
-          className="mb-2 flex gap-1 overflow-x-auto rounded-full border border-zinc-800 bg-zinc-950/60 px-1 py-1 text-xs [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          ref={tabsRef}
+          className="mb-2 flex flex-1 gap-1 overflow-x-auto rounded-full border border-zinc-800 bg-zinc-950/60 px-1 py-1 text-xs [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
         >
           {categoryTabs.map((tab) => {
             const active = categoryFilter === tab.id;
             return (
               <button
                 key={tab.id}
+                data-tab-id={tab.id}
                 type="button"
                 onClick={() => setCategoryFilter(tab.id)}
                 className="rounded-full font-medium"
@@ -2127,29 +2151,39 @@ function MapBoard({
             );
           })}
         </div>
+        <button
+          type="button"
+          aria-label="Scroll tabs right"
+          onClick={() => {
+            tabsRef.current?.scrollBy({ left: 150, behavior: "smooth" });
+          }}
+          className="shrink-0 rounded-md border border-zinc-700/60 bg-zinc-900/70 px-1.5 py-1 text-xs text-zinc-400 backdrop-blur-sm transition-colors hover:bg-zinc-800 hover:text-zinc-200"
+        >
+          &gt;
+        </button>
+      </div>
 
-        <div style={{ width: "100%" }}>
-          <select
-            value={selectedMapId ?? ""}
-            onChange={(e) => {
-              const value = e.target.value;
-              setSelectedMapId(value === "" ? null : value);
-            }}
-            className="w-full rounded-lg border border-zinc-800 bg-zinc-950/80 px-3 py-2 text-sm text-zinc-100 outline-none focus:border-rose-500 focus:ring-1 focus:ring-rose-500"
-          >
-            <option value="">— Select a map —</option>
-            {filteredMaps.map((map) => {
-              const count = markerCounts[map.id] ?? 0;
-              const label =
-                count > 0 ? `${map.name} (${count})` : map.name;
-              return (
-                <option key={map.id} value={map.id}>
-                  {label}
-                </option>
-              );
-            })}
-          </select>
-        </div>
+      <div style={{ width: "100%" }}>
+        <select
+          value={selectedMapId ?? ""}
+          onChange={(e) => {
+            const value = e.target.value;
+            setSelectedMapId(value === "" ? null : value);
+          }}
+          className="w-full rounded-lg border border-zinc-800 bg-zinc-950/80 px-3 py-2 text-sm text-zinc-100 outline-none focus:border-rose-500 focus:ring-1 focus:ring-rose-500"
+        >
+          <option value="">— Select a map —</option>
+          {filteredMaps.map((map) => {
+            const count = markerCounts[map.id] ?? 0;
+            const label =
+              count > 0 ? `${map.name} (${count})` : map.name;
+            return (
+              <option key={map.id} value={map.id}>
+                {label}
+              </option>
+            );
+          })}
+        </select>
       </div>
 
       <div className="min-w-0 flex-1 space-y-2">

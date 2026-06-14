@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import { DiscordSDK } from "@discord/embedded-app-sdk";
 import {
@@ -86,12 +86,12 @@ function Square11View({
 			</h3>
 			<div
 				className="grid gap-2"
-				style={{ gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))" }}
+				style={{ gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))" }}
 			>
 				{SQUARE_11_EVENTS.map((event) => (
 					<div
 						key={event.id}
-						className="glass-card flex flex-col justify-between rounded-xl p-3"
+						className="glass-card flex flex-col justify-between rounded-xl p-2 sm:p-3"
 					>
 						<div className="mb-2 flex items-center justify-between gap-2">
 							<h4 className="text-sm font-semibold text-zinc-100">
@@ -151,12 +151,12 @@ function DragonTowerView({
 			</h3>
 			<div
 				className="grid gap-2"
-				style={{ gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))" }}
+				style={{ gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))" }}
 			>
 				{DRAGON_TOWER_EVENTS.map((event) => (
 					<div
 						key={event.id}
-						className="glass-card flex flex-col justify-between rounded-xl p-3"
+						className="glass-card flex flex-col justify-between rounded-xl p-2 sm:p-3"
 					>
 						<div className="mb-2 flex items-center justify-between gap-2">
 							<h4 className="text-sm font-semibold text-zinc-100">
@@ -216,12 +216,12 @@ function EventMirageView({
 			</h3>
 			<div
 				className="grid gap-2"
-				style={{ gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))" }}
+				style={{ gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))" }}
 			>
 				{EVENT_MIRAGE_EVENTS.map((event) => (
 					<div
 						key={event.id}
-						className="glass-card flex flex-col justify-between rounded-xl p-3"
+						className="glass-card flex flex-col justify-between rounded-xl p-2 sm:p-3"
 					>
 						<div className="mb-2 flex items-center justify-between gap-2">
 							<h4 className="text-sm font-semibold text-zinc-100">
@@ -281,12 +281,12 @@ function PurgatoryView({
 			</h3>
 			<div
 				className="grid gap-2"
-				style={{ gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))" }}
+				style={{ gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))" }}
 			>
 				{PURGATORY_EVENTS.map((event) => (
 					<div
 						key={event.id}
-						className="glass-card flex flex-col justify-between rounded-xl p-3"
+						className="glass-card flex flex-col justify-between rounded-xl p-2 sm:p-3"
 					>
 						<div className="mb-2 flex items-center justify-between gap-2">
 							<h4 className="text-sm font-semibold text-zinc-100">
@@ -346,12 +346,12 @@ function ServerView({
 			</h3>
 			<div
 				className="grid gap-2"
-				style={{ gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))" }}
+				style={{ gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))" }}
 			>
 				{SERVER_EVENTS.map((event) => (
 					<div
 						key={event.id}
-						className="glass-card flex flex-col justify-between rounded-xl p-3"
+						className="glass-card flex flex-col justify-between rounded-xl p-2 sm:p-3"
 					>
 						<div className="mb-2 flex items-center justify-between gap-2">
 							<div>
@@ -609,7 +609,7 @@ function secretPeakPinClasses(boss: SecretPeakBoss, state: SecretPeakBossState) 
 
 function secretPeakCardClasses(boss: SecretPeakBoss, state: SecretPeakBossState) {
   const base =
-    "flex items-center justify-between rounded-xl px-3 py-2.5 glass-card";
+    "flex items-center justify-between rounded-xl px-2 sm:px-3 py-2 sm:py-2.5 glass-card";
 
   if (state === "cooldown") return base;
 
@@ -838,7 +838,7 @@ function SecretPeakView({
       {/* Boss list below map */}
       <div
         className="grid gap-2"
-        style={{ gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))" }}
+        style={{ gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))" }}
       >
         {floorBosses.map((boss) => {
           const nextSpawn = getNextSpawnForBoss(boss);
@@ -956,7 +956,7 @@ function MirageView({
 
       <div
         className="grid gap-2"
-        style={{ gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))" }}
+        style={{ gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))" }}
       >
         {filtered.map((boss: MirageBoss) => {
           const nextSpawn = getNextSpawnFromTimes(boss.spawnTimes);
@@ -1035,7 +1035,7 @@ function MirageView({
                   </div>
                 </div>
               ) : (
-                <div className="flex items-center gap-2 px-4 pt-4">
+                <div className="flex items-center gap-2 px-3 sm:px-4 pt-3 sm:pt-4">
                   <span
                     className="text-[10px] font-semibold uppercase tracking-widest px-2 py-0.5 rounded-full"
                     style={{
@@ -1069,7 +1069,7 @@ function MirageView({
                 </div>
               )}
 
-	              <div className="px-4 pb-4 pt-3">
+	              <div className="px-3 sm:px-4 pb-3 sm:pb-4 pt-2 sm:pt-3">
                 <h3 className="text-sm font-bold text-zinc-100 leading-snug mb-0.5">
                   {boss.name}
                 </h3>
@@ -1163,7 +1163,7 @@ function MagicSquareView({
 
   const cardClasses = (boss: MagicSquareBoss, state: SecretPeakBossState) => {
     const base =
-      "rounded-2xl border p-3 backdrop-blur-sm transition-all flex flex-col gap-2";
+      "rounded-2xl border p-2 sm:p-3 backdrop-blur-sm transition-all flex flex-col gap-2";
     if (state === "cooldown") {
       return `${base} border-zinc-700/60 bg-zinc-900/80 text-zinc-300`;
     }
@@ -1207,7 +1207,7 @@ function MagicSquareView({
 
       <div
         className="grid gap-2"
-        style={{ gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))" }}
+        style={{ gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))" }}
       >
         {floorBosses.map((boss) => {
           const nextSpawn = getNextSpawnForBoss(boss);
@@ -1316,12 +1316,12 @@ function WorldBossesView({
         </h3>
         <div
           className="grid gap-2"
-          style={{ gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))" }}
+          style={{ gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))" }}
         >
           {DAILY_WORLD_BOSSES.map((boss) => (
             <div
               key={boss.id}
-              className="glass-card rounded-xl p-3"
+              className="glass-card rounded-xl p-2 sm:p-3"
             >
               <div className="mb-3 flex items-start justify-between gap-2">
                 <div>
@@ -1371,12 +1371,12 @@ function WorldBossesView({
         </h3>
         <div
           className="grid gap-2"
-          style={{ gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))" }}
+          style={{ gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))" }}
         >
           {WEEKLY_WORLD_BOSSES.map((boss) => (
             <div
               key={boss.id}
-              className="glass-card rounded-xl p-3"
+              className="glass-card rounded-xl p-2 sm:p-3"
             >
               <div className="mb-2 flex items-start justify-between gap-2">
                 <div className="flex-1">
@@ -1704,6 +1704,17 @@ export default function DashboardPage() {
   const [showNamePrompt, setShowNamePrompt] = useState(false);
   const [nameInput, setNameInput] = useState("");
   const [discordAuthDone, setDiscordAuthDone] = useState(false);
+  const tabsRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!tabsRef.current) return;
+    const activeBtn = tabsRef.current.querySelector(
+      `[data-tab-id="${activeTab}"]`
+    ) as HTMLElement | null;
+    if (activeBtn) {
+      activeBtn.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+    }
+  }, [activeTab]);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -2034,13 +2045,13 @@ export default function DashboardPage() {
 
   return (
     <div className="flex h-screen flex-col overflow-hidden text-zinc-100 antialiased">
-      <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col overflow-hidden px-3 pt-3 sm:px-5">
+      <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col overflow-hidden p-2 pt-2 sm:p-4">
         <header
           className="flex items-center justify-between gap-3 pb-3"
           style={{ borderBottom: "1px solid rgba(255,255,255,0.07)" }}
         >
           <h1
-            className="shrink-0 text-base font-bold tracking-tight"
+            className="shrink-0 text-sm sm:text-base font-bold tracking-tight"
             style={{
               background: "linear-gradient(135deg, #e2e8f0 0%, #94a3b8 100%)",
               WebkitBackgroundClip: "text",
@@ -2110,11 +2121,21 @@ export default function DashboardPage() {
           </div>
         </header>
 
-        <div className="flex items-center justify-between gap-2">
+        <div className="flex items-center gap-1">
+          <button
+            type="button"
+            aria-label="Scroll tabs left"
+            onClick={() => {
+              tabsRef.current?.scrollBy({ left: -150, behavior: "smooth" });
+            }}
+            className="shrink-0 rounded-md border border-zinc-700/60 bg-zinc-900/70 px-1.5 py-1 text-zinc-400 backdrop-blur-sm transition-colors hover:bg-zinc-800 hover:text-zinc-200"
+          >
+            &lt;
+          </button>
           <nav
-            className="tabs-scroll flex gap-0 overflow-x-scroll border-b border-zinc-800/80"
+            ref={tabsRef}
+            className="tabs-scroll flex flex-1 gap-0 overflow-x-auto border-b border-zinc-800/80"
             style={{
-              overflowX: "scroll",
               flexWrap: "nowrap",
               msOverflowStyle: "none",
               scrollbarWidth: "none",
@@ -2124,6 +2145,7 @@ export default function DashboardPage() {
             {tabs.map((tab) => (
               <button
                 key={tab.id}
+                data-tab-id={tab.id}
                 type="button"
                 onClick={() => setActiveTab(tab.id)}
                 className={[
@@ -2137,9 +2159,19 @@ export default function DashboardPage() {
               </button>
             ))}
           </nav>
+          <button
+            type="button"
+            aria-label="Scroll tabs right"
+            onClick={() => {
+              tabsRef.current?.scrollBy({ left: 150, behavior: "smooth" });
+            }}
+            className="shrink-0 rounded-md border border-zinc-700/60 bg-zinc-900/70 px-1.5 py-1 text-zinc-400 backdrop-blur-sm transition-colors hover:bg-zinc-800 hover:text-zinc-200"
+          >
+            &gt;
+          </button>
           <a
             href="/war"
-            className="ml-2 flex shrink-0 items-center gap-1 rounded-full border px-3 py-1 text-[11px] font-semibold text-red-300 transition-colors hover:bg-red-500/25"
+            className="ml-1 flex shrink-0 items-center gap-1 rounded-full border px-2 py-1 text-[10px] font-semibold text-red-300 transition-colors hover:bg-red-500/25 sm:px-3 sm:text-[11px]"
             style={{
               background: "rgba(239,68,68,0.15)",
               borderColor: "rgba(239,68,68,0.4)",
@@ -2147,18 +2179,28 @@ export default function DashboardPage() {
           >
             <svg
               viewBox="0 0 24 24"
-              width={14}
-              height={14}
-              className="text-red-300"
+              width={12}
+              height={12}
+              className="text-red-300 sm:hidden"
             >
               <line x1={6} y1={6} x2={18} y2={18} stroke="currentColor" strokeWidth={2} />
               <line x1={18} y1={6} x2={6} y2={18} stroke="currentColor" strokeWidth={2} />
             </svg>
-            <span>WAR BOARD</span>
+            <svg
+              viewBox="0 0 24 24"
+              width={14}
+              height={14}
+              className="hidden text-red-300 sm:block"
+            >
+              <line x1={6} y1={6} x2={18} y2={18} stroke="currentColor" strokeWidth={2} />
+              <line x1={18} y1={6} x2={6} y2={18} stroke="currentColor" strokeWidth={2} />
+            </svg>
+            <span className="hidden sm:inline">WAR BOARD</span>
+            <span className="sm:hidden">WAR</span>
           </a>
         </div>
 
-        <section className="flex-1 overflow-y-auto pb-4" suppressHydrationWarning>
+        <section className="flex-1 overflow-y-auto pb-2 sm:pb-4" suppressHydrationWarning>
           {activeTab === "secret_peak" && (
             <SecretPeakView
               dynamicTimers={dynamicTimers}
