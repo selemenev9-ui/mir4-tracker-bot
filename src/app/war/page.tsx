@@ -2356,7 +2356,7 @@ function WarPageInner() {
               response_type: "code",
               state: "",
               prompt: "none",
-              scope: ["identify", "guilds.members.read"],
+              scope: ["identify"],
             });
 
             const tokenRes = await fetch("/api/token", {
@@ -2381,37 +2381,38 @@ function WarPageInner() {
 
             const user = auth?.user;
             let displayName = user?.global_name ?? user?.username ?? "unknown";
+            let avatarUrl: string | null = null;
 
-            // Попытка получить ник на текущем сервере (guild nickname)
+            // Получить nick и avatar через bot token (без consent)
             try {
-              const guildId = (discordSdk as DiscordSDKWithCommands).guildId as
-                | string
-                | undefined;
-              if (guildId && accessToken) {
+              const guildId = (discordSdk as unknown as { guildId?: string }).guildId;
+              if (guildId && user?.id) {
                 const memberRes = await fetch(
-                  `https://discord.com/api/v10/users/@me/guilds/${guildId}/member`,
-                  {
-                    headers: { Authorization: `Bearer ${accessToken}` },
-                  },
+                  `/api/guild-member?userId=${user.id}&guildId=${guildId}`,
                 );
                 if (memberRes.ok) {
                   const member = (await memberRes.json()) as {
                     nick?: string | null;
-                    user?: { global_name?: string | null; username?: string | null };
+                    globalName?: string | null;
+                    avatarUrl?: string | null;
                   };
                   if (member?.nick) {
                     displayName = member.nick;
-                  } else if (member?.user?.global_name) {
-                    displayName = member.user.global_name;
+                  } else if (member?.globalName) {
+                    displayName = member.globalName;
+                  }
+                  if (member?.avatarUrl) {
+                    avatarUrl = member.avatarUrl;
                   }
                 }
               }
             } catch {
-              // оставляем displayName как есть при ошибке
+              // fallback — оставляем displayName как есть
             }
 
             setUsername(displayName);
             setDiscordUserId(user?.id ?? null);
+            // TODO: использовать avatarUrl если добавлено состояние аватарки
           } catch {
             setUsername("unknown");
             setDiscordUserId(null);
@@ -2476,11 +2477,22 @@ function WarPageInner() {
     <main className="min-h-screen bg-[#030711] text-zinc-100">
       <div className="mx-auto flex max-w-6xl flex-col gap-4 px-4 py-4">
         <header className="flex flex-col gap-3 border-b border-zinc-800 pb-3 md:flex-row md:items-center md:justify-between">
-          <div>
-            <h1 className="text-sm font-semibold tracking-tight text-zinc-100 md:text-base">
-              WAR BOARD
-            </h1>
-            <p className="text-xs text-zinc-500">Tactical coordination</p>
+          <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={() => {
+                window.location.href = "/";
+              }}
+              className="flex items-center gap-1 rounded-full bg-white/10 px-3 py-1 text-xs font-medium text-zinc-100 transition-colors hover:bg-white/20"
+            >
+              ← Boss Tracker
+            </button>
+            <div>
+              <h1 className="text-sm font-semibold tracking-tight text-zinc-100 md:text-base">
+                WAR BOARD
+              </h1>
+              <p className="text-xs text-zinc-500">Tactical coordination</p>
+            </div>
           </div>
           <div className="flex flex-wrap items-center gap-2">
             <div
