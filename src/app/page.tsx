@@ -2227,11 +2227,14 @@ export default function DashboardPage() {
           className="flex items-center justify-between gap-2 pb-1.5"
           style={{ borderBottom: "1px solid rgba(255,255,255,0.07)" }}
         >
-          <h1
-            className="shrink-0 text-sm @[500px]/app:text-base font-bold tracking-tight text-zinc-100"
-          >
-            MIR4 Boss Tracker
-          </h1>
+          <div className="shrink-0 flex flex-col gap-0">
+            <h1 className="text-sm @[500px]/app:text-base font-bold tracking-tight text-zinc-100">
+              MIR4 Boss Tracker
+            </h1>
+            <span className="hidden @[400px]/app:inline text-[10px] text-zinc-500 leading-tight">
+              built for guilds · by devilren (AKA Balor)
+            </span>
+          </div>
           <div className="flex min-w-0 items-center gap-2">
             <span className="hidden @[500px]/app:block">
               <ServerClock />
