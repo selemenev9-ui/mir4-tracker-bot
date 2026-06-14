@@ -47,6 +47,28 @@ type DynamicTimerMap = Record<
     updatedBy: string;
   }
 >;
+
+type DiscordSDKWithCommands = DiscordSDK & {
+  commands: {
+    authorize(args: {
+      client_id: string;
+      response_type: "code";
+      state: string;
+      prompt: "none";
+      scope: string[];
+    }): Promise<{ code: string }>;
+    authenticate(args: {
+      access_token: string;
+    }): Promise<{
+      user?: {
+        id?: string;
+        username?: string;
+        global_name?: string | null;
+      };
+    }>;
+  };
+};
+
 // ─── Fixed-Hour Events Views (Square 11, Dragon Tower, Event Mirage, Purgatory, Server) ──
 
 function Square11View({
@@ -1682,6 +1704,7 @@ export default function DashboardPage() {
   );
   const [showNamePrompt, setShowNamePrompt] = useState(false);
   const [nameInput, setNameInput] = useState("");
+  const [discordAuthDone, setDiscordAuthDone] = useState(false);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -1694,7 +1717,6 @@ export default function DashboardPage() {
       if (savedUsername && savedId && mounted) {
         setCurrentUser({ id: savedId, username: savedUsername });
         setSdkReady(true);
-        // Still try Discord SDK in background to get real identity
       }
 
       try {
@@ -1707,12 +1729,87 @@ export default function DashboardPage() {
 
         const sdk = new DiscordSDK(clientId);
         await sdk.ready();
-        // SDK is ready — we're inside Discord Activity
-        // Mark as Discord-connected (no full OAuth needed for basic functionality)
+
         if (mounted) {
           setSdkReady(true);
           if (!savedUsername) {
             setSdkError(false);
+          }
+        }
+
+        // Full Discord OAuth for real user ID and guild nickname
+        try {
+          const discordSdk = sdk as DiscordSDKWithCommands;
+
+          const { code } = await discordSdk.commands.authorize({
+            client_id: clientId,
+            response_type: "code",
+            state: "",
+            prompt: "none",
+            scope: ["identify", "guilds.members.read"],
+          });
+
+          const tokenRes = await fetch("/api/token", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ code }),
+          });
+
+          const tokenData = (await tokenRes.json()) as {
+            access_token?: string;
+          };
+          const accessToken = tokenData.access_token;
+
+          if (!tokenRes.ok || !accessToken) {
+            throw new Error("token_exchange_failed");
+          }
+
+          const auth = await discordSdk.commands.authenticate({
+            access_token: accessToken,
+          });
+
+          const user = auth?.user;
+          let displayName = user?.global_name ?? user?.username ?? "unknown";
+
+          // Try to fetch guild nickname
+          try {
+            const guildId = (discordSdk as unknown as { guildId?: string }).guildId;
+            if (guildId && accessToken) {
+              const memberRes = await fetch(
+                `https://discord.com/api/v10/users/@me/guilds/${guildId}/member`,
+                {
+                  headers: { Authorization: `Bearer ${accessToken}` },
+                },
+              );
+              if (memberRes.ok) {
+                const member = (await memberRes.json()) as {
+                  nick?: string | null;
+                  user?: {
+                    global_name?: string | null;
+                    username?: string | null;
+                  };
+                };
+                if (member?.nick) {
+                  displayName = member.nick;
+                } else if (member?.user?.global_name) {
+                  displayName = member.user.global_name;
+                }
+              }
+            }
+          } catch {
+            // keep displayName as-is on error
+          }
+
+          if (mounted && user?.id) {
+            setCurrentUser({ id: user.id, username: displayName });
+            setDiscordAuthDone(true);
+            localStorage.setItem("mir4_username", displayName);
+            localStorage.setItem("mir4_user_id", user.id);
+          }
+        } catch {
+          // OAuth failed — fall back to manual name prompt
+          if (mounted && !savedUsername) {
+            setSdkError(true);
           }
         }
       } catch {
@@ -1850,15 +1947,15 @@ export default function DashboardPage() {
     [currentUser]
   );
 
-  // Show name prompt if SDK initialized but no user yet
+  // Show name prompt if SDK initialized but no user yet and Discord auth not done
   useEffect(() => {
-    if (!currentUser && (sdkReady || sdkError)) {
+    if (!currentUser && (sdkReady || sdkError) && !discordAuthDone) {
       const timer = setTimeout(() => {
         if (!currentUser) setShowNamePrompt(true);
       }, 1500);
       return () => clearTimeout(timer);
     }
-  }, [sdkReady, sdkError, currentUser]);
+  }, [sdkReady, sdkError, currentUser, discordAuthDone]);
 
   const handleSaveName = useCallback(() => {
     const trimmed = nameInput.trim();
@@ -2069,7 +2166,7 @@ export default function DashboardPage() {
       </main>
 
       {/* Name Prompt Modal */}
-      {showNamePrompt && !currentUser && (
+      {showNamePrompt && !currentUser && !discordAuthDone && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center"
           style={{
