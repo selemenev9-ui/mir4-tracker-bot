@@ -86,12 +86,22 @@ async function sendPersonalDMs(
 
   if (!reminders?.length) return;
 
-  for (const row of reminders as Array<{ user_id: string }>) {
-    const channelId = await openDmChannel(row.user_id);
+  const userIds = (reminders as Array<{ user_id: string }>).map((r) => r.user_id);
+
+  // Send DM to each subscriber
+  for (const userId of userIds) {
+    const channelId = await openDmChannel(userId);
     if (channelId) {
       await sendDM(channelId, message);
     }
   }
+
+  // Delete reminders after sending — one-time only
+  await supabase
+    .from("personal_reminders")
+    .delete()
+    .eq("boss_id", bossId)
+    .in("user_id", userIds);
 }
 
 async function hasNotified(
