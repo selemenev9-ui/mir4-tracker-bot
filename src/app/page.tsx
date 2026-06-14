@@ -685,6 +685,7 @@ function SecretPeakView({
   const [selectedFloor, setSelectedFloor] = useState(1);
   const [activePin, setActivePin] = useState<SecretPeakBoss | null>(null);
   const [reporting, setReporting] = useState(false);
+  const [reportingId, setReportingId] = useState<string | null>(null);
   const [reportMsg, setReportMsg] = useState<
     { type: "ok" | "err"; text: string } | null
   >(null);
@@ -822,7 +823,7 @@ function SecretPeakView({
                 <>
                   {(() => {
                     const nextSpawn = getNextSpawnForBoss(activePin);
-                    if (!nextSpawn) {
+                    if (!nextSpawn || nextSpawn.getTime() <= Date.now()) {
                       return (
                         <button
                           type="button"
@@ -906,6 +907,25 @@ function SecretPeakView({
                   {boss.type === "red_upper" && "Upper"}
                 </span>
                 <CountdownBadge nextSpawn={nextSpawn ?? null} />
+                {(boss.type === "teal" || boss.type === "gold") && state !== "cooldown" && currentUser && (
+                  <button
+                    type="button"
+                    disabled={reportingId === boss.id}
+                    onClick={async () => {
+                      if (!currentUser) return;
+                      setReportingId(boss.id);
+                      try {
+                        await onReportKill(boss.id, boss.name, boss.floor);
+                      } finally {
+                        setReportingId(null);
+                      }
+                    }}
+                    className="rounded-md border border-emerald-500/80 bg-emerald-500/20 px-1.5 py-0.5 text-[10px] text-emerald-300 transition-colors hover:bg-emerald-500/30 disabled:opacity-40"
+                    title="Report Kill"
+                  >
+                    ⚔️
+                  </button>
+                )}
               </div>
               {/* Full card */}
               <div className="hidden @[700px]/app:flex items-center justify-between flex-1">
@@ -929,6 +949,24 @@ function SecretPeakView({
                       initialSubscribed={subscribedBossIds.has(boss.id)}
                       onToggle={onBellToggle}
                     />
+                  )}
+                  {(boss.type === "teal" || boss.type === "gold") && state !== "cooldown" && (
+                    <button
+                      type="button"
+                      disabled={!currentUser || reportingId === boss.id}
+                      onClick={async () => {
+                        if (!currentUser) return;
+                        setReportingId(boss.id);
+                        try {
+                          await onReportKill(boss.id, boss.name, boss.floor);
+                        } finally {
+                          setReportingId(null);
+                        }
+                      }}
+                      className="rounded-xl border border-emerald-500/80 bg-emerald-500/20 px-2 py-1 text-xs font-semibold text-emerald-300 transition-colors hover:bg-emerald-500/30 disabled:cursor-not-allowed disabled:opacity-40"
+                    >
+                      {reportingId === boss.id ? "Reporting..." : currentUser ? "Report Kill" : "Login required"}
+                    </button>
                   )}
                 </div>
               </div>
