@@ -8,6 +8,7 @@ import {
   PURGATORY_EVENTS,
   SERVER_EVENTS,
   MAGIC_SQUARE_BOSSES,
+  MIRAGE_BOSSES,
 } from "@/lib/gameData";
 import { getSupabaseClient } from "@/lib/supabase";
 
@@ -180,6 +181,25 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     }
   }
 
+  // ── 2. Mirage Bosses ────────────────────────────────────────────────────────
+  for (const boss of MIRAGE_BOSSES) {
+    for (const spawnTimeStr of boss.spawnTimes) {
+      const parts = spawnTimeStr.split(":");
+      const spawnH = parseInt(parts[0] ?? "0", 10);
+      const spawnM = parseInt(parts[1] ?? "0", 10);
+      const spawnTotalMinutes = spawnH * 60 + spawnM;
+      if (spawnTotalMinutes - nowMinutes === NOTIFY_BEFORE) {
+        const key = `${boss.id}_${spawnH}_${today}`;
+        if (!(await hasNotified(supabase, key))) {
+          const msg = `⚔️ **${boss.name}** (Mirage L${boss.layer} ${boss.world}) spawns in **${NOTIFY_BEFORE} min** — ${boss.location}`;
+          await sendPersonalDMs(supabase, boss.id, msg);
+          await markNotified(supabase, key);
+          notifications.push(key);
+        }
+      }
+    }
+  }
+
   // ── 3. Square 11 Events ─────────────────────────────────────────────────────
   for (const event of SQUARE_11_EVENTS) {
     if (shouldNotifyFixed(event.spawnHoursUTC8, nowMinutes)) {
@@ -290,7 +310,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     }
   }
 
-  // ── 2. Weekly World Bosses — Valley only ───────────────────────────────────
+  // ── Weekly World Bosses ───────────────────────────────────────────────────
   const VALLEY_LAB_IDS = new Set([
     "krukan",
     "valley_capture",
@@ -298,7 +318,6 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     "utukan",
   ]);
   for (const boss of WEEKLY_WORLD_BOSSES) {
-    if (!VALLEY_LAB_IDS.has(boss.id)) continue;
     if (boss.dayOfWeek === dayOfWeek) {
       const diff = boss.spawnHourUTC8 * 60 - nowMinutes;
       if (diff === boss.notifyMinutesBefore) {
@@ -306,7 +325,11 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
         if (!(await hasNotified(supabase, key))) {
           const desc = boss.description ? `\n> ${boss.description}` : "";
           const message = `@here 🏆 **${boss.name}** spawns in **${boss.notifyMinutesBefore} min** — ${boss.zone}${desc}`;
-          await sendWebhook(message);
+          // Webhook only for valley/lab bosses (alliance channel)
+          if (VALLEY_LAB_IDS.has(boss.id)) {
+            await sendWebhook(message);
+          }
+          // Personal DMs for ALL weekly bosses
           await sendPersonalDMs(supabase, boss.id, message);
           await markNotified(supabase, key);
           notifications.push(key);
