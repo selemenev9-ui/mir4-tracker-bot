@@ -2350,32 +2350,42 @@ function WarPageInner() {
         .then(async () => {
           const discordSdk = sdk as DiscordSDKWithCommands;
           try {
-            const { code } = await discordSdk.commands.authorize({
-              client_id: process.env.NEXT_PUBLIC_DISCORD_APP_ID!,
-              response_type: "code",
-              state: "",
-              scope: ["identify"],
-            } as any);
-
-            const tokenRes = await fetch("/api/token", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ code }),
-            });
-
-            const tokenData = (await tokenRes.json()) as {
-              access_token?: string;
-            };
-
-            const accessToken = tokenData.access_token;
-
-            if (!tokenRes.ok || !accessToken) {
-              throw new Error("token_exchange_failed");
+            // Try silent authenticate first (skip popup if already authorized)
+            let auth: { user?: { id?: string; username?: string; global_name?: string | null } } | null = null;
+            try {
+              auth = await discordSdk.commands.authenticate({ access_token: "" });
+            } catch {
+              // silent auth failed, need popup
             }
 
-            const auth = await discordSdk.commands.authenticate({
-              access_token: accessToken,
-            });
+            // If no user from silent auth, do full authorize flow
+            if (!auth?.user?.id) {
+              const { code } = await discordSdk.commands.authorize({
+                client_id: process.env.NEXT_PUBLIC_DISCORD_APP_ID!,
+                response_type: "code",
+                state: "",
+                scope: ["identify"],
+              } as any);
+
+              const tokenRes = await fetch("/api/token", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ code }),
+              });
+
+              const tokenData = (await tokenRes.json()) as {
+                access_token?: string;
+              };
+
+              const accessToken = tokenData.access_token;
+              if (!tokenRes.ok || !accessToken) {
+                throw new Error("token_exchange_failed");
+              }
+
+              auth = await discordSdk.commands.authenticate({
+                access_token: accessToken,
+              });
+            }
 
             const user = auth?.user;
             let displayName = user?.global_name ?? user?.username ?? "unknown";

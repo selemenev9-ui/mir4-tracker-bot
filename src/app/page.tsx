@@ -1741,62 +1741,74 @@ export default function DashboardPage() {
           const discordSdk = sdk as DiscordSDKWithCommands;
           console.log("[OAuth] Starting Discord OAuth flow...");
 
-          // Step 1: authorize
-          let code: string;
+          // Step 1: Try silent authenticate first (user already authorized?)
+          let auth: { user?: { id?: string; username?: string; global_name?: string | null } } | null = null;
           try {
-            const authorizeRes = await discordSdk.commands.authorize({
-              client_id: clientId,
-              response_type: "code",
-              state: "",
-              scope: ["identify"],
-            } as any);
-            code = authorizeRes.code;
-            console.log("[OAuth] authorize() returned code:", code ? "yes" : "no");
-          } catch (authorizeErr) {
-            console.error("[OAuth] authorize() FAILED:", authorizeErr);
-            throw new Error("authorize_failed");
+            auth = await discordSdk.commands.authenticate({ access_token: "" });
+            console.log("[OAuth] Silent authenticate succeeded, user:", auth?.user?.id ?? "none");
+          } catch {
+            console.log("[OAuth] Silent authenticate failed, showing authorize popup...");
           }
 
-          // Step 2: exchange code for token
-          const tokenRes = await fetch("/api/token", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ code }),
-          });
+          // Step 2: If silent auth failed, do full authorize + token exchange
+          if (!auth?.user?.id) {
+            let code: string;
+            try {
+              const authorizeRes = await discordSdk.commands.authorize({
+                client_id: clientId,
+                response_type: "code",
+                state: "",
+                scope: ["identify"],
+              } as any);
+              code = authorizeRes.code;
+              console.log("[OAuth] authorize() returned code:", code ? "yes" : "no");
+            } catch (authorizeErr) {
+              console.error("[OAuth] authorize() FAILED:", authorizeErr);
+              throw new Error("authorize_failed");
+            }
 
-          const tokenData = (await tokenRes.json()) as {
-            access_token?: string;
-            error?: string;
-          };
-          console.log("[OAuth] /api/token response:", tokenRes.status, tokenData.error ?? "ok");
-
-          const accessToken = tokenData.access_token;
-          if (!tokenRes.ok || !accessToken) {
-            throw new Error("token_exchange_failed: " + (tokenData.error ?? tokenRes.status));
-          }
-
-          // Step 3: authenticate with Discord SDK
-          let auth: { user?: { id?: string; username?: string; global_name?: string | null } };
-          try {
-            auth = await discordSdk.commands.authenticate({
-              access_token: accessToken,
+            const tokenRes = await fetch("/api/token", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ code }),
             });
-            console.log("[OAuth] authenticate() returned user:", auth?.user?.id ?? "no user");
-          } catch (authErr) {
-            console.error("[OAuth] authenticate() FAILED:", authErr);
-            throw new Error("authenticate_failed");
+
+            const tokenData = (await tokenRes.json()) as {
+              access_token?: string;
+              error?: string;
+            };
+            console.log("[OAuth] /api/token response:", tokenRes.status, tokenData.error ?? "ok");
+
+            const accessToken = tokenData.access_token;
+            if (!tokenRes.ok || !accessToken) {
+              throw new Error("token_exchange_failed: " + (tokenData.error ?? String(tokenRes.status)));
+            }
+
+            try {
+              auth = await discordSdk.commands.authenticate({
+                access_token: accessToken,
+              });
+              console.log("[OAuth] authenticate() returned user:", auth?.user?.id ?? "no user");
+            } catch (authErr) {
+              console.error("[OAuth] authenticate() FAILED:", authErr);
+              throw new Error("authenticate_failed");
+            }
           }
 
           const user = auth?.user;
+          if (!user?.id) {
+            throw new Error("no_user_after_auth");
+          }
+
           let displayName = user?.global_name ?? user?.username ?? "unknown";
           let avatarUrl: string | null = null;
-          console.log("[OAuth] User from Discord:", user?.id, displayName);
+          console.log("[OAuth] User from Discord:", user.id, displayName);
 
-          // Step 4: Get nick and avatar via bot token (no user consent)
+          // Step 3: Get nick and avatar via bot token (no user consent)
           try {
             const guildId = (discordSdk as unknown as { guildId?: string }).guildId;
             console.log("[OAuth] guildId:", guildId ?? "none");
-            if (guildId && user?.id) {
+            if (guildId) {
               const memberRes = await fetch(
                 `/api/guild-member?userId=${user.id}&guildId=${guildId}`,
               );
@@ -1824,7 +1836,7 @@ export default function DashboardPage() {
             console.error("[OAuth] guild-member fetch error:", memberErr);
           }
 
-          if (mounted && user?.id) {
+          if (mounted) {
             setCurrentUser({ id: user.id, username: displayName, avatarUrl });
             setDiscordAuthDone(true);
             localStorage.setItem("mir4_username", displayName);
