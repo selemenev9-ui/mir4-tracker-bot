@@ -823,6 +823,7 @@ function SecretPeakView({
                 <>
                   {(() => {
                     const nextSpawn = getNextSpawnForBoss(activePin);
+                    // eslint-disable-next-line react-hooks/purity
                     if (!nextSpawn || nextSpawn.getTime() <= Date.now()) {
                       return (
                         <button
@@ -1880,6 +1881,7 @@ export default function DashboardPage() {
   const [discordAuthDone, setDiscordAuthDone] = useState(false);
   const tabsRef = useRef<HTMLDivElement>(null);
   const isDragging = useRef(false);
+  const [isGrabbing, setIsGrabbing] = useState(false);
   const dragStartX = useRef(0);
   const dragScrollLeft = useRef(0);
 
@@ -1954,6 +1956,7 @@ export default function DashboardPage() {
                 response_type: "code",
                 state: "",
                 scope: ["identify"],
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
               } as any);
               code = authorizeRes.code;
               console.log("[OAuth] authorize() returned code:", code ? "yes" : "no");
@@ -2101,6 +2104,7 @@ export default function DashboardPage() {
 
   useEffect(() => {
     if (!currentUser?.id) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setSubscribedBossIds(new Set());
       return;
     }
@@ -2326,10 +2330,11 @@ export default function DashboardPage() {
                 scrollbarWidth: "none",
                 WebkitOverflowScrolling: "touch",
                 userSelect: "none",
-                cursor: isDragging.current ? "grabbing" : "grab",
+                cursor: isGrabbing ? "grabbing" : "grab",
               }}
               onMouseDown={(e) => {
                 isDragging.current = true;
+                setIsGrabbing(true);
                 dragStartX.current = e.pageX - (tabsRef.current?.offsetLeft ?? 0);
                 dragScrollLeft.current = tabsRef.current?.scrollLeft ?? 0;
               }}
@@ -2339,8 +2344,14 @@ export default function DashboardPage() {
                 const x = e.pageX - tabsRef.current.offsetLeft;
                 tabsRef.current.scrollLeft = dragScrollLeft.current - (x - dragStartX.current);
               }}
-              onMouseUp={() => { isDragging.current = false; }}
-              onMouseLeave={() => { isDragging.current = false; }}
+              onMouseUp={() => {
+                isDragging.current = false;
+                setIsGrabbing(false);
+              }}
+              onMouseLeave={() => {
+                isDragging.current = false;
+                setIsGrabbing(false);
+              }}
             >
               {tabs.map((tab) => (
                 <button

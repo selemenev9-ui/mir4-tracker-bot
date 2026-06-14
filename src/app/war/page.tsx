@@ -5,7 +5,10 @@ export const dynamic = "force-dynamic";
 import { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { DiscordSDK } from "@discord/embedded-app-sdk";
-import { createClient } from "@supabase/supabase-js";
+import {
+  createClient,
+  type RealtimePostgresChangesPayload,
+} from "@supabase/supabase-js";
 import { RealtimeClient } from "@supabase/realtime-js";
 
 // Types and constants
@@ -140,6 +143,7 @@ interface Assignment {
   role: "attack" | "defend" | "support";
   squad: Squad | null;
   assigned_by: string;
+  updated_at?: string;
 }
 
 interface MapMarker {
@@ -152,6 +156,31 @@ interface MapMarker {
   label: string | null;
   placed_by: string;
 }
+
+type InsertMapMarker = Omit<MapMarker, "id"> & { id?: string };
+
+type Database = {
+  public: {
+    Tables: {
+      war_assignments: {
+        Row: Assignment;
+        Insert: Assignment;
+        Update: Partial<Assignment>;
+        Relationships: [];
+      };
+      war_map_markers: {
+        Row: MapMarker;
+        Insert: InsertMapMarker;
+        Update: Partial<InsertMapMarker>;
+        Relationships: [];
+      };
+    };
+    Views: Record<string, never>;
+    Functions: Record<string, never>;
+    Enums: Record<string, never>;
+    CompositeTypes: Record<string, never>;
+  };
+};
 
 const glassCard = {
   background:
@@ -193,6 +222,7 @@ function getRealtimeUrl() {
   return undefined;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 let supabaseInstance: any = null;
 
 function getSupabase() {
@@ -1206,7 +1236,7 @@ function DeployBoard({
       .from("war_assignments")
       .select("*")
       .eq("war_date", selectedDate);
-    setAssignments((data as Assignment[]) ?? []);
+    setAssignments(data ?? []);
   }, [selectedDate]);
 
   const handleAssign = useCallback(
@@ -1865,7 +1895,7 @@ function MapBoard({
         .from("war_map_markers")
         .select("*")
         .eq("map_id", mapId);
-      const rows = (data as MapMarker[]) ?? [];
+      const rows = data ?? [];
       setMarkers(rows);
       setMarkerCounts((prev) => ({ ...prev, [mapId]: rows.length }));
     },
@@ -2031,9 +2061,11 @@ function MapBoard({
           table: "war_map_markers",
           filter: `map_id=eq.${selectedMapId}`,
         },
-        (payload: any) => {
+        (
+          payload: RealtimePostgresChangesPayload<Record<string, unknown>>
+        ) => {
           if (payload.eventType === "INSERT") {
-            const row = payload.new as MapMarker;
+            const row = payload.new as unknown as MapMarker;
             setMarkers((prev) =>
               prev.some((m) => m.id === row.id) ? prev : [...prev, row]
             );
@@ -2042,7 +2074,7 @@ function MapBoard({
               [row.map_id]: (prev[row.map_id] ?? 0) + 1,
             }));
           } else if (payload.eventType === "DELETE") {
-            const row = payload.old as { id: string; map_id: string };
+            const row = payload.old as unknown as { id: string; map_id: string };
             setMarkers((prev) => prev.filter((m) => m.id !== row.id));
             setMarkerCounts((prev) => ({
               ...prev,
@@ -2416,7 +2448,7 @@ function WarPageInner() {
                 response_type: "code",
                 state: "",
                 scope: ["identify"],
-              } as any);
+              });
 
               const tokenRes = await fetch("/api/token", {
                 method: "POST",

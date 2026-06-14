@@ -12,6 +12,9 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Root-level CommonJS utility scripts:
+    "capture-screenshots.js",
+    "generate-presentation.js",
   ]),
 ]);
 
