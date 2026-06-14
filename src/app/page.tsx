@@ -1745,7 +1745,8 @@ export default function DashboardPage() {
             response_type: "code",
             state: "",
             scope: ["identify"],
-          });
+            redirect_uri: "https://mir4-tracker-bot.vercel.app",
+          } as any);
 
           const tokenRes = await fetch("/api/token", {
             method: "POST",

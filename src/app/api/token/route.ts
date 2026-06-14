@@ -15,6 +15,7 @@ export async function POST(req: NextRequest) {
       client_secret: process.env.DISCORD_CLIENT_SECRET!,
       grant_type: "authorization_code",
       code,
+      redirect_uri: "https://mir4-tracker-bot.vercel.app",
     }),
   });
 
