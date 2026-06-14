@@ -1954,12 +1954,13 @@ export default function DashboardPage() {
 
         <div className="flex items-center justify-between gap-2">
           <nav
-            className="flex gap-0 overflow-x-auto border-b border-zinc-800/80 hide-scrollbar"
+            className="tabs-scroll flex gap-0 overflow-x-scroll border-b border-zinc-800/80"
             style={{
-              overflowX: "auto",
+              overflowX: "scroll",
               flexWrap: "nowrap",
               msOverflowStyle: "none",
               scrollbarWidth: "none",
+              WebkitOverflowScrolling: "touch",
             }}
           >
             {tabs.map((tab) => (
@@ -1968,7 +1969,7 @@ export default function DashboardPage() {
                 type="button"
                 onClick={() => setActiveTab(tab.id)}
                 className={[
-                  "-mb-px shrink-0 border-b-2 px-2.5 py-1.5 text-[11px] font-semibold transition-all whitespace-nowrap sm:px-3 sm:text-xs",
+                  "-mb-px shrink-0 border-b-2 px-2 py-1 text-[11px] font-semibold transition-all whitespace-nowrap",
                   activeTab === tab.id
                     ? "border-red-500 text-zinc-100"
                     : "border-transparent text-zinc-500 hover:border-zinc-600 hover:text-zinc-300",
