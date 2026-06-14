@@ -2350,15 +2350,21 @@ function WarPageInner() {
         .then(async () => {
           const discordSdk = sdk as DiscordSDKWithCommands;
           try {
-            // Try silent authenticate first (skip popup if already authorized)
+            // Step 1: Try reusing saved access token from localStorage
+            let accessToken = localStorage.getItem("mir4_discord_access_token");
             let auth: { user?: { id?: string; username?: string; global_name?: string | null } } | null = null;
-            try {
-              auth = await discordSdk.commands.authenticate({ access_token: "" });
-            } catch {
-              // silent auth failed, need popup
+
+            if (accessToken) {
+              try {
+                auth = await discordSdk.commands.authenticate({ access_token: accessToken });
+              } catch {
+                localStorage.removeItem("mir4_discord_access_token");
+                accessToken = null;
+                auth = null;
+              }
             }
 
-            // If no user from silent auth, do full authorize flow
+            // Step 2: If no valid saved token, do full authorize flow
             if (!auth?.user?.id) {
               const { code } = await discordSdk.commands.authorize({
                 client_id: process.env.NEXT_PUBLIC_DISCORD_APP_ID!,
@@ -2377,11 +2383,12 @@ function WarPageInner() {
                 access_token?: string;
               };
 
-              const accessToken = tokenData.access_token;
-              if (!tokenRes.ok || !accessToken) {
+              const newToken = tokenData.access_token;
+              if (!tokenRes.ok || !newToken) {
                 throw new Error("token_exchange_failed");
               }
 
+              accessToken = newToken;
               auth = await discordSdk.commands.authenticate({
                 access_token: accessToken,
               });
@@ -2420,6 +2427,9 @@ function WarPageInner() {
 
             setUsername(displayName);
             setDiscordUserId(user?.id ?? null);
+            if (accessToken) {
+              localStorage.setItem("mir4_discord_access_token", accessToken);
+            }
             // TODO: использовать avatarUrl если добавлено состояние аватарки
           } catch {
             setUsername("unknown");
