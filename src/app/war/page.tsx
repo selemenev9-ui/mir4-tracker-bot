@@ -1,5 +1,7 @@
 "use client";
 
+export const dynamic = "force-dynamic";
+
 import { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { DiscordSDK } from "@discord/embedded-app-sdk";
@@ -191,15 +193,22 @@ function getRealtimeUrl() {
   return undefined;
 }
 
-const supabase = createClient(
-  getSupabaseUrl(),
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-  {
-    realtime: {
-      url: getRealtimeUrl(),
-    },
-  } as SupabaseClientOptions,
-);
+let supabaseInstance: any = null;
+
+function getSupabase() {
+  if (!supabaseInstance) {
+    supabaseInstance = createClient(
+      getSupabaseUrl(),
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      {
+        realtime: {
+          url: getRealtimeUrl(),
+        },
+      } as SupabaseClientOptions,
+    );
+  }
+  return supabaseInstance;
+}
 
 function todayUTC8(): string {
   const now = new Date();
@@ -1193,7 +1202,7 @@ function DeployBoard({
   const [inputValues, setInputValues] = useState<Record<Squad, string>>(squadNames);
 
   const loadAssignments = useCallback(async () => {
-    const { data } = await supabase
+    const { data } = await getSupabase()
       .from("war_assignments")
       .select("*")
       .eq("war_date", selectedDate);
@@ -1208,14 +1217,14 @@ function DeployBoard({
     ) => {
       if (!selectedDate) return;
       if (squad === null) {
-        await supabase
+        await getSupabase()
           .from("war_assignments")
           .delete()
           .eq("war_date", selectedDate)
           .eq("zone_id", zoneId)
           .eq("role", role);
       } else {
-        await supabase.from("war_assignments").upsert(
+        await getSupabase().from("war_assignments").upsert(
           {
             war_date: selectedDate,
             zone_id: zoneId,
@@ -1236,7 +1245,7 @@ function DeployBoard({
     const initialLoad = window.setTimeout(() => {
       void loadAssignments();
     }, 0);
-    const channel = supabase
+    const channel = getSupabase()
       .channel(`war-deploy-${selectedDate}`)
       .on(
         "postgres_changes",
@@ -1256,7 +1265,7 @@ function DeployBoard({
     }, POLL_INTERVAL);
     return () => {
       window.clearTimeout(initialLoad);
-      supabase.removeChannel(channel);
+      getSupabase().removeChannel(channel);
       window.clearInterval(pollInterval);
     };
   }, [loadAssignments, selectedDate]);
@@ -1840,7 +1849,7 @@ function MapBoard({
 
   const loadMarkers = useCallback(
     async (mapId: string) => {
-      const { data } = await supabase
+      const { data } = await getSupabase()
         .from("war_map_markers")
         .select("*")
         .eq("map_id", mapId);
@@ -1876,7 +1885,7 @@ function MapBoard({
       setMarkers((prev) => [...prev, tempMarker]);
 
       try {
-        const { data, error } = await supabase
+        const { data, error } = await getSupabase()
           .from("war_map_markers")
           .insert({
             map_id: params.mapId,
@@ -1913,7 +1922,7 @@ function MapBoard({
   const handleRemoveMarker = useCallback(async (id: string) => {
     setMarkers((prev) => prev.filter((m) => m.id !== id));
     try {
-      await supabase.from("war_map_markers").delete().eq("id", id);
+      await getSupabase().from("war_map_markers").delete().eq("id", id);
     } catch (err) {
       console.error("supabase exception:", err);
     }
@@ -1923,7 +1932,7 @@ function MapBoard({
     if (!lastActionId) return;
     setMarkers((prev) => prev.filter((m) => m.id !== lastActionId));
     try {
-      await supabase.from("war_map_markers").delete().eq("id", lastActionId);
+      await getSupabase().from("war_map_markers").delete().eq("id", lastActionId);
       setLastActionId(null);
     } catch (err) {
       console.error("supabase exception:", err);
@@ -1961,7 +1970,7 @@ function MapBoard({
       setMarkers((prev) => [...prev, optimistic]);
 
       try {
-        const { data, error } = await supabase
+        const { data, error } = await getSupabase()
           .from("war_map_markers")
           .insert({
             map_id: mapId,
@@ -2000,7 +2009,7 @@ function MapBoard({
     const initialLoad = window.setTimeout(() => {
       void loadMarkers(selectedMapId);
     }, 0);
-    const channel = supabase
+    const channel = getSupabase()
       .channel(`war-map-${selectedMapId}`)
       .on(
         "postgres_changes",
@@ -2010,7 +2019,7 @@ function MapBoard({
           table: "war_map_markers",
           filter: `map_id=eq.${selectedMapId}`,
         },
-        (payload) => {
+        (payload: any) => {
           if (payload.eventType === "INSERT") {
             const row = payload.new as MapMarker;
             setMarkers((prev) =>
@@ -2036,7 +2045,7 @@ function MapBoard({
     }, POLL_INTERVAL);
     return () => {
       window.clearTimeout(initialLoad);
-      supabase.removeChannel(channel);
+      getSupabase().removeChannel(channel);
       window.clearInterval(pollInterval);
     };
   }, [loadMarkers, selectedMapId]);
@@ -2253,7 +2262,7 @@ function MapBoard({
                   window.setTimeout(() => setClearPending(false), 3000);
                   return;
                 }
-                await supabase
+                await getSupabase()
                   .from("war_map_markers")
                   .delete()
                   .eq("map_id", selectedMapId);
