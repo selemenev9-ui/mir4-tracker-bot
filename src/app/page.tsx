@@ -84,14 +84,11 @@ function Square11View({
 			<h3 className="mb-1 text-xs font-semibold uppercase tracking-widest text-zinc-500">
 				Square 11
 			</h3>
-			<div
-				className="grid gap-2"
-				style={{ gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))" }}
-			>
+			<div className="grid grid-cols-[repeat(auto-fit,minmax(280px,1fr))] gap-2">
 				{SQUARE_11_EVENTS.map((event) => (
 					<div
 						key={event.id}
-						className="glass-card flex flex-col justify-between rounded-xl p-2 sm:p-3"
+						className="@container/card glass-card flex flex-col justify-between rounded-xl p-2 sm:p-3"
 					>
 						<div className="mb-2 flex items-center justify-between gap-2">
 							<h4 className="text-sm font-semibold text-zinc-100">
@@ -149,14 +146,11 @@ function DragonTowerView({
 			<h3 className="mb-1 text-xs font-semibold uppercase tracking-widest text-zinc-500">
 				Dragon Tower
 			</h3>
-			<div
-				className="grid gap-2"
-				style={{ gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))" }}
-			>
+			<div className="grid grid-cols-[repeat(auto-fit,minmax(280px,1fr))] gap-2">
 				{DRAGON_TOWER_EVENTS.map((event) => (
 					<div
 						key={event.id}
-						className="glass-card flex flex-col justify-between rounded-xl p-2 sm:p-3"
+						className="@container/card glass-card flex flex-col justify-between rounded-xl p-2 sm:p-3"
 					>
 						<div className="mb-2 flex items-center justify-between gap-2">
 							<h4 className="text-sm font-semibold text-zinc-100">
@@ -214,14 +208,11 @@ function EventMirageView({
 			<h3 className="mb-1 text-xs font-semibold uppercase tracking-widest text-zinc-500">
 				Event — Mirage
 			</h3>
-			<div
-				className="grid gap-2"
-				style={{ gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))" }}
-			>
+			<div className="grid grid-cols-[repeat(auto-fit,minmax(280px,1fr))] gap-2">
 				{EVENT_MIRAGE_EVENTS.map((event) => (
 					<div
 						key={event.id}
-						className="glass-card flex flex-col justify-between rounded-xl p-2 sm:p-3"
+						className="@container/card glass-card flex flex-col justify-between rounded-xl p-2 sm:p-3"
 					>
 						<div className="mb-2 flex items-center justify-between gap-2">
 							<h4 className="text-sm font-semibold text-zinc-100">
@@ -279,14 +270,11 @@ function PurgatoryView({
 			<h3 className="mb-1 text-xs font-semibold uppercase tracking-widest text-zinc-500">
 				Purgatory
 			</h3>
-			<div
-				className="grid gap-2"
-				style={{ gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))" }}
-			>
+			<div className="grid grid-cols-[repeat(auto-fit,minmax(280px,1fr))] gap-2">
 				{PURGATORY_EVENTS.map((event) => (
 					<div
 						key={event.id}
-						className="glass-card flex flex-col justify-between rounded-xl p-2 sm:p-3"
+						className="@container/card glass-card flex flex-col justify-between rounded-xl p-2 sm:p-3"
 					>
 						<div className="mb-2 flex items-center justify-between gap-2">
 							<h4 className="text-sm font-semibold text-zinc-100">
@@ -344,14 +332,11 @@ function ServerView({
 			<h3 className="mb-1 text-xs font-semibold uppercase tracking-widest text-zinc-500">
 				Server &amp; System
 			</h3>
-			<div
-				className="grid gap-2"
-				style={{ gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))" }}
-			>
+			<div className="grid grid-cols-[repeat(auto-fit,minmax(280px,1fr))] gap-2">
 				{SERVER_EVENTS.map((event) => (
 					<div
 						key={event.id}
-						className="glass-card flex flex-col justify-between rounded-xl p-2 sm:p-3"
+						className="@container/card glass-card flex flex-col justify-between rounded-xl p-2 sm:p-3"
 					>
 						<div className="mb-2 flex items-center justify-between gap-2">
 							<div>
@@ -428,7 +413,7 @@ function ServerClock() {
         }}
       />
       <span
-        className="font-mono text-xs text-zinc-300 tracking-widest"
+        className="font-mono text-xs @[500px]/app:text-sm text-zinc-300 tracking-widest"
         suppressHydrationWarning
       >
         {time} UTC+8
@@ -609,7 +594,7 @@ function secretPeakPinClasses(boss: SecretPeakBoss, state: SecretPeakBossState) 
 
 function secretPeakCardClasses(boss: SecretPeakBoss, state: SecretPeakBossState) {
   const base =
-    "flex items-center justify-between rounded-xl px-2 sm:px-3 py-2 sm:py-2.5 glass-card";
+    "@container/card flex items-center justify-between rounded-xl px-2 sm:px-3 py-2 sm:py-2.5 glass-card";
 
   if (state === "cooldown") return base;
 
@@ -836,10 +821,7 @@ function SecretPeakView({
       </div>
 
       {/* Boss list below map */}
-      <div
-        className="grid gap-2"
-        style={{ gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))" }}
-      >
+      <div className="grid grid-cols-[repeat(auto-fit,minmax(280px,1fr))] gap-2">
         {floorBosses.map((boss) => {
           const nextSpawn = getNextSpawnForBoss(boss);
           const state = getSecretPeakBossState(nextSpawn);
@@ -848,19 +830,8 @@ function SecretPeakView({
               key={boss.id}
               className={secretPeakCardClasses(boss, state)}
             >
-              <div>
-                <p className="text-xs font-semibold text-zinc-200">
-                  {boss.name}
-                </p>
-                <p className="mt-0.5 text-[10px] uppercase tracking-wide text-zinc-500">
-                  {boss.type === "teal" && "Dynamic — 30 min"}
-                  {boss.type === "gold" && "Dynamic — 60 min"}
-                  {boss.type === "red_lower" && "Fixed — Lower"}
-                  {boss.type === "red_upper" && "Fixed — Upper"}
-                </p>
-              </div>
-              <div className="flex items-center gap-2">
-                <CountdownBadge nextSpawn={nextSpawn ?? null} />
+              {/* Compact row */}
+              <div className="flex @[480px]/app:hidden items-center gap-2 flex-1">
                 {state === "cooldown" && (
                   <BellToggle
                     bossId={boss.id}
@@ -869,6 +840,39 @@ function SecretPeakView({
                     onToggle={onBellToggle}
                   />
                 )}
+                <span className="font-semibold text-xs flex-1">{boss.name}</span>
+                <span className="text-[10px] text-zinc-500 uppercase">
+                  {boss.type === "teal" && "30m"}
+                  {boss.type === "gold" && "60m"}
+                  {boss.type === "red_lower" && "Lower"}
+                  {boss.type === "red_upper" && "Upper"}
+                </span>
+                <CountdownBadge nextSpawn={nextSpawn ?? null} />
+              </div>
+              {/* Full card */}
+              <div className="hidden @[480px]/app:flex items-center justify-between flex-1">
+                <div>
+                  <p className="text-xs font-semibold text-zinc-200">
+                    {boss.name}
+                  </p>
+                  <p className="mt-0.5 text-[10px] uppercase tracking-wide text-zinc-500">
+                    {boss.type === "teal" && "Dynamic — 30 min"}
+                    {boss.type === "gold" && "Dynamic — 60 min"}
+                    {boss.type === "red_lower" && "Fixed — Lower"}
+                    {boss.type === "red_upper" && "Fixed — Upper"}
+                  </p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <CountdownBadge nextSpawn={nextSpawn ?? null} />
+                  {state === "cooldown" && (
+                    <BellToggle
+                      bossId={boss.id}
+                      userId={currentUser ? currentUser.id : null}
+                      initialSubscribed={subscribedBossIds.has(boss.id)}
+                      onToggle={onBellToggle}
+                    />
+                  )}
+                </div>
               </div>
             </div>
           );
@@ -954,58 +958,105 @@ function MirageView({
         ))}
       </div>
 
-      <div
-        className="grid gap-2"
-        style={{ gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))" }}
-      >
+      <div className="grid grid-cols-[repeat(auto-fit,minmax(280px,1fr))] gap-2">
         {filtered.map((boss: MirageBoss) => {
           const nextSpawn = getNextSpawnFromTimes(boss.spawnTimes);
           return (
             <div
               key={boss.id}
-              className="glass-card rounded-2xl overflow-hidden"
+              className="@container/card glass-card rounded-2xl overflow-hidden"
               style={{ position: "relative" }}
             >
-              <div
-                style={{
-                  position: "absolute",
-                  top: 0,
-                  left: 0,
-                  right: 0,
-                  height: "1px",
-                  background:
-                    "linear-gradient(90deg, transparent, rgba(255,255,255,0.2), rgba(168,85,247,0.4), rgba(255,255,255,0.2), transparent)",
-                  zIndex: 2,
-                }}
-              />
-              {boss.rewardImage ? (
-                <div className="relative h-36 overflow-hidden">
-                  <Image
-                    src={boss.rewardImage}
-                    alt={`${boss.name} rewards`}
-                    fill
-                    className="object-cover object-top"
-                    style={{
-                      opacity: 0.9,
-                      filter: "saturate(1.15) contrast(1.05)",
-                    }}
-                    unoptimized
-                  />
-                  <div
-                    className="absolute inset-0"
-                    style={{
-                      background:
-                        "linear-gradient(to bottom, rgba(0,0,0,0.05) 0%, transparent 35%, rgba(15,22,50,0.85) 100%)",
-                    }}
-                  />
-                  <div className="absolute bottom-2 left-3 flex items-center gap-1.5">
+              {/* Compact row */}
+              <div className="flex @[480px]/app:hidden items-center gap-2 px-3 py-2.5">
+                <BellToggle
+                  bossId={boss.id}
+                  userId={userId}
+                  initialSubscribed={subscribedBossIds.has(boss.id)}
+                  onToggle={onBellToggle}
+                />
+                <span className="font-semibold text-xs flex-1">{boss.name}</span>
+                <span className="text-[10px] text-zinc-500">{boss.location}</span>
+                <CountdownBadge nextSpawn={nextSpawn} />
+              </div>
+              {/* Full card */}
+              <div className="hidden @[480px]/app:flex flex-col">
+                <div
+                  style={{
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    height: "1px",
+                    background:
+                      "linear-gradient(90deg, transparent, rgba(255,255,255,0.2), rgba(168,85,247,0.4), rgba(255,255,255,0.2), transparent)",
+                    zIndex: 2,
+                  }}
+                />
+                {boss.rewardImage ? (
+                  <div className="relative h-36 overflow-hidden">
+                    <Image
+                      src={boss.rewardImage}
+                      alt={`${boss.name} rewards`}
+                      fill
+                      className="object-cover object-top"
+                      style={{
+                        opacity: 0.9,
+                        filter: "saturate(1.15) contrast(1.05)",
+                      }}
+                      unoptimized
+                    />
+                    <div
+                      className="absolute inset-0"
+                      style={{
+                        background:
+                          "linear-gradient(to bottom, rgba(0,0,0,0.05) 0%, transparent 35%, rgba(15,22,50,0.85) 100%)",
+                      }}
+                    />
+                    <div className="absolute bottom-2 left-3 flex items-center gap-1.5">
+                      <span
+                        className="text-[10px] font-semibold uppercase tracking-widest px-2 py-0.5 rounded-full"
+                        style={{
+                          background: "rgba(0,0,0,0.6)",
+                          backdropFilter: "blur(8px)",
+                          border: "1px solid rgba(255,255,255,0.12)",
+                          color: "#94a3b8",
+                        }}
+                      >
+                        Layer {boss.layer}
+                      </span>
+                      <span
+                        className="text-[10px] font-semibold px-2 py-0.5 rounded-full"
+                        style={{
+                          background: "rgba(168,85,247,0.25)",
+                          backdropFilter: "blur(8px)",
+                          border: "1px solid rgba(168,85,247,0.4)",
+                          color: "#d8b4fe",
+                        }}
+                      >
+                        {boss.world}
+                      </span>
+                      <span
+                        className="text-[10px] font-semibold px-2 py-0.5 rounded-full"
+                        style={{
+                          background: "rgba(0,0,0,0.6)",
+                          backdropFilter: "blur(8px)",
+                          border: "1px solid rgba(255,255,255,0.1)",
+                          color: "#64748b",
+                        }}
+                      >
+                        {boss.level}
+                      </span>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-2 px-3 sm:px-4 pt-3 sm:pt-4">
                     <span
                       className="text-[10px] font-semibold uppercase tracking-widest px-2 py-0.5 rounded-full"
                       style={{
-                        background: "rgba(0,0,0,0.6)",
-                        backdropFilter: "blur(8px)",
-                        border: "1px solid rgba(255,255,255,0.12)",
-                        color: "#94a3b8",
+                        background: "rgba(255,255,255,0.06)",
+                        border: "1px solid rgba(255,255,255,0.1)",
+                        color: "#64748b",
                       }}
                     >
                       Layer {boss.layer}
@@ -1013,104 +1064,69 @@ function MirageView({
                     <span
                       className="text-[10px] font-semibold px-2 py-0.5 rounded-full"
                       style={{
-                        background: "rgba(168,85,247,0.25)",
-                        backdropFilter: "blur(8px)",
-                        border: "1px solid rgba(168,85,247,0.4)",
+                        background: "rgba(168,85,247,0.2)",
+                        border: "1px solid rgba(168,85,247,0.35)",
                         color: "#d8b4fe",
                       }}
                     >
                       {boss.world}
                     </span>
                     <span
-                      className="text-[10px] font-semibold px-2 py-0.5 rounded-full"
+                      className="text-[10px] font-semibold px-2 py-0.5 rounded-full ml-auto"
                       style={{
-                        background: "rgba(0,0,0,0.6)",
-                        backdropFilter: "blur(8px)",
-                        border: "1px solid rgba(255,255,255,0.1)",
-                        color: "#64748b",
+                        background: "rgba(255,255,255,0.05)",
+                        border: "1px solid rgba(255,255,255,0.08)",
+                        color: "#475569",
                       }}
                     >
                       {boss.level}
                     </span>
                   </div>
-                </div>
-              ) : (
-                <div className="flex items-center gap-2 px-3 sm:px-4 pt-3 sm:pt-4">
-                  <span
-                    className="text-[10px] font-semibold uppercase tracking-widest px-2 py-0.5 rounded-full"
-                    style={{
-                      background: "rgba(255,255,255,0.06)",
-                      border: "1px solid rgba(255,255,255,0.1)",
-                      color: "#64748b",
-                    }}
-                  >
-                    Layer {boss.layer}
-                  </span>
-                  <span
-                    className="text-[10px] font-semibold px-2 py-0.5 rounded-full"
-                    style={{
-                      background: "rgba(168,85,247,0.2)",
-                      border: "1px solid rgba(168,85,247,0.35)",
-                      color: "#d8b4fe",
-                    }}
-                  >
-                    {boss.world}
-                  </span>
-                  <span
-                    className="text-[10px] font-semibold px-2 py-0.5 rounded-full ml-auto"
-                    style={{
-                      background: "rgba(255,255,255,0.05)",
-                      border: "1px solid rgba(255,255,255,0.08)",
-                      color: "#475569",
-                    }}
-                  >
-                    {boss.level}
-                  </span>
-                </div>
-              )}
+                )}
 
-	              <div className="px-3 sm:px-4 pb-3 sm:pb-4 pt-2 sm:pt-3">
-                <h3 className="text-sm font-bold text-zinc-100 leading-snug mb-0.5">
-                  {boss.name}
-                </h3>
-                <p className="text-[11px] text-zinc-500 mb-3">{boss.location}</p>
+                <div className="px-3 sm:px-4 pb-3 sm:pb-4 pt-2 sm:pt-3">
+                  <h3 className="text-sm font-bold text-zinc-100 leading-snug mb-0.5">
+                    {boss.name}
+                  </h3>
+                  <p className="text-[11px] text-zinc-500 mb-3">{boss.location}</p>
 
-                <div className="flex flex-wrap gap-1 mb-4">
-                  {boss.spawnTimes.map((t) => (
-                    <span
-                      key={t}
-                      className="font-mono text-[10px] px-1.5 py-0.5 rounded"
-                      style={{
-                        background: "rgba(255,255,255,0.07)",
-                        border: "1px solid rgba(255,255,255,0.12)",
-                        color: "#64748b",
-                      }}
-                    >
-                      {t}
-                    </span>
-                  ))}
-                </div>
-
-                <div
-                  className="flex items-center justify-between rounded-xl px-3 py-2.5 gap-2"
-                  style={{
-                    background: "rgba(0,0,0,0.5)",
-                    border: "1px solid rgba(255,255,255,0.1)",
-                    backdropFilter: "blur(8px)",
-                  }}
-                >
-                  <div className="flex items-center gap-2">
-                    <span className="text-[10px] uppercase tracking-widest font-semibold text-zinc-600">
-                      Next Spawn
-                    </span>
-                    <CountdownBadge nextSpawn={nextSpawn} large />
+                  <div className="flex flex-wrap gap-1 mb-4">
+                    {boss.spawnTimes.map((t) => (
+                      <span
+                        key={t}
+                        className="font-mono text-[10px] px-1.5 py-0.5 rounded"
+                        style={{
+                          background: "rgba(255,255,255,0.07)",
+                          border: "1px solid rgba(255,255,255,0.12)",
+                          color: "#64748b",
+                        }}
+                      >
+                        {t}
+                      </span>
+                    ))}
                   </div>
-                  <BellToggle
-                    bossId={boss.id}
-                    userId={userId}
-                    initialSubscribed={subscribedBossIds.has(boss.id)}
-                    onToggle={onBellToggle}
-                  />
+
+                  <div
+                    className="flex items-center justify-between rounded-xl px-3 py-2.5 gap-2"
+                    style={{
+                      background: "rgba(0,0,0,0.5)",
+                      border: "1px solid rgba(255,255,255,0.1)",
+                      backdropFilter: "blur(8px)",
+                    }}
+                  >
+                    <div className="flex items-center gap-2">
+                      <span className="text-[10px] uppercase tracking-widest font-semibold text-zinc-600">
+                        Next Spawn
+                      </span>
+                      <CountdownBadge nextSpawn={nextSpawn} large />
+                    </div>
+                    <BellToggle
+                      bossId={boss.id}
+                      userId={userId}
+                      initialSubscribed={subscribedBossIds.has(boss.id)}
+                      onToggle={onBellToggle}
+                    />
+                  </div>
                 </div>
               </div>
             </div>
@@ -1163,7 +1179,7 @@ function MagicSquareView({
 
   const cardClasses = (boss: MagicSquareBoss, state: SecretPeakBossState) => {
     const base =
-      "rounded-2xl border p-2 sm:p-3 backdrop-blur-sm transition-all flex flex-col gap-2";
+      "@container/card rounded-2xl border p-2 sm:p-3 backdrop-blur-sm transition-all flex flex-col gap-2";
     if (state === "cooldown") {
       return `${base} border-zinc-700/60 bg-zinc-900/80 text-zinc-300`;
     }
@@ -1205,10 +1221,7 @@ function MagicSquareView({
         ))}
       </div>
 
-      <div
-        className="grid gap-2"
-        style={{ gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))" }}
-      >
+      <div className="grid grid-cols-[repeat(auto-fit,minmax(280px,1fr))] gap-2">
         {floorBosses.map((boss) => {
           const nextSpawn = getNextSpawnForBoss(boss);
           const state = getState(boss);
@@ -1217,76 +1230,110 @@ function MagicSquareView({
 
           return (
             <div key={boss.id} className={cardClasses(boss, state)}>
-              <div className="flex items-start justify-between gap-2">
-                <div>
-                  <p className="mb-0.5 text-[10px] uppercase tracking-widest text-zinc-500">
-                    Floor {boss.floor}
-                  </p>
-                  <h3 className="text-sm font-semibold text-zinc-100">
-                    {boss.name}
-                  </h3>
-                </div>
-                <span
-                  className={[
-                    "rounded-full px-2 py-0.5 text-[9px] font-bold uppercase tracking-widest",
-                    boss.type === "chamber1"
-                      ? "bg-sky-500/20 text-sky-300"
-                      : "",
-                    boss.type === "chamber2"
-                      ? "bg-amber-500/20 text-amber-300"
-                      : "",
-                    boss.type === "chamber3"
-                      ? "bg-violet-500/20 text-violet-300"
-                      : "",
-                  ].join(" ")}
-                >
-                  {boss.type}
-                </span>
-              </div>
-
-              <div className="flex items-center justify-between gap-2">
-                <div className="flex items-center gap-2">
-                  <span className="text-[10px] uppercase tracking-wide text-zinc-500">
-                    Next spawn
-                  </span>
-                  <CountdownBadge nextSpawn={nextSpawn ?? null} />
-                </div>
+              {/* Compact row */}
+              <div className="flex @[480px]/app:hidden items-center gap-2 flex-1">
                 <BellToggle
                   bossId={boss.id}
                   userId={currentUser ? currentUser.id : null}
                   initialSubscribed={subscribedBossIds.has(boss.id)}
                   onToggle={onBellToggle}
                 />
+                <span className="font-semibold text-xs flex-1">{boss.name}</span>
+                <span className="text-[10px] text-zinc-500 uppercase">F{boss.floor}</span>
+                <CountdownBadge nextSpawn={nextSpawn ?? null} />
+                {canReport && currentUser && state !== "cooldown" && (
+                  <button
+                    type="button"
+                    disabled={reportingId === boss.id}
+                    onClick={async () => {
+                      if (!currentUser) return;
+                      setReportingId(boss.id);
+                      try {
+                        await onReportKill(boss.id, boss.name, boss.floor);
+                      } finally {
+                        setReportingId(null);
+                      }
+                    }}
+                    className="rounded-md border border-emerald-500/80 bg-emerald-500/20 px-1.5 py-0.5 text-[10px] text-emerald-300 transition-colors hover:bg-emerald-500/30 disabled:opacity-40"
+                    title="Report Kill"
+                  >
+                    ⚔️
+                  </button>
+                )}
               </div>
+              {/* Full card */}
+              <div className="hidden @[480px]/app:flex flex-col gap-2 flex-1">
+                <div className="flex items-start justify-between gap-2">
+                  <div>
+                    <p className="mb-0.5 text-[10px] uppercase tracking-widest text-zinc-500">
+                      Floor {boss.floor}
+                    </p>
+                    <h3 className="text-sm font-semibold text-zinc-100">
+                      {boss.name}
+                    </h3>
+                  </div>
+                  <span
+                    className={[
+                      "rounded-full px-2 py-0.5 text-[9px] font-bold uppercase tracking-widest",
+                      boss.type === "chamber1"
+                        ? "bg-sky-500/20 text-sky-300"
+                        : "",
+                      boss.type === "chamber2"
+                        ? "bg-amber-500/20 text-amber-300"
+                        : "",
+                      boss.type === "chamber3"
+                        ? "bg-violet-500/20 text-violet-300"
+                        : "",
+                    ].join(" ")}
+                  >
+                    {boss.type}
+                  </span>
+                </div>
 
-              {canReport ? (
-                <button
-                  type="button"
-                  disabled={
-                    !currentUser || reportingId === boss.id || state === "cooldown"
-                  }
-                  onClick={async () => {
-                    if (!currentUser) return;
-                    setReportingId(boss.id);
-                    try {
-                      await onReportKill(boss.id, boss.name, boss.floor);
-                    } finally {
-                      setReportingId(null);
+                <div className="flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-2">
+                    <span className="text-[10px] uppercase tracking-wide text-zinc-500">
+                      Next spawn
+                    </span>
+                    <CountdownBadge nextSpawn={nextSpawn ?? null} />
+                  </div>
+                  <BellToggle
+                    bossId={boss.id}
+                    userId={currentUser ? currentUser.id : null}
+                    initialSubscribed={subscribedBossIds.has(boss.id)}
+                    onToggle={onBellToggle}
+                  />
+                </div>
+
+                {canReport ? (
+                  <button
+                    type="button"
+                    disabled={
+                      !currentUser || reportingId === boss.id || state === "cooldown"
                     }
-                  }}
-                  className="mt-2 w-full rounded-xl border border-emerald-500/80 bg-emerald-500/20 py-1.5 text-xs font-semibold text-emerald-300 transition-colors hover:bg-emerald-500/30 disabled:cursor-not-allowed disabled:opacity-40"
-                >
-                  {reportingId === boss.id
-                    ? "Reporting..."
-                    : currentUser
-                    ? "Report Kill"
-                    : "Login required"}
-                </button>
-              ) : (
-                <p className="mt-2 text-[10px] text-zinc-500">
-                  Fixed schedule — no report needed
-                </p>
-              )}
+                    onClick={async () => {
+                      if (!currentUser) return;
+                      setReportingId(boss.id);
+                      try {
+                        await onReportKill(boss.id, boss.name, boss.floor);
+                      } finally {
+                        setReportingId(null);
+                      }
+                    }}
+                    className="mt-2 w-full rounded-xl border border-emerald-500/80 bg-emerald-500/20 py-1.5 text-xs font-semibold text-emerald-300 transition-colors hover:bg-emerald-500/30 disabled:cursor-not-allowed disabled:opacity-40"
+                  >
+                    {reportingId === boss.id
+                      ? "Reporting..."
+                      : currentUser
+                      ? "Report Kill"
+                      : "Login required"}
+                  </button>
+                ) : (
+                  <p className="mt-2 text-[10px] text-zinc-500">
+                    Fixed schedule — no report needed
+                  </p>
+                )}
+              </div>
             </div>
           );
         })}
@@ -1314,51 +1361,63 @@ function WorldBossesView({
         <h3 className="mb-2 text-[10px] font-semibold uppercase tracking-widest text-zinc-500">
           Daily
         </h3>
-        <div
-          className="grid gap-2"
-          style={{ gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))" }}
-        >
+        <div className="grid grid-cols-[repeat(auto-fit,minmax(280px,1fr))] gap-2">
           {DAILY_WORLD_BOSSES.map((boss) => (
             <div
               key={boss.id}
-              className="glass-card rounded-xl p-2 sm:p-3"
+              className="@container/card glass-card rounded-xl p-2 sm:p-3"
             >
-              <div className="mb-3 flex items-start justify-between gap-2">
-                <div>
-                  <h3 className="text-sm font-semibold text-zinc-100">
-                    {boss.name}
-                  </h3>
-                  <p className="mt-0.5 text-[11px] text-zinc-500">
-                    {boss.zone}
-                  </p>
-                </div>
-                <span className="rounded-full bg-blue-500/20 px-2 py-0.5 text-[9px] font-bold uppercase tracking-widest text-blue-300">
-                  Daily
-                </span>
-              </div>
-              <div className="mb-3 flex flex-wrap gap-1.5">
-                {boss.spawnHoursUTC8.map((h) => (
-                  <span
-                    key={h}
-                    className="rounded bg-zinc-800/80 px-2 py-0.5 text-[11px] font-mono text-zinc-300"
-                  >
-                    {String(h).padStart(2, "0")}:00
-                  </span>
-                ))}
-              </div>
-              <div className="flex items-center justify-between gap-2">
-                <div className="flex items-center gap-2">
-                  <span className="text-[10px] uppercase tracking-wide text-zinc-500">
-                    Next spawn
-                  </span>
-                  <CountdownBadge nextSpawn={getNextFixedSpawn(boss.spawnHoursUTC8)} />
-                </div>
+              {/* Compact row */}
+              <div className="flex @[480px]/app:hidden items-center gap-2 flex-1">
                 <BellToggle
                   bossId={boss.id}
                   userId={userId}
                   initialSubscribed={subscribedBossIds.has(boss.id)}
                   onToggle={onBellToggle}
                 />
+                <span className="font-semibold text-xs flex-1">{boss.name}</span>
+                <span className="text-[10px] text-zinc-500">{boss.zone}</span>
+                <CountdownBadge nextSpawn={getNextFixedSpawn(boss.spawnHoursUTC8)} />
+              </div>
+              {/* Full card */}
+              <div className="hidden @[480px]/app:flex flex-col gap-2 flex-1">
+                <div className="mb-1 flex items-start justify-between gap-2">
+                  <div>
+                    <h3 className="text-sm font-semibold text-zinc-100">
+                      {boss.name}
+                    </h3>
+                    <p className="mt-0.5 text-[11px] text-zinc-500">
+                      {boss.zone}
+                    </p>
+                  </div>
+                  <span className="rounded-full bg-blue-500/20 px-2 py-0.5 text-[9px] font-bold uppercase tracking-widest text-blue-300">
+                    Daily
+                  </span>
+                </div>
+                <div className="flex flex-wrap gap-1.5">
+                  {boss.spawnHoursUTC8.map((h) => (
+                    <span
+                      key={h}
+                      className="rounded bg-zinc-800/80 px-2 py-0.5 text-[11px] font-mono text-zinc-300"
+                    >
+                      {String(h).padStart(2, "0")}:00
+                    </span>
+                  ))}
+                </div>
+                <div className="flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-2">
+                    <span className="text-[10px] uppercase tracking-wide text-zinc-500">
+                      Next spawn
+                    </span>
+                    <CountdownBadge nextSpawn={getNextFixedSpawn(boss.spawnHoursUTC8)} />
+                  </div>
+                  <BellToggle
+                    bossId={boss.id}
+                    userId={userId}
+                    initialSubscribed={subscribedBossIds.has(boss.id)}
+                    onToggle={onBellToggle}
+                  />
+                </div>
               </div>
             </div>
           ))}
@@ -1369,53 +1428,70 @@ function WorldBossesView({
         <h3 className="mb-2 text-[10px] font-semibold uppercase tracking-widest text-zinc-500">
           Weekly
         </h3>
-        <div
-          className="grid gap-2"
-          style={{ gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))" }}
-        >
+        <div className="grid grid-cols-[repeat(auto-fit,minmax(280px,1fr))] gap-2">
           {WEEKLY_WORLD_BOSSES.map((boss) => (
             <div
               key={boss.id}
-              className="glass-card rounded-xl p-2 sm:p-3"
+              className="@container/card glass-card rounded-xl p-2 sm:p-3"
             >
-              <div className="mb-2 flex items-start justify-between gap-2">
-                <div className="flex-1">
-                  <div className="mb-0.5 flex items-center gap-2">
-                    <span className="rounded bg-zinc-800/80 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-zinc-400">
-                      {weekDays[boss.dayOfWeek]}
-                    </span>
-                    <span className="font-mono text-[11px] text-zinc-400">
-                      {String(boss.spawnHourUTC8).padStart(2, "0")}:00 UTC+8
-                    </span>
-                  </div>
-                  <h3 className="text-sm font-semibold text-zinc-100">
-                    {boss.name}
-                  </h3>
-                  <p className="mt-0.5 text-[11px] text-zinc-500">
-                    {boss.zone}
-                  </p>
-                  {boss.description && (
-                    <p className="mt-1 text-[10px] text-amber-400/70">
-                      {boss.description}
-                    </p>
+              {/* Compact row */}
+              <div className="flex @[480px]/app:hidden items-center gap-2 flex-1">
+                <BellToggle
+                  bossId={boss.id}
+                  userId={userId}
+                  initialSubscribed={subscribedBossIds.has(boss.id)}
+                  onToggle={onBellToggle}
+                />
+                <span className="font-semibold text-xs flex-1">{boss.name}</span>
+                <span className="text-[10px] text-zinc-500">{weekDays[boss.dayOfWeek]}</span>
+                <CountdownBadge
+                  nextSpawn={getNextWeeklySpawn(
+                    boss.dayOfWeek,
+                    boss.spawnHourUTC8
                   )}
-                </div>
-                <div className="flex flex-col items-end gap-1">
-                  <span className="rounded-full bg-red-500/20 px-2 py-0.5 text-[9px] font-bold uppercase tracking-widest text-red-300">
-                    Weekly
-                  </span>
-                  <CountdownBadge
-                    nextSpawn={getNextWeeklySpawn(
-                      boss.dayOfWeek,
-                      boss.spawnHourUTC8
+                />
+              </div>
+              {/* Full card */}
+              <div className="hidden @[480px]/app:flex flex-col gap-1 flex-1">
+                <div className="mb-1 flex items-start justify-between gap-2">
+                  <div className="flex-1">
+                    <div className="mb-0.5 flex items-center gap-2">
+                      <span className="rounded bg-zinc-800/80 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-zinc-400">
+                        {weekDays[boss.dayOfWeek]}
+                      </span>
+                      <span className="font-mono text-[11px] text-zinc-400">
+                        {String(boss.spawnHourUTC8).padStart(2, "0")}:00 UTC+8
+                      </span>
+                    </div>
+                    <h3 className="text-sm font-semibold text-zinc-100">
+                      {boss.name}
+                    </h3>
+                    <p className="mt-0.5 text-[11px] text-zinc-500">
+                      {boss.zone}
+                    </p>
+                    {boss.description && (
+                      <p className="mt-1 text-[10px] text-amber-400/70">
+                        {boss.description}
+                      </p>
                     )}
-                  />
-                  <BellToggle
-                    bossId={boss.id}
-                    userId={userId}
-                    initialSubscribed={subscribedBossIds.has(boss.id)}
-                    onToggle={onBellToggle}
-                  />
+                  </div>
+                  <div className="flex flex-col items-end gap-1">
+                    <span className="rounded-full bg-red-500/20 px-2 py-0.5 text-[9px] font-bold uppercase tracking-widest text-red-300">
+                      Weekly
+                    </span>
+                    <CountdownBadge
+                      nextSpawn={getNextWeeklySpawn(
+                        boss.dayOfWeek,
+                        boss.spawnHourUTC8
+                      )}
+                    />
+                    <BellToggle
+                      bossId={boss.id}
+                      userId={userId}
+                      initialSubscribed={subscribedBossIds.has(boss.id)}
+                      onToggle={onBellToggle}
+                    />
+                  </div>
                 </div>
               </div>
             </div>
@@ -2044,14 +2120,14 @@ export default function DashboardPage() {
   ];
 
   return (
-    <div className="flex h-screen flex-col overflow-hidden text-zinc-100 antialiased">
+    <div className="@container/app flex h-screen flex-col overflow-hidden text-zinc-100 antialiased">
       <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col overflow-hidden p-2 pt-2 sm:p-4">
         <header
           className="flex items-center justify-between gap-3 pb-3"
           style={{ borderBottom: "1px solid rgba(255,255,255,0.07)" }}
         >
           <h1
-            className="shrink-0 text-sm sm:text-base font-bold tracking-tight"
+            className="shrink-0 text-sm @[500px]/app:text-base font-bold tracking-tight"
             style={{
               background: "linear-gradient(135deg, #e2e8f0 0%, #94a3b8 100%)",
               WebkitBackgroundClip: "text",
@@ -2062,7 +2138,7 @@ export default function DashboardPage() {
             ⚔️ MIR4 Boss Tracker
           </h1>
           <div className="flex min-w-0 items-center gap-2">
-            <span className="hidden sm:block">
+            <span className="hidden @[500px]/app:block">
               <ServerClock />
             </span>
             {currentUser ? (
@@ -2121,17 +2197,8 @@ export default function DashboardPage() {
           </div>
         </header>
 
-        <div className="flex items-center gap-1">
-          <button
-            type="button"
-            aria-label="Scroll tabs left"
-            onClick={() => {
-              tabsRef.current?.scrollBy({ left: -150, behavior: "smooth" });
-            }}
-            className="shrink-0 rounded-md border border-zinc-700/60 bg-zinc-900/70 px-1.5 py-1 text-zinc-400 backdrop-blur-sm transition-colors hover:bg-zinc-800 hover:text-zinc-200"
-          >
-            &lt;
-          </button>
+        {/* Wide container — tab bar */}
+        <div className="hidden @[600px]:flex items-center gap-1">
           <nav
             ref={tabsRef}
             className="tabs-scroll flex flex-1 gap-0 overflow-x-auto border-b border-zinc-800/80"
@@ -2159,19 +2226,48 @@ export default function DashboardPage() {
               </button>
             ))}
           </nav>
-          <button
-            type="button"
-            aria-label="Scroll tabs right"
-            onClick={() => {
-              tabsRef.current?.scrollBy({ left: 150, behavior: "smooth" });
-            }}
-            className="shrink-0 rounded-md border border-zinc-700/60 bg-zinc-900/70 px-1.5 py-1 text-zinc-400 backdrop-blur-sm transition-colors hover:bg-zinc-800 hover:text-zinc-200"
-          >
-            &gt;
-          </button>
           <a
             href="/war"
-            className="ml-1 flex shrink-0 items-center gap-1 rounded-full border px-2 py-1 text-[10px] font-semibold text-red-300 transition-colors hover:bg-red-500/25 sm:px-3 sm:text-[11px]"
+            className="ml-1 flex shrink-0 items-center gap-1 rounded-full border px-3 py-1 text-[11px] font-semibold text-red-300 transition-colors hover:bg-red-500/25"
+            style={{
+              background: "rgba(239,68,68,0.15)",
+              borderColor: "rgba(239,68,68,0.4)",
+            }}
+          >
+            <svg
+              viewBox="0 0 24 24"
+              width={14}
+              height={14}
+              className="text-red-300"
+            >
+              <line x1={6} y1={6} x2={18} y2={18} stroke="currentColor" strokeWidth={2} />
+              <line x1={18} y1={6} x2={6} y2={18} stroke="currentColor" strokeWidth={2} />
+            </svg>
+            <span>WAR BOARD</span>
+          </a>
+        </div>
+
+        {/* Narrow container — dropdown */}
+        <div className="flex @[600px]:hidden items-center gap-1 w-full">
+          <select
+            value={activeTab}
+            onChange={(e) => setActiveTab(e.target.value as Tab)}
+            className="flex-1 rounded-lg bg-zinc-800 border border-zinc-700 text-white text-sm px-3 py-2 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+          >
+            <option value="world_bosses">🌍 World Bosses</option>
+            <option value="secret_peak">⛰️ Secret Peak</option>
+            <option value="magic_square">🏛️ Magic Square</option>
+            <option value="mirage">⚔️ Mirage</option>
+            <option value="square_11">🔲 Square 11</option>
+            <option value="dragon_tower">🐉 Dragon Tower</option>
+            <option value="event_mirage">🌀 Event Mirage</option>
+            <option value="purgatory">💀 Purgatory</option>
+            <option value="server">⚙️ Server</option>
+            <option value="calculator">🔢 Calculator</option>
+          </select>
+          <a
+            href="/war"
+            className="flex shrink-0 items-center gap-1 rounded-full border px-2 py-1 text-[10px] font-semibold text-red-300 transition-colors hover:bg-red-500/25"
             style={{
               background: "rgba(239,68,68,0.15)",
               borderColor: "rgba(239,68,68,0.4)",
@@ -2181,22 +2277,11 @@ export default function DashboardPage() {
               viewBox="0 0 24 24"
               width={12}
               height={12}
-              className="text-red-300 sm:hidden"
+              className="text-red-300"
             >
               <line x1={6} y1={6} x2={18} y2={18} stroke="currentColor" strokeWidth={2} />
               <line x1={18} y1={6} x2={6} y2={18} stroke="currentColor" strokeWidth={2} />
             </svg>
-            <svg
-              viewBox="0 0 24 24"
-              width={14}
-              height={14}
-              className="hidden text-red-300 sm:block"
-            >
-              <line x1={6} y1={6} x2={18} y2={18} stroke="currentColor" strokeWidth={2} />
-              <line x1={18} y1={6} x2={6} y2={18} stroke="currentColor" strokeWidth={2} />
-            </svg>
-            <span className="hidden sm:inline">WAR BOARD</span>
-            <span className="sm:hidden">WAR</span>
           </a>
         </div>
 
