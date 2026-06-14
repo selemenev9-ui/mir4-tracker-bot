@@ -637,7 +637,7 @@ function SecretPeakView({
   onBellToggle,
 }: {
   dynamicTimers: DynamicTimerMap;
-  currentUser: { id: string; username: string } | null;
+  currentUser: { id: string; username: string; avatarUrl?: string | null } | null;
   onReportKill: (bossId: string, bossName: string, floor: number) => Promise<void>;
   subscribedBossIds: Set<string>;
   onBellToggle: (bossId: string, newState: boolean) => void;
@@ -1132,7 +1132,7 @@ function MagicSquareView({
   onBellToggle,
 }: {
   dynamicTimers: DynamicTimerMap;
-  currentUser: { id: string; username: string } | null;
+  currentUser: { id: string; username: string; avatarUrl?: string | null } | null;
   onReportKill: (bossId: string, bossName: string, floor: number) => Promise<void>;
   subscribedBossIds: Set<string>;
   onBellToggle: (bossId: string, newState: boolean) => void;
@@ -1694,7 +1694,7 @@ function MiningCalculatorView() {
 export default function DashboardPage() {
   const [activeTab, setActiveTab] = useState<Tab>("world_bosses");
   const [currentUser, setCurrentUser] = useState<
-    { id: string; username: string } | null
+    { id: string; username: string; avatarUrl?: string | null } | null
   >(null);
   const [sdkReady, setSdkReady] = useState(false);
   const [sdkError, setSdkError] = useState(false);
@@ -1746,7 +1746,7 @@ export default function DashboardPage() {
             response_type: "code",
             state: "",
             prompt: "none",
-            scope: ["identify", "guilds.members.read"],
+            scope: ["identify"],
           });
 
           const tokenRes = await fetch("/api/token", {
@@ -1770,38 +1770,37 @@ export default function DashboardPage() {
 
           const user = auth?.user;
           let displayName = user?.global_name ?? user?.username ?? "unknown";
+          let avatarUrl: string | null = null;
 
-          // Try to fetch guild nickname
+          // Get nick and avatar via bot token (no user consent)
           try {
             const guildId = (discordSdk as unknown as { guildId?: string }).guildId;
-            if (guildId && accessToken) {
+            if (guildId && user?.id) {
               const memberRes = await fetch(
-                `https://discord.com/api/v10/users/@me/guilds/${guildId}/member`,
-                {
-                  headers: { Authorization: `Bearer ${accessToken}` },
-                },
+                `/api/guild-member?userId=${user.id}&guildId=${guildId}`,
               );
               if (memberRes.ok) {
                 const member = (await memberRes.json()) as {
                   nick?: string | null;
-                  user?: {
-                    global_name?: string | null;
-                    username?: string | null;
-                  };
+                  globalName?: string | null;
+                  avatarUrl?: string | null;
                 };
                 if (member?.nick) {
                   displayName = member.nick;
-                } else if (member?.user?.global_name) {
-                  displayName = member.user.global_name;
+                } else if (member?.globalName) {
+                  displayName = member.globalName;
+                }
+                if (member?.avatarUrl) {
+                  avatarUrl = member.avatarUrl;
                 }
               }
             }
           } catch {
-            // keep displayName as-is on error
+            // fallback
           }
 
           if (mounted && user?.id) {
-            setCurrentUser({ id: user.id, username: displayName });
+            setCurrentUser({ id: user.id, username: displayName, avatarUrl });
             setDiscordAuthDone(true);
             localStorage.setItem("mir4_username", displayName);
             localStorage.setItem("mir4_user_id", user.id);
@@ -2005,6 +2004,18 @@ export default function DashboardPage() {
             </span>
             {currentUser ? (
               <>
+                {currentUser.avatarUrl && (
+                  <img
+                    src={currentUser.avatarUrl}
+                    alt=""
+                    className="shrink-0 rounded-full object-cover"
+                    style={{
+                      width: 28,
+                      height: 28,
+                      marginRight: 6,
+                    }}
+                  />
+                )}
                 <span
                   className="max-w-[120px] truncate text-xs"
                   style={{
@@ -2017,21 +2028,23 @@ export default function DashboardPage() {
                 >
                   {currentUser.username}
                 </span>
-                <button
-                  type="button"
-                  onClick={() => {
-                    localStorage.removeItem("mir4_username");
-                    localStorage.removeItem("mir4_user_id");
-                    setCurrentUser(null);
-                    setSdkReady(false);
-                    setSdkError(false);
-                    setShowNamePrompt(true);
-                    setNameInput("");
-                  }}
-                  className="shrink-0 text-[10px] text-zinc-600 transition-colors hover:text-zinc-400"
-                >
-                  change
-                </button>
+                {!discordAuthDone && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      localStorage.removeItem("mir4_username");
+                      localStorage.removeItem("mir4_user_id");
+                      setCurrentUser(null);
+                      setSdkReady(false);
+                      setSdkError(false);
+                      setShowNamePrompt(true);
+                      setNameInput("");
+                    }}
+                    className="shrink-0 text-[10px] text-zinc-600 transition-colors hover:text-zinc-400"
+                  >
+                    change
+                  </button>
+                )}
               </>
             ) : (
               <button
