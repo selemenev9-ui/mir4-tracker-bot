@@ -25,6 +25,35 @@ type ChatInputCommand = {
   dm_permission?: boolean;
 };
 
+type ExistingCommand = {
+  name: string;
+  [key: string]: unknown;
+};
+
+const ALLOWED_COMMAND_FIELDS = new Set([
+  "name",
+  "type",
+  "description",
+  "options",
+  "default_member_permissions",
+  "dm_permission",
+  "integration_types",
+  "contexts",
+  "nsfw",
+  "name_localizations",
+  "description_localizations",
+]);
+
+function sanitizeCommand(command: ExistingCommand): Record<string, unknown> {
+  const sanitized: Record<string, unknown> = {};
+  for (const key of ALLOWED_COMMAND_FIELDS) {
+    if (command[key] !== undefined) {
+      sanitized[key] = command[key];
+    }
+  }
+  return sanitized;
+}
+
 async function registerCommands(): Promise<void> {
   const url = `${DISCORD_API_BASE}/applications/${DISCORD_APP_ID}/commands`;
 
@@ -37,13 +66,43 @@ async function registerCommands(): Promise<void> {
     dm_permission: false,
   };
 
+  const trackerCommand: ChatInputCommand = {
+    name: "tracker",
+    description: "Open the MIR4 boss tracker inside Discord.",
+    type: 1,
+    dm_permission: false,
+  };
+
+  const translateCommand = {
+    name: "Translate",
+    type: 3,
+  } as const;
+
+  const existingResponse = await fetch(url, {
+    method: "GET",
+    headers: {
+      Authorization: `Bot ${DISCORD_BOT_TOKEN}`,
+    },
+  });
+
+  if (!existingResponse.ok) {
+    const errorText = await existingResponse.text();
+    throw new Error(`Failed to fetch existing commands: ${existingResponse.status} ${existingResponse.statusText} - ${errorText}`);
+  }
+
+  const existingCommands = (await existingResponse.json()) as ExistingCommand[];
+  const namesToReplace = new Set(["setup_tracker", "tracker", "Translate"]);
+  const preservedCommands = existingCommands
+    .filter((command) => !namesToReplace.has(command.name))
+    .map((command) => sanitizeCommand(command));
+
   const response = await fetch(url, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bot ${DISCORD_BOT_TOKEN}`,
     },
-    body: JSON.stringify([setupTrackerCommand]),
+    body: JSON.stringify([...preservedCommands, setupTrackerCommand, trackerCommand, translateCommand]),
   });
 
   if (!response.ok) {

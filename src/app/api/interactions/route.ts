@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { InteractionType } from "discord-interactions";
+import { translate } from "@vitalets/google-translate-api";
 import { verifyDiscordRequest } from "@/lib/discord";
 
 // Discord Interaction Response Types (Discord API v10)
@@ -14,6 +15,17 @@ type AnyInteraction = {
   data?: {
     name?: string;
     custom_id?: string;
+    type?: number;
+    target_id?: string;
+    resolved?: {
+      messages?: Record<
+        string,
+        {
+          content: string;
+          author: { username: string };
+        }
+      >;
+    };
   };
 };
 
@@ -91,6 +103,48 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
           ],
         },
       });
+    }
+
+    if (commandName === "Translate") {
+      const targetId = interaction.data?.target_id;
+      const messages = interaction.data?.resolved?.messages;
+      const originalText = targetId && messages ? messages[targetId]?.content : null;
+
+      if (!originalText || originalText.trim() === "") {
+        return NextResponse.json({
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+          data: {
+            content: "❌ Could not find any text in that message.",
+            flags: 64,
+          },
+        });
+      }
+
+      try {
+        const result = await translate(originalText, { to: "en" });
+
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const detected: string = ((result as any).raw?.src as string | undefined) ?? "unknown";
+
+        const langLabel = detected !== "unknown" && detected !== "en" ? ` [${detected.toUpperCase()} → EN]` : "";
+
+        return NextResponse.json({
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+          data: {
+            content: `🌐 **Translation**${langLabel}\n>>> ${result.text}`,
+            flags: 64,
+          },
+        });
+      } catch (err) {
+        console.error("Translation error:", err);
+        return NextResponse.json({
+          type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+          data: {
+            content: "❌ Translation failed. Google may be rate-limiting. Try again in a moment.",
+            flags: 64,
+          },
+        });
+      }
     }
 
     return new NextResponse("Unknown command", { status: 400 });
