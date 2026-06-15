@@ -2399,6 +2399,17 @@ export default function DashboardPage() {
             <span className="hidden @[500px]/app:inline">Crafting</span>
           </a>
           <a
+            href="/potential"
+            className="ml-1 flex shrink-0 items-center gap-1 rounded-full border px-2 @[600px]/app:px-3 py-1 text-[11px] font-semibold text-cyan-300 transition-colors hover:bg-cyan-500/25"
+            style={{
+              background: "rgba(6,182,212,0.12)",
+              borderColor: "rgba(6,182,212,0.35)",
+            }}
+          >
+            <span>⚡</span>
+            <span className="hidden @[500px]/app:inline">Potential</span>
+          </a>
+          <a
             href="/war"
             className="ml-1 flex shrink-0 items-center gap-1 rounded-full border px-2 @[600px]/app:px-3 py-1 text-[11px] font-semibold text-red-300 transition-colors hover:bg-red-500/25"
             style={{
