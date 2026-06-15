@@ -65,12 +65,50 @@ const RARITY_COLORS: Record<string, string> = {
   legendario: "#fbbf24",
 };
 
+const FILTER_STATS = [
+  "Accuracy", "All ATK DMG Boost", "All DMG Reduction", "Antidemon Power",
+  "Bash ATK DMG Boost", "Bash DMG Reduction", "Basic ATK DMG Boost", "Basic DMG Reduction",
+  "Boss ATK DMG Boost", "Boss DMG Reduction", "Box Open Time Boost",
+  "CRIT", "CRIT ATK DMG Boost", "CRIT DMG Reduction", "CRIT EVA",
+  "Darksteel Gain Boost", "Debilitation RES Boost", "Debilitation Success Boost",
+  "Divine Water Cooldown Reduction",
+  "Dragon Artifact Enhancement Success Chance Boost (E)",
+  "Dragon Artifact Enhancement Success Chance Boost (L)",
+  "Dragon Artifact Enhancement Success Chance Boost (R)",
+  "Dragon Artifact Enhancement Success Chance Boost (UC-L)",
+  "Drop Chance Boost", "Energy Gain Boost", "Energy Gathering Boost",
+  "Equipment Enhancement Success Chance Boost (E)",
+  "Equipment Enhancement Success Chance Boost (L)",
+  "Equipment Enhancement Success Chance Boost (R)",
+  "Equipment Enhancement Success Chance Boost (UC-L)",
+  "Equipment Enhancement Success Chance Boost (UC)",
+  "EVA", "Gathering Boost", "HP", "HP Potion Effect Boost",
+  "Hunting Copper Gain Boost", "Hunting EXP Boost",
+  "Knockdown RES Boost", "Knockdown Success Boost",
+  "Lucky Drop Chance Boost", "Max Vigor Boost (sec)", "Mining Boost",
+  "Monster ATK DMG Boost", "Monster DMG Reduction", "MP", "MP Potion Effect Boost",
+  "PHYS ATK", "PHYS DEF", "PvP ATK DMG Boost", "PvP DMG Reduction",
+  "Silence RES Boost", "Silence Success Boost",
+  "Skill ATK DMG Boost", "Skill DMG Reduction", "Skill HP Recovery Am't Boost",
+  "Solitude Training Success Chance Boost",
+  "Spell ATK", "Spell DEF", "Stun RES Boost", "Stun Success Boost",
+];
+
+function nodeMatchesFilter(node: PotentialNode, activeFilters: string[]): boolean {
+  if (activeFilters.length === 0) return false;
+  return node.stages.some((stage) =>
+    stage.stats.some((stat) => activeFilters.includes(stat.name))
+  );
+}
+
 export default function PotentialClient({ data }: { data: PotentialData }) {
   const classes = Object.keys(data);
   const [selectedClass, setSelectedClass] = useState<string>(classes[0]);
   const [selectedNode, setSelectedNode] = useState<PotentialNode | null>(null);
   const [currentStage, setCurrentStage] = useState<number>(0);
   const [scale, setScale] = useState<number>(0.4);
+  const [filterOpen, setFilterOpen] = useState<boolean>(false);
+  const [activeFilters, setActiveFilters] = useState<string[]>([]);
 
   const classData = data[selectedClass];
   const stage = selectedNode ? selectedNode.stages[currentStage] : null;
@@ -78,6 +116,12 @@ export default function PotentialClient({ data }: { data: PotentialData }) {
 
   return (
     <div className="flex bg-[#0a0a0f] text-zinc-100" style={{ height: "100dvh", overflow: "hidden" }}>
+      <style>{`
+        @keyframes filterGlow {
+          0%, 100% { filter: drop-shadow(0 0 4px #ffd24d); }
+          50%       { filter: drop-shadow(0 0 16px #ffd24d) brightness(1.3); }
+        }
+      `}</style>
       {/* ── Left sidebar (class selector) ── */}
       <aside
         className="flex flex-col items-center py-3 gap-1 bg-[#111] border-r border-zinc-800 overflow-y-auto"
@@ -127,7 +171,7 @@ export default function PotentialClient({ data }: { data: PotentialData }) {
           {/* Background */}
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src="/potential/5700011.webp"
+            src="/potential/bgpotential.png"
             alt=""
             width={2400}
             height={1800}
@@ -165,6 +209,7 @@ export default function PotentialClient({ data }: { data: PotentialData }) {
           {/* Node buttons */}
           {classData.nodes.map((node) => {
             const isSelected = selectedNode?.pid === node.pid;
+            const isFiltered = nodeMatchesFilter(node, activeFilters);
             return (
               <button
                 key={node.pid}
@@ -187,12 +232,28 @@ export default function PotentialClient({ data }: { data: PotentialData }) {
                   cursor: "pointer",
                   boxShadow: isSelected ? "0 0 10px 4px rgba(245,158,11,0.6)" : "none",
                   transition: "all 0.1s",
-                  zIndex: isSelected ? 10 : 1,
+                  zIndex: isSelected || isFiltered ? 10 : 1,
                   padding: 0,
+                  animation: isFiltered ? "filterGlow 1.5s ease-in-out infinite" : "none",
                 }}
               />
             );
           })}
+        </div>
+
+        {/* Filter button */}
+        <div className="absolute top-3 left-3" style={{ zIndex: 20 }}>
+          <button
+            type="button"
+            onClick={() => setFilterOpen(true)}
+            className="flex items-center gap-1.5 rounded bg-zinc-800 border px-3 py-1.5 text-xs font-semibold hover:bg-zinc-700 transition-colors"
+            style={{
+              borderColor: activeFilters.length > 0 ? "#f59e0b" : "#52525b",
+              color: activeFilters.length > 0 ? "#fbbf24" : "#d4d4d8",
+            }}
+          >
+            🔍 Filter Attributes{activeFilters.length > 0 ? ` (${activeFilters.length})` : ""}
+          </button>
         </div>
 
         {/* Zoom controls */}
@@ -357,6 +418,78 @@ export default function PotentialClient({ data }: { data: PotentialData }) {
           </div>
         )}
       </aside>
+
+      {/* Filter modal */}
+      {filterOpen && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center"
+          style={{ background: "rgba(0,0,0,0.75)" }}
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setFilterOpen(false);
+          }}
+        >
+          <div
+            className="relative w-full max-w-lg rounded-xl border bg-[#111] p-5 mx-4"
+            style={{ borderColor: "#f59e0b", maxHeight: "80vh", display: "flex", flexDirection: "column" }}
+          >
+            {/* Modal header */}
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-sm font-bold text-amber-400">Search Condition</h2>
+              <button
+                type="button"
+                onClick={() => setFilterOpen(false)}
+                className="w-7 h-7 rounded bg-zinc-800 border border-zinc-600 text-zinc-300 hover:bg-zinc-700 flex items-center justify-center text-sm"
+              >
+                ✕
+              </button>
+            </div>
+
+            {/* Checkbox grid */}
+            <div className="overflow-y-auto" style={{ maxHeight: "24rem" }}>
+              <div className="grid gap-1" style={{ gridTemplateColumns: "repeat(2, 1fr)" }}>
+                {FILTER_STATS.map((stat) => (
+                  <label
+                    key={stat}
+                    className="flex items-center gap-2 cursor-pointer rounded px-2 py-1 hover:bg-zinc-800 text-xs text-zinc-300"
+                  >
+                    <input
+                      type="checkbox"
+                      checked={activeFilters.includes(stat)}
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          setActiveFilters((prev) => [...prev, stat]);
+                        } else {
+                          setActiveFilters((prev) => prev.filter((f) => f !== stat));
+                        }
+                      }}
+                      className="accent-amber-400 shrink-0"
+                    />
+                    {stat}
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            {/* Footer */}
+            <div className="flex items-center justify-end gap-2 mt-4 pt-3 border-t border-zinc-800">
+              <button
+                type="button"
+                onClick={() => setActiveFilters([])}
+                className="px-3 py-1.5 rounded bg-zinc-800 border border-zinc-600 text-xs text-zinc-300 hover:bg-zinc-700"
+              >
+                Clear All
+              </button>
+              <button
+                type="button"
+                onClick={() => setFilterOpen(false)}
+                className="px-3 py-1.5 rounded bg-amber-500 text-black text-xs font-semibold hover:bg-amber-400"
+              >
+                Confirm
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
