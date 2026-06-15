@@ -560,14 +560,14 @@ function EquipmentCalculator() {
             </div>
           </div>
           <div className="flex items-center gap-3 rounded-xl border border-zinc-800 bg-zinc-800/70 p-4">
-            <CraftIcon src={ICON("Darksteel.webp")} alt="Darksteel" />
+            <CraftIcon src={ICON("Darksteel.png")} alt="Darksteel" />
             <div>
               <p className="text-xs text-zinc-400">Darksteel</p>
               <p className="text-lg font-semibold text-zinc-100">{fmt(totals.darksteel)}</p>
             </div>
           </div>
           <div className="flex items-center gap-3 rounded-xl border border-zinc-800 bg-zinc-800/70 p-4">
-            <CraftIcon src={ICON("Copper.webp")} alt="Copper" />
+            <CraftIcon src={ICON("Copper.png")} alt="Copper" />
             <div>
               <p className="text-xs text-zinc-400">Copper</p>
               <p className="text-lg font-semibold text-zinc-100">{fmt(totals.copper)}</p>
