@@ -601,11 +601,12 @@ function DragonArtifactCalculator() {
   const inputs = artifactState[artifact.id];
   const safeCount = Math.max(1, inputs.count || 1);
 
-  const needEternal = Math.max(0, safeCount - inputs.eternal);
+  const eternalPerCraft = grade === "epic" ? 30 : 50;
+  const needEternal = Math.max(0, safeCount * eternalPerCraft - inputs.eternal);
   const needPiece = Math.max(0, safeCount - inputs.piece);
   const needSphere = Math.max(0, safeCount - inputs.sphere);
   const dragonSteel = safeCount * (grade === "epic" ? 250 : 2_500);
-  const glitteringPowder = safeCount * (grade === "epic" ? 2_500_000 : 25_000_000);
+  const darksteelCost = safeCount * (grade === "epic" ? 2_500_000 : 25_000_000);
 
   function update(field: keyof ArtifactState, value: number) {
     setArtifactState((prev) => ({
@@ -726,6 +727,7 @@ function DragonArtifactCalculator() {
             <div>
               <p className="text-xs text-zinc-400">{artifact.eternal} needed</p>
               <p className="text-lg font-semibold text-zinc-100">{fmt(needEternal)}</p>
+              <p className="text-[11px] text-zinc-500">Need: {fmt(safeCount * eternalPerCraft)} (×{eternalPerCraft} each)</p>
             </div>
           </div>
           <div className="flex items-center gap-3 rounded-xl border border-zinc-800 bg-zinc-800/70 p-4">
@@ -752,10 +754,11 @@ function DragonArtifactCalculator() {
             </div>
           </div>
           <div className="flex items-center gap-3 rounded-xl border border-zinc-800 bg-zinc-800/70 p-4">
-            <CraftIcon src={ICON("GlitteringPowder.png")} alt="Glittering Powder" />
+            <CraftIcon src={ICON("Darksteel.png")} alt="Darksteel" />
             <div>
-              <p className="text-xs text-zinc-400">Glittering Powder</p>
-              <p className="text-lg font-semibold text-zinc-100">{fmt(glitteringPowder)}</p>
+              <p className="text-xs text-zinc-400">Darksteel</p>
+              <p className="text-lg font-semibold text-zinc-100">{fmt(darksteelCost)}</p>
+              <p className="text-[11px] text-zinc-500">Craft cost</p>
             </div>
           </div>
         </div>
