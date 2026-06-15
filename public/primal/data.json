@@ -1,0 +1,1886 @@
+[
+  {
+    "name": "Arma",
+    "img": "arma.png",
+    "stones": [
+      "1.png",
+      "1.1.png",
+      "1.2.png"
+    ],
+    "mainStats": [
+      {
+        "icon": "3.png",
+        "name": "CRIT ATK DMG Boost",
+        "min": "16.8%",
+        "max": "55.4%"
+      },
+      {
+        "icon": "5.png",
+        "name": "All ATK DMG Boost",
+        "min": "5.6%",
+        "max": "18.4%"
+      },
+      {
+        "icon": "7.png",
+        "name": "PHYS ATK",
+        "min": "61",
+        "max": "201"
+      },
+      {
+        "icon": "8.png",
+        "name": "Spell ATK",
+        "min": "61",
+        "max": "201"
+      },
+      {
+        "icon": "9.png",
+        "name": "Accuracy",
+        "min": "54",
+        "max": "178"
+      },
+      {
+        "icon": "13.png",
+        "name": "PvP ATK DMG Boost",
+        "min": "6.4%",
+        "max": "21.1%"
+      },
+      {
+        "icon": "15.png",
+        "name": "Skill ATK DMG Boost",
+        "min": "6.8%",
+        "max": "22.4%"
+      },
+      {
+        "icon": "27.png",
+        "name": "Stun Success Boost",
+        "min": "4.1%",
+        "max": "13.5%"
+      },
+      {
+        "icon": "21.png",
+        "name": "Monster ATK DMG Boost",
+        "min": "7%",
+        "max": "23.1%"
+      },
+      {
+        "icon": "25.png",
+        "name": "Boss ATK DMG Boost",
+        "min": "8.5%",
+        "max": "28%"
+      },
+      {
+        "icon": "29.png",
+        "name": "Silence Success Boost",
+        "min": "4.2%",
+        "max": "13.8%"
+      },
+      {
+        "icon": "38.png",
+        "name": "Hunting Copper Gain Boost",
+        "min": "5.3%",
+        "max": "17.49%"
+      },
+      {
+        "icon": "35.png",
+        "name": "Drop Chance Boost",
+        "min": "5%",
+        "max": "16.5%"
+      },
+      {
+        "icon": "31.png",
+        "name": "Knockdown Success Boost",
+        "min": "4%",
+        "max": "13.2%"
+      },
+      {
+        "icon": "19.png",
+        "name": "Basic ATK DMG Boost",
+        "min": "4.8%",
+        "max": "15.8%"
+      },
+      {
+        "icon": "23.png",
+        "name": "Monster Accuracy Boost",
+        "min": "28",
+        "max": "92"
+      }
+    ],
+    "secStats": [
+      {
+        "icon": "1.png",
+        "name": "CRIT",
+        "min": "35",
+        "max": "115"
+      },
+      {
+        "icon": "17.png",
+        "name": "Bash ATK DMG Boost",
+        "min": "11.2%",
+        "max": "36.9%"
+      },
+      {
+        "icon": "7.png",
+        "name": "PHYS ATK",
+        "min": "33",
+        "max": "108"
+      },
+      {
+        "icon": "8.png",
+        "name": "Spell ATK",
+        "min": "33",
+        "max": "108"
+      },
+      {
+        "icon": "13.png",
+        "name": "PvP ATK DMG Boost",
+        "min": "3.2%",
+        "max": "10.5%"
+      },
+      {
+        "icon": "15.png",
+        "name": "Skill ATK DMG Boost",
+        "min": "3.8%",
+        "max": "12.5%"
+      },
+      {
+        "icon": "27.png",
+        "name": "Stun Success Boost",
+        "min": "2.3%",
+        "max": "7.5%"
+      },
+      {
+        "icon": "23.png",
+        "name": "Monster Accuracy Boost",
+        "min": "15",
+        "max": "49"
+      }
+    ]
+  },
+  {
+    "name": "Arma Secundaria",
+    "img": "secundaria.png",
+    "stones": [
+      "2.png",
+      "2.1.png",
+      "2.2.png"
+    ],
+    "mainStats": [
+      {
+        "icon": "33.png",
+        "name": "Debilitation Success Boost",
+        "min": "3.8%",
+        "max": "12.5%"
+      },
+      {
+        "icon": "5.png",
+        "name": "All ATK DMG Boost",
+        "min": "5.6%",
+        "max": "18.4%"
+      },
+      {
+        "icon": "7.png",
+        "name": "PHYS ATK",
+        "min": "61",
+        "max": "201"
+      },
+      {
+        "icon": "8.png",
+        "name": "Spell ATK",
+        "min": "61",
+        "max": "201"
+      },
+      {
+        "icon": "11.png",
+        "name": "PHYS DEF",
+        "min": "55",
+        "max": "181"
+      },
+      {
+        "icon": "12.png",
+        "name": "Spell DEF",
+        "min": "55",
+        "max": "181"
+      },
+      {
+        "icon": "13.png",
+        "name": "PvP ATK DMG Boost",
+        "min": "6.4%",
+        "max": "21.1%"
+      },
+      {
+        "icon": "15.png",
+        "name": "Skill ATK DMG Boost",
+        "min": "6.8%",
+        "max": "22.4%"
+      },
+      {
+        "icon": "32.png",
+        "name": "Knockdown RES Boost",
+        "min": "4%",
+        "max": "13.2%"
+      },
+      {
+        "icon": "27.png",
+        "name": "Stun Success Boost",
+        "min": "4.1%",
+        "max": "13.5%"
+      },
+      {
+        "icon": "29.png",
+        "name": "Silence Success Boost",
+        "min": "4.2%",
+        "max": "13.8%"
+      },
+      {
+        "icon": "20.png",
+        "name": "Basic DMG Reduction",
+        "min": "4.8%",
+        "max": "15.8%"
+      },
+      {
+        "icon": "24.png",
+        "name": "Monster EVA Boost",
+        "min": "28",
+        "max": "92"
+      },
+      {
+        "icon": "39.png",
+        "name": "Antidemon Power",
+        "min": "3.9%",
+        "max": "12.8%"
+      },
+      {
+        "icon": "35.png",
+        "name": "Drop Chance Boost",
+        "min": "5%",
+        "max": "16.5%"
+      },
+      {
+        "icon": "36.png",
+        "name": "Lucky Drop Chance Boost",
+        "min": "4.5%",
+        "max": "14.85%"
+      }
+    ],
+    "secStats": [
+      {
+        "icon": "1.png",
+        "name": "CRIT",
+        "min": "35",
+        "max": "115"
+      },
+      {
+        "icon": "6.png",
+        "name": "All DMG Reduction",
+        "min": "2.8%",
+        "max": "9.2%"
+      },
+      {
+        "icon": "7.png",
+        "name": "PHYS ATK",
+        "min": "33",
+        "max": "108"
+      },
+      {
+        "icon": "8.png",
+        "name": "Spell ATK",
+        "min": "33",
+        "max": "108"
+      },
+      {
+        "icon": "11.png",
+        "name": "PHYS DEF",
+        "min": "30",
+        "max": "99"
+      },
+      {
+        "icon": "12.png",
+        "name": "Spell DEF",
+        "min": "30",
+        "max": "99"
+      },
+      {
+        "icon": "13.png",
+        "name": "PvP ATK DMG Boost",
+        "min": "3.2%",
+        "max": "10.5%"
+      },
+      {
+        "icon": "15.png",
+        "name": "Skill ATK DMG Boost",
+        "min": "3.8%",
+        "max": "12.5%"
+      }
+    ]
+  },
+  {
+    "name": "Armadura",
+    "img": "armadura.png",
+    "stones": [
+      "3.png",
+      "3.1.png",
+      "3.2.png"
+    ],
+    "mainStats": [
+      {
+        "icon": "34.png",
+        "name": "Debilitation RES Boost",
+        "min": "3.8%",
+        "max": "12.5%"
+      },
+      {
+        "icon": "17.png",
+        "name": "Bash ATK DMG Boost",
+        "min": "22.4%",
+        "max": "73.9%"
+      },
+      {
+        "icon": "31.png",
+        "name": "Knockdown Success Boost",
+        "min": "4%",
+        "max": "13.2%"
+      },
+      {
+        "icon": "14.png",
+        "name": "PvP DMG Reduction",
+        "min": "6.4%",
+        "max": "21.1%"
+      },
+      {
+        "icon": "16.png",
+        "name": "Skill DMG Reduction",
+        "min": "6.8%",
+        "max": "22.4%"
+      },
+      {
+        "icon": "40.png",
+        "name": "HP",
+        "min": "1,400",
+        "max": "4,620"
+      },
+      {
+        "icon": "41.png",
+        "name": "MP",
+        "min": "350",
+        "max": "1,155"
+      },
+      {
+        "icon": "22.png",
+        "name": "Monster DMG Reduction",
+        "min": "7%",
+        "max": "23.1%"
+      },
+      {
+        "icon": "19.png",
+        "name": "Basic ATK DMG Boost",
+        "min": "4.8%",
+        "max": "15.8%"
+      },
+      {
+        "icon": "23.png",
+        "name": "Monster Accuracy Boost",
+        "min": "28",
+        "max": "92"
+      },
+      {
+        "icon": "30.png",
+        "name": "Silence RES Boost",
+        "min": "4.2%",
+        "max": "13.8%"
+      },
+      {
+        "icon": "37.png",
+        "name": "Hunting EXP Boost",
+        "min": "4%",
+        "max": "13.2%"
+      },
+      {
+        "icon": "26.png",
+        "name": "Boss DMG Reduction",
+        "min": "8.5%",
+        "max": "28%"
+      },
+      {
+        "icon": "39.png",
+        "name": "Antidemon Power",
+        "min": "3.9%",
+        "max": "12.8%"
+      },
+      {
+        "icon": "36.png",
+        "name": "Lucky Drop Chance Boost",
+        "min": "4.5%",
+        "max": "14.85%"
+      },
+      {
+        "icon": "38.png",
+        "name": "Hunting Copper Gain Boost",
+        "min": "5.3%",
+        "max": "17.49%"
+      }
+    ],
+    "secStats": [
+      {
+        "icon": "10.png",
+        "name": "EVA",
+        "min": "32",
+        "max": "105"
+      },
+      {
+        "icon": "18.png",
+        "name": "Bash DMG Reduction",
+        "min": "11.2%",
+        "max": "36.9%"
+      },
+      {
+        "icon": "14.png",
+        "name": "PvP DMG Reduction",
+        "min": "3.2%",
+        "max": "10.5%"
+      },
+      {
+        "icon": "31.png",
+        "name": "Knockdown Success Boost",
+        "min": "2.1%",
+        "max": "6.9%"
+      },
+      {
+        "icon": "19.png",
+        "name": "Basic ATK DMG Boost",
+        "min": "2.5%",
+        "max": "8.2%"
+      },
+      {
+        "icon": "30.png",
+        "name": "Silence RES Boost",
+        "min": "2.4%",
+        "max": "7.9%"
+      },
+      {
+        "icon": "22.png",
+        "name": "Monster DMG Reduction",
+        "min": "4%",
+        "max": "13.2%"
+      },
+      {
+        "icon": "26.png",
+        "name": "Boss DMG Reduction",
+        "min": "4.5%",
+        "max": "14.8%"
+      }
+    ]
+  },
+  {
+    "name": "Calça",
+    "img": "calca.png",
+    "stones": [
+      "4.png",
+      "4.1.png",
+      "4.2.png"
+    ],
+    "mainStats": [
+      {
+        "icon": "10.png",
+        "name": "EVA",
+        "min": "54",
+        "max": "178"
+      },
+      {
+        "icon": "18.png",
+        "name": "Bash DMG Reduction",
+        "min": "22.4%",
+        "max": "73.9%"
+      },
+      {
+        "icon": "7.png",
+        "name": "PHYS ATK",
+        "min": "61",
+        "max": "201"
+      },
+      {
+        "icon": "8.png",
+        "name": "Spell ATK",
+        "min": "61",
+        "max": "201"
+      },
+      {
+        "icon": "27.png",
+        "name": "Stun Success Boost",
+        "min": "4.1%",
+        "max": "13.5%"
+      },
+      {
+        "icon": "14.png",
+        "name": "PvP DMG Reduction",
+        "min": "6.4%",
+        "max": "21.1%"
+      },
+      {
+        "icon": "32.png",
+        "name": "Knockdown RES Boost",
+        "min": "4%",
+        "max": "13.2%"
+      },
+      {
+        "icon": "16.png",
+        "name": "Skill DMG Reduction",
+        "min": "6.8%",
+        "max": "22.4%"
+      },
+      {
+        "icon": "19.png",
+        "name": "Basic ATK DMG Boost",
+        "min": "4.8%",
+        "max": "15.8%"
+      },
+      {
+        "icon": "23.png",
+        "name": "Monster Accuracy Boost",
+        "min": "28",
+        "max": "92"
+      },
+      {
+        "icon": "21.png",
+        "name": "Monster ATK DMG Boost",
+        "min": "7%",
+        "max": "23.1%"
+      },
+      {
+        "icon": "29.png",
+        "name": "Silence Success Boost",
+        "min": "4.2%",
+        "max": "13.8%"
+      },
+      {
+        "icon": "25.png",
+        "name": "Boss ATK DMG Boost",
+        "min": "8.5%",
+        "max": "28%"
+      },
+      {
+        "icon": "36.png",
+        "name": "Lucky Drop Chance Boost",
+        "min": "4.5%",
+        "max": "14.85%"
+      },
+      {
+        "icon": "35.png",
+        "name": "Drop Chance Boost",
+        "min": "5%",
+        "max": "16.5%"
+      },
+      {
+        "icon": "38.png",
+        "name": "Hunting Copper Gain Boost",
+        "min": "5.3%",
+        "max": "17.49%"
+      }
+    ],
+    "secStats": [
+      {
+        "icon": "2.png",
+        "name": "CRIT EVA",
+        "min": "35",
+        "max": "115"
+      },
+      {
+        "icon": "9.png",
+        "name": "Accuracy",
+        "min": "32",
+        "max": "105"
+      },
+      {
+        "icon": "16.png",
+        "name": "Skill DMG Reduction",
+        "min": "3.8%",
+        "max": "12.5%"
+      },
+      {
+        "icon": "27.png",
+        "name": "Stun Success Boost",
+        "min": "2.3%",
+        "max": "7.5%"
+      },
+      {
+        "icon": "29.png",
+        "name": "Silence Success Boost",
+        "min": "2.4%",
+        "max": "7.9%"
+      },
+      {
+        "icon": "23.png",
+        "name": "Monster Accuracy Boost",
+        "min": "15",
+        "max": "49"
+      },
+      {
+        "icon": "21.png",
+        "name": "Monster ATK DMG Boost",
+        "min": "4%",
+        "max": "13.2%"
+      },
+      {
+        "icon": "25.png",
+        "name": "Boss ATK DMG Boost",
+        "min": "4.5%",
+        "max": "14.8%"
+      }
+    ]
+  },
+  {
+    "name": "Luva",
+    "img": "luva.png",
+    "stones": [
+      "5.png",
+      "5.1.png",
+      "5.2.png"
+    ],
+    "mainStats": [
+      {
+        "icon": "1.png",
+        "name": "CRIT",
+        "min": "64",
+        "max": "211"
+      },
+      {
+        "icon": "2.png",
+        "name": "CRIT EVA",
+        "min": "64",
+        "max": "211"
+      },
+      {
+        "icon": "17.png",
+        "name": "Bash ATK DMG Boost",
+        "min": "22.4%",
+        "max": "73.9%"
+      },
+      {
+        "icon": "11.png",
+        "name": "PHYS DEF",
+        "min": "55",
+        "max": "181"
+      },
+      {
+        "icon": "12.png",
+        "name": "Spell DEF",
+        "min": "55",
+        "max": "181"
+      },
+      {
+        "icon": "14.png",
+        "name": "PvP DMG Reduction",
+        "min": "6.4%",
+        "max": "21.1%"
+      },
+      {
+        "icon": "32.png",
+        "name": "Knockdown RES Boost",
+        "min": "4%",
+        "max": "13.2%"
+      },
+      {
+        "icon": "28.png",
+        "name": "Stun RES Boost",
+        "min": "4.1%",
+        "max": "13.5%"
+      },
+      {
+        "icon": "16.png",
+        "name": "Skill DMG Reduction",
+        "min": "6.8%",
+        "max": "22.4%"
+      },
+      {
+        "icon": "40.png",
+        "name": "HP",
+        "min": "1,400",
+        "max": "4,620"
+      },
+      {
+        "icon": "41.png",
+        "name": "MP",
+        "min": "350",
+        "max": "1,155"
+      },
+      {
+        "icon": "20.png",
+        "name": "Basic DMG Reduction",
+        "min": "4.8%",
+        "max": "15.8%"
+      },
+      {
+        "icon": "24.png",
+        "name": "Monster EVA Boost",
+        "min": "28",
+        "max": "92"
+      },
+      {
+        "icon": "30.png",
+        "name": "Silence RES Boost",
+        "min": "4.2%",
+        "max": "13.8%"
+      },
+      {
+        "icon": "22.png",
+        "name": "Monster DMG Reduction",
+        "min": "7%",
+        "max": "23.1%"
+      },
+      {
+        "icon": "26.png",
+        "name": "Boss DMG Reduction",
+        "min": "8.5%",
+        "max": "28%"
+      }
+    ],
+    "secStats": [
+      {
+        "icon": "4.png",
+        "name": "CRIT DMG Reduction",
+        "min": "8.4%",
+        "max": "27.7%"
+      },
+      {
+        "icon": "5.png",
+        "name": "All ATK DMG Boost",
+        "min": "2.8%",
+        "max": "9.2%"
+      },
+      {
+        "icon": "11.png",
+        "name": "PHYS DEF",
+        "min": "30",
+        "max": "99"
+      },
+      {
+        "icon": "12.png",
+        "name": "Spell DEF",
+        "min": "30",
+        "max": "99"
+      },
+      {
+        "icon": "32.png",
+        "name": "Knockdown RES Boost",
+        "min": "2.1%",
+        "max": "6.9%"
+      },
+      {
+        "icon": "28.png",
+        "name": "Stun RES Boost",
+        "min": "2.3%",
+        "max": "7.5%"
+      },
+      {
+        "icon": "20.png",
+        "name": "Basic DMG Reduction",
+        "min": "2.5%",
+        "max": "8.2%"
+      },
+      {
+        "icon": "30.png",
+        "name": "Silence RES Boost",
+        "min": "2.4%",
+        "max": "7.9%"
+      }
+    ]
+  },
+  {
+    "name": "Bota",
+    "img": "bota.png",
+    "stones": [
+      "6.png",
+      "6.1.png",
+      "6.2.png"
+    ],
+    "mainStats": [
+      {
+        "icon": "10.png",
+        "name": "EVA",
+        "min": "54",
+        "max": "178"
+      },
+      {
+        "icon": "4.png",
+        "name": "CRIT DMG Reduction",
+        "min": "16.8%",
+        "max": "55.4%"
+      },
+      {
+        "icon": "18.png",
+        "name": "Bash DMG Reduction",
+        "min": "22.4%",
+        "max": "73.9%"
+      },
+      {
+        "icon": "7.png",
+        "name": "PHYS ATK",
+        "min": "61",
+        "max": "201"
+      },
+      {
+        "icon": "8.png",
+        "name": "Spell ATK",
+        "min": "61",
+        "max": "201"
+      },
+      {
+        "icon": "11.png",
+        "name": "PHYS DEF",
+        "min": "55",
+        "max": "181"
+      },
+      {
+        "icon": "12.png",
+        "name": "Spell DEF",
+        "min": "55",
+        "max": "181"
+      },
+      {
+        "icon": "28.png",
+        "name": "Stun RES Boost",
+        "min": "4.1%",
+        "max": "13.5%"
+      },
+      {
+        "icon": "37.png",
+        "name": "Hunting EXP Boost",
+        "min": "4%",
+        "max": "13.2%"
+      },
+      {
+        "icon": "30.png",
+        "name": "Silence RES Boost",
+        "min": "4.2%",
+        "max": "13.8%"
+      },
+      {
+        "icon": "19.png",
+        "name": "Basic ATK DMG Boost",
+        "min": "4.8%",
+        "max": "15.8%"
+      },
+      {
+        "icon": "20.png",
+        "name": "Basic DMG Reduction",
+        "min": "4.8%",
+        "max": "15.8%"
+      },
+      {
+        "icon": "24.png",
+        "name": "Monster EVA Boost",
+        "min": "28",
+        "max": "92"
+      },
+      {
+        "icon": "21.png",
+        "name": "Monster ATK DMG Boost",
+        "min": "7%",
+        "max": "23.1%"
+      },
+      {
+        "icon": "25.png",
+        "name": "Boss ATK DMG Boost",
+        "min": "8.5%",
+        "max": "28%"
+      },
+      {
+        "icon": "35.png",
+        "name": "Drop Chance Boost",
+        "min": "5%",
+        "max": "16.5%"
+      }
+    ],
+    "secStats": [
+      {
+        "icon": "7.png",
+        "name": "PHYS ATK",
+        "min": "33",
+        "max": "108"
+      },
+      {
+        "icon": "8.png",
+        "name": "Spell ATK",
+        "min": "33",
+        "max": "108"
+      },
+      {
+        "icon": "3.png",
+        "name": "CRIT ATK DMG Boost",
+        "min": "8.4%",
+        "max": "27.7%"
+      },
+      {
+        "icon": "5.png",
+        "name": "All ATK DMG Boost",
+        "min": "2.8%",
+        "max": "9.2%"
+      },
+      {
+        "icon": "28.png",
+        "name": "Stun RES Boost",
+        "min": "2.3%",
+        "max": "7.5%"
+      },
+      {
+        "icon": "37.png",
+        "name": "Hunting EXP Boost",
+        "min": "2%",
+        "max": "6.6%"
+      },
+      {
+        "icon": "19.png",
+        "name": "Basic ATK DMG Boost",
+        "min": "2.5%",
+        "max": "8.2%"
+      },
+      {
+        "icon": "24.png",
+        "name": "Monster EVA Boost",
+        "min": "15",
+        "max": "49"
+      }
+    ]
+  },
+  {
+    "name": "Colar",
+    "img": "colar.png",
+    "stones": [
+      "7.png",
+      "7.1.png",
+      "7.2.png"
+    ],
+    "mainStats": [
+      {
+        "icon": "1.png",
+        "name": "CRIT",
+        "min": "64",
+        "max": "211"
+      },
+      {
+        "icon": "4.png",
+        "name": "CRIT DMG Reduction",
+        "min": "16.8%",
+        "max": "55.4%"
+      },
+      {
+        "icon": "27.png",
+        "name": "Stun Success Boost",
+        "min": "4.1%",
+        "max": "13.5%"
+      },
+      {
+        "icon": "31.png",
+        "name": "Knockdown Success Boost",
+        "min": "4%",
+        "max": "13.2%"
+      },
+      {
+        "icon": "14.png",
+        "name": "PvP DMG Reduction",
+        "min": "6.4%",
+        "max": "21.1%"
+      },
+      {
+        "icon": "16.png",
+        "name": "Skill DMG Reduction",
+        "min": "6.8%",
+        "max": "22.4%"
+      },
+      {
+        "icon": "37.png",
+        "name": "Hunting EXP Boost",
+        "min": "4%",
+        "max": "13.2%"
+      },
+      {
+        "icon": "40.png",
+        "name": "HP",
+        "min": "1,400",
+        "max": "4,620"
+      },
+      {
+        "icon": "41.png",
+        "name": "MP",
+        "min": "350",
+        "max": "1,155"
+      },
+      {
+        "icon": "19.png",
+        "name": "Basic ATK DMG Boost",
+        "min": "4.8%",
+        "max": "15.8%"
+      },
+      {
+        "icon": "23.png",
+        "name": "Monster Accuracy Boost",
+        "min": "28",
+        "max": "92"
+      },
+      {
+        "icon": "29.png",
+        "name": "Silence Success Boost",
+        "min": "4.2%",
+        "max": "13.8%"
+      },
+      {
+        "icon": "21.png",
+        "name": "Monster ATK DMG Boost",
+        "min": "7%",
+        "max": "23.1%"
+      },
+      {
+        "icon": "39.png",
+        "name": "Antidemon Power",
+        "min": "3.9%",
+        "max": "12.8%"
+      },
+      {
+        "icon": "25.png",
+        "name": "Boss ATK DMG Boost",
+        "min": "8.5%",
+        "max": "28%"
+      },
+      {
+        "icon": "36.png",
+        "name": "Lucky Drop Chance Boost",
+        "min": "4.5%",
+        "max": "14.85%"
+      }
+    ],
+    "secStats": [
+      {
+        "icon": "33.png",
+        "name": "Debilitation Success Boost",
+        "min": "2%",
+        "max": "6.6%"
+      },
+      {
+        "icon": "6.png",
+        "name": "All DMG Reduction",
+        "min": "2.8%",
+        "max": "9.2%"
+      },
+      {
+        "icon": "14.png",
+        "name": "PvP DMG Reduction",
+        "min": "3.2%",
+        "max": "10.5%"
+      },
+      {
+        "icon": "31.png",
+        "name": "Knockdown Success Boost",
+        "min": "2.1%",
+        "max": "6.9%"
+      },
+      {
+        "icon": "40.png",
+        "name": "HP",
+        "min": "700",
+        "max": "2,310"
+      },
+      {
+        "icon": "41.png",
+        "name": "MP",
+        "min": "170",
+        "max": "561"
+      },
+      {
+        "icon": "29.png",
+        "name": "Silence Success Boost",
+        "min": "2.4%",
+        "max": "7.9%"
+      },
+      {
+        "icon": "39.png",
+        "name": "Antidemon Power",
+        "min": "2.2%",
+        "max": "7.2%"
+      }
+    ]
+  },
+  {
+    "name": "Bracelete",
+    "img": "bracelete.png",
+    "stones": [
+      "8.png",
+      "8.1.png",
+      "8.2.png"
+    ],
+    "mainStats": [
+      {
+        "icon": "34.png",
+        "name": "Debilitation RES Boost",
+        "min": "3.8%",
+        "max": "12.5%"
+      },
+      {
+        "icon": "2.png",
+        "name": "CRIT EVA",
+        "min": "64",
+        "max": "211"
+      },
+      {
+        "icon": "7.png",
+        "name": "PHYS ATK",
+        "min": "61",
+        "max": "201"
+      },
+      {
+        "icon": "8.png",
+        "name": "Spell ATK",
+        "min": "61",
+        "max": "201"
+      },
+      {
+        "icon": "31.png",
+        "name": "Knockdown Success Boost",
+        "min": "4%",
+        "max": "13.2%"
+      },
+      {
+        "icon": "28.png",
+        "name": "Stun RES Boost",
+        "min": "4.1%",
+        "max": "13.5%"
+      },
+      {
+        "icon": "13.png",
+        "name": "PvP ATK DMG Boost",
+        "min": "6.4%",
+        "max": "21.1%"
+      },
+      {
+        "icon": "15.png",
+        "name": "Skill ATK DMG Boost",
+        "min": "6.8%",
+        "max": "22.4%"
+      },
+      {
+        "icon": "40.png",
+        "name": "HP",
+        "min": "1,400",
+        "max": "4,620"
+      },
+      {
+        "icon": "41.png",
+        "name": "MP",
+        "min": "350",
+        "max": "1,155"
+      },
+      {
+        "icon": "30.png",
+        "name": "Silence RES Boost",
+        "min": "4.2%",
+        "max": "13.8%"
+      },
+      {
+        "icon": "23.png",
+        "name": "Monster Accuracy Boost",
+        "min": "28",
+        "max": "92"
+      },
+      {
+        "icon": "39.png",
+        "name": "Antidemon Power",
+        "min": "3.9%",
+        "max": "12.8%"
+      },
+      {
+        "icon": "22.png",
+        "name": "Monster DMG Reduction",
+        "min": "7%",
+        "max": "23.1%"
+      },
+      {
+        "icon": "26.png",
+        "name": "Boss DMG Reduction",
+        "min": "8.5%",
+        "max": "28%"
+      },
+      {
+        "icon": "38.png",
+        "name": "Hunting Copper Gain Boost",
+        "min": "5.3%",
+        "max": "17.49%"
+      }
+    ],
+    "secStats": [
+      {
+        "icon": "18.png",
+        "name": "Bash DMG Reduction",
+        "min": "11.2%",
+        "max": "36.9%"
+      },
+      {
+        "icon": "9.png",
+        "name": "Accuracy",
+        "min": "32",
+        "max": "105"
+      },
+      {
+        "icon": "40.png",
+        "name": "HP",
+        "min": "700",
+        "max": "2,310"
+      },
+      {
+        "icon": "41.png",
+        "name": "MP",
+        "min": "170",
+        "max": "561"
+      },
+      {
+        "icon": "30.png",
+        "name": "Silence RES Boost",
+        "min": "2.4%",
+        "max": "7.9%"
+      },
+      {
+        "icon": "22.png",
+        "name": "Monster DMG Reduction",
+        "min": "4%",
+        "max": "13.2%"
+      },
+      {
+        "icon": "39.png",
+        "name": "Antidemon Power",
+        "min": "2.2%",
+        "max": "7.2%"
+      },
+      {
+        "icon": "26.png",
+        "name": "Boss DMG Reduction",
+        "min": "4.5%",
+        "max": "14.8%"
+      }
+    ]
+  },
+  {
+    "name": "Anel",
+    "img": "anel.png",
+    "stones": [
+      "9.png",
+      "9.1.png",
+      "9.2.png"
+    ],
+    "mainStats": [
+      {
+        "icon": "11.png",
+        "name": "PHYS DEF",
+        "min": "55",
+        "max": "181"
+      },
+      {
+        "icon": "12.png",
+        "name": "Spell DEF",
+        "min": "55",
+        "max": "181"
+      },
+      {
+        "icon": "13.png",
+        "name": "PvP ATK DMG Boost",
+        "min": "6.4%",
+        "max": "21.1%"
+      },
+      {
+        "icon": "21.png",
+        "name": "Monster ATK DMG Boost",
+        "min": "7%",
+        "max": "23.1%"
+      },
+      {
+        "icon": "25.png",
+        "name": "Boss ATK DMG Boost",
+        "min": "8.5%",
+        "max": "28%"
+      },
+      {
+        "icon": "22.png",
+        "name": "Monster DMG Reduction",
+        "min": "7%",
+        "max": "23.1%"
+      },
+      {
+        "icon": "26.png",
+        "name": "Boss DMG Reduction",
+        "min": "8.5%",
+        "max": "28%"
+      },
+      {
+        "icon": "15.png",
+        "name": "Skill ATK DMG Boost",
+        "min": "6.8%",
+        "max": "22.4%"
+      },
+      {
+        "icon": "6.png",
+        "name": "All DMG Reduction",
+        "min": "5.6%",
+        "max": "18.4%"
+      },
+      {
+        "icon": "28.png",
+        "name": "Stun RES Boost",
+        "min": "4.1%",
+        "max": "13.5%"
+      },
+      {
+        "icon": "33.png",
+        "name": "Debilitation Success Boost",
+        "min": "3.8%",
+        "max": "12.5%"
+      },
+      {
+        "icon": "29.png",
+        "name": "Silence Success Boost",
+        "min": "4.2%",
+        "max": "13.8%"
+      },
+      {
+        "icon": "37.png",
+        "name": "Hunting EXP Boost",
+        "min": "4%",
+        "max": "13.2%"
+      },
+      {
+        "icon": "32.png",
+        "name": "Knockdown RES Boost",
+        "min": "4%",
+        "max": "13.2%"
+      },
+      {
+        "icon": "20.png",
+        "name": "Basic DMG Reduction",
+        "min": "4.8%",
+        "max": "15.8%"
+      },
+      {
+        "icon": "24.png",
+        "name": "Monster EVA Boost",
+        "min": "28",
+        "max": "92"
+      }
+    ],
+    "secStats": [
+      {
+        "icon": "2.png",
+        "name": "CRIT EVA",
+        "min": "35",
+        "max": "115"
+      },
+      {
+        "icon": "34.png",
+        "name": "Debilitation RES Boost",
+        "min": "2%",
+        "max": "6.6%"
+      },
+      {
+        "icon": "32.png",
+        "name": "Knockdown RES Boost",
+        "min": "2.1%",
+        "max": "6.9%"
+      },
+      {
+        "icon": "37.png",
+        "name": "Hunting EXP Boost",
+        "min": "2%",
+        "max": "6.6%"
+      },
+      {
+        "icon": "20.png",
+        "name": "Basic DMG Reduction",
+        "min": "2.5%",
+        "max": "8.2%"
+      },
+      {
+        "icon": "24.png",
+        "name": "Monster EVA Boost",
+        "min": "15",
+        "max": "49"
+      },
+      {
+        "icon": "21.png",
+        "name": "Monster ATK DMG Boost",
+        "min": "4%",
+        "max": "13.2%"
+      },
+      {
+        "icon": "25.png",
+        "name": "Boss ATK DMG Boost",
+        "min": "4.5%",
+        "max": "14.8%"
+      }
+    ]
+  },
+  {
+    "name": "Brinco",
+    "img": "brinco.png",
+    "stones": [
+      "10.png",
+      "10.1.png",
+      "10.2.png"
+    ],
+    "mainStats": [
+      {
+        "icon": "3.png",
+        "name": "CRIT ATK DMG Boost",
+        "min": "16.8%",
+        "max": "55.4%"
+      },
+      {
+        "icon": "6.png",
+        "name": "All DMG Reduction",
+        "min": "5.6%",
+        "max": "18.4%"
+      },
+      {
+        "icon": "9.png",
+        "name": "Accuracy",
+        "min": "54",
+        "max": "178"
+      },
+      {
+        "icon": "11.png",
+        "name": "PHYS DEF",
+        "min": "55",
+        "max": "181"
+      },
+      {
+        "icon": "12.png",
+        "name": "Spell DEF",
+        "min": "55",
+        "max": "181"
+      },
+      {
+        "icon": "15.png",
+        "name": "Skill ATK DMG Boost",
+        "min": "6.8%",
+        "max": "22.4%"
+      },
+      {
+        "icon": "16.png",
+        "name": "Skill DMG Reduction",
+        "min": "6.8%",
+        "max": "22.4%"
+      },
+      {
+        "icon": "30.png",
+        "name": "Silence RES Boost",
+        "min": "4.2%",
+        "max": "13.8%"
+      },
+      {
+        "icon": "20.png",
+        "name": "Basic DMG Reduction",
+        "min": "4.8%",
+        "max": "15.8%"
+      },
+      {
+        "icon": "24.png",
+        "name": "Monster EVA Boost",
+        "min": "28",
+        "max": "92"
+      },
+      {
+        "icon": "22.png",
+        "name": "Monster DMG Reduction",
+        "min": "7%",
+        "max": "23.1%"
+      },
+      {
+        "icon": "39.png",
+        "name": "Antidemon Power",
+        "min": "3.9%",
+        "max": "12.8%"
+      },
+      {
+        "icon": "26.png",
+        "name": "Boss DMG Reduction",
+        "min": "8.5%",
+        "max": "28%"
+      },
+      {
+        "icon": "36.png",
+        "name": "Lucky Drop Chance Boost",
+        "min": "4.5%",
+        "max": "14.85%"
+      },
+      {
+        "icon": "35.png",
+        "name": "Drop Chance Boost",
+        "min": "5%",
+        "max": "16.5%"
+      },
+      {
+        "icon": "38.png",
+        "name": "Hunting Copper Gain Boost",
+        "min": "5.3%",
+        "max": "17.49%"
+      }
+    ],
+    "secStats": [
+      {
+        "icon": "10.png",
+        "name": "EVA",
+        "min": "32",
+        "max": "105"
+      },
+      {
+        "icon": "17.png",
+        "name": "Bash ATK DMG Boost",
+        "min": "11.2%",
+        "max": "36.9%"
+      },
+      {
+        "icon": "11.png",
+        "name": "PHYS DEF",
+        "min": "30",
+        "max": "99"
+      },
+      {
+        "icon": "12.png",
+        "name": "Spell DEF",
+        "min": "30",
+        "max": "99"
+      },
+      {
+        "icon": "15.png",
+        "name": "Skill ATK DMG Boost",
+        "min": "3.8%",
+        "max": "12.5%"
+      },
+      {
+        "icon": "16.png",
+        "name": "Skill DMG Reduction",
+        "min": "3.8%",
+        "max": "12.5%"
+      },
+      {
+        "icon": "22.png",
+        "name": "Monster DMG Reduction",
+        "min": "4%",
+        "max": "13.2%"
+      },
+      {
+        "icon": "26.png",
+        "name": "Boss DMG Reduction",
+        "min": "4.5%",
+        "max": "14.8%"
+      }
+    ]
+  },
+  {
+    "name": "Medalha",
+    "img": "medalha.png",
+    "stones": [
+      "8.png",
+      "8.1.png",
+      "8.2.png"
+    ],
+    "mainStats": [
+      {
+        "icon": "1.png",
+        "name": "CRIT",
+        "min": "64",
+        "max": "211"
+      },
+      {
+        "icon": "4.png",
+        "name": "CRIT DMG Reduction",
+        "min": "16.8%",
+        "max": "55.4%"
+      },
+      {
+        "icon": "27.png",
+        "name": "Stun Success Boost",
+        "min": "4.1%",
+        "max": "13.5%"
+      },
+      {
+        "icon": "31.png",
+        "name": "Knockdown Success Boost",
+        "min": "4%",
+        "max": "13.2%"
+      },
+      {
+        "icon": "14.png",
+        "name": "PvP DMG Reduction",
+        "min": "6.4%",
+        "max": "21.1%"
+      },
+      {
+        "icon": "16.png",
+        "name": "Skill DMG Reduction",
+        "min": "6.8%",
+        "max": "22.4%"
+      },
+      {
+        "icon": "37.png",
+        "name": "Hunting EXP Boost",
+        "min": "4%",
+        "max": "13.2%"
+      },
+      {
+        "icon": "40.png",
+        "name": "HP",
+        "min": "1,400",
+        "max": "4,620"
+      },
+      {
+        "icon": "41.png",
+        "name": "MP",
+        "min": "350",
+        "max": "1,155"
+      },
+      {
+        "icon": "19.png",
+        "name": "Basic ATK DMG Boost",
+        "min": "4.8%",
+        "max": "15.8%"
+      },
+      {
+        "icon": "23.png",
+        "name": "Monster Accuracy Boost",
+        "min": "28",
+        "max": "92"
+      },
+      {
+        "icon": "29.png",
+        "name": "Silence Success Boost",
+        "min": "4.2%",
+        "max": "13.8%"
+      },
+      {
+        "icon": "21.png",
+        "name": "Monster ATK DMG Boost",
+        "min": "7%",
+        "max": "23.1%"
+      },
+      {
+        "icon": "39.png",
+        "name": "Antidemon Power",
+        "min": "3.9%",
+        "max": "12.8%"
+      },
+      {
+        "icon": "25.png",
+        "name": "Boss ATK DMG Boost",
+        "min": "8.5%",
+        "max": "28%"
+      },
+      {
+        "icon": "36.png",
+        "name": "Lucky Drop Chance Boost",
+        "min": "4.5%",
+        "max": "14.85%"
+      }
+    ],
+    "secStats": [
+      {
+        "icon": "33.png",
+        "name": "Debilitation Success Boost",
+        "min": "2%",
+        "max": "6.6%"
+      },
+      {
+        "icon": "6.png",
+        "name": "All DMG Reduction",
+        "min": "2.8%",
+        "max": "9.2%"
+      },
+      {
+        "icon": "14.png",
+        "name": "PvP DMG Reduction",
+        "min": "3.2%",
+        "max": "10.5%"
+      },
+      {
+        "icon": "31.png",
+        "name": "Knockdown Success Boost",
+        "min": "2.1%",
+        "max": "6.9%"
+      },
+      {
+        "icon": "40.png",
+        "name": "HP",
+        "min": "700",
+        "max": "2,310"
+      },
+      {
+        "icon": "41.png",
+        "name": "MP",
+        "min": "170",
+        "max": "561"
+      },
+      {
+        "icon": "29.png",
+        "name": "Silence Success Boost",
+        "min": "2.4%",
+        "max": "7.9%"
+      },
+      {
+        "icon": "39.png",
+        "name": "Antidemon Power",
+        "min": "2.2%",
+        "max": "7.2%"
+      }
+    ]
+  },
+  {
+    "name": "Berloque",
+    "img": "sino.png",
+    "stones": [
+      "7.png",
+      "7.1.png",
+      "7.2.png"
+    ],
+    "mainStats": [
+      {
+        "icon": "34.png",
+        "name": "Debilitation RES Boost",
+        "min": "3.8%",
+        "max": "12.5%"
+      },
+      {
+        "icon": "2.png",
+        "name": "CRIT EVA",
+        "min": "64",
+        "max": "211"
+      },
+      {
+        "icon": "7.png",
+        "name": "PHYS ATK",
+        "min": "61",
+        "max": "201"
+      },
+      {
+        "icon": "8.png",
+        "name": "Spell ATK",
+        "min": "61",
+        "max": "201"
+      },
+      {
+        "icon": "31.png",
+        "name": "Knockdown Success Boost",
+        "min": "4%",
+        "max": "13.2%"
+      },
+      {
+        "icon": "28.png",
+        "name": "Stun RES Boost",
+        "min": "4.1%",
+        "max": "13.5%"
+      },
+      {
+        "icon": "13.png",
+        "name": "PvP ATK DMG Boost",
+        "min": "6.4%",
+        "max": "21.1%"
+      },
+      {
+        "icon": "15.png",
+        "name": "Skill ATK DMG Boost",
+        "min": "6.8%",
+        "max": "22.4%"
+      },
+      {
+        "icon": "40.png",
+        "name": "HP",
+        "min": "1,400",
+        "max": "4,620"
+      },
+      {
+        "icon": "41.png",
+        "name": "MP",
+        "min": "350",
+        "max": "1,155"
+      },
+      {
+        "icon": "30.png",
+        "name": "Silence RES Boost",
+        "min": "4.2%",
+        "max": "13.8%"
+      },
+      {
+        "icon": "23.png",
+        "name": "Monster Accuracy Boost",
+        "min": "28",
+        "max": "92"
+      },
+      {
+        "icon": "39.png",
+        "name": "Antidemon Power",
+        "min": "3.9%",
+        "max": "12.8%"
+      },
+      {
+        "icon": "22.png",
+        "name": "Monster DMG Reduction",
+        "min": "7%",
+        "max": "23.1%"
+      },
+      {
+        "icon": "26.png",
+        "name": "Boss DMG Reduction",
+        "min": "8.5%",
+        "max": "28%"
+      },
+      {
+        "icon": "38.png",
+        "name": "Hunting Copper Gain Boost",
+        "min": "5.3%",
+        "max": "17.49%"
+      }
+    ],
+    "secStats": [
+      {
+        "icon": "18.png",
+        "name": "Bash DMG Reduction",
+        "min": "11.2%",
+        "max": "36.9%"
+      },
+      {
+        "icon": "9.png",
+        "name": "Accuracy",
+        "min": "32",
+        "max": "105"
+      },
+      {
+        "icon": "40.png",
+        "name": "HP",
+        "min": "700",
+        "max": "2,310"
+      },
+      {
+        "icon": "41.png",
+        "name": "MP",
+        "min": "170",
+        "max": "561"
+      },
+      {
+        "icon": "30.png",
+        "name": "Silence RES Boost",
+        "min": "2.4%",
+        "max": "7.9%"
+      },
+      {
+        "icon": "22.png",
+        "name": "Monster DMG Reduction",
+        "min": "4%",
+        "max": "13.2%"
+      },
+      {
+        "icon": "39.png",
+        "name": "Antidemon Power",
+        "min": "2.2%",
+        "max": "7.2%"
+      },
+      {
+        "icon": "26.png",
+        "name": "Boss DMG Reduction",
+        "min": "4.5%",
+        "max": "14.8%"
+      }
+    ]
+  }
+]
