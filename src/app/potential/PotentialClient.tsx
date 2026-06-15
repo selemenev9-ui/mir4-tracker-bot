@@ -230,6 +230,20 @@ export default function PotentialClient({ data }: { data: PotentialData }) {
             ))}
           </svg>
 
+          {/* Center connector gems — branch junction icons */}
+          <div style={{ position: "absolute", left: 1201, top: 806, transform: "translate(-50%, -50%) rotate(180deg)", zIndex: 3, pointerEvents: "none" }}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/potential/frame-esfera-2.webp" width={56} height={56} alt="" />
+          </div>
+          <div style={{ position: "absolute", left: 1139, top: 923, transform: "translate(-50%, -50%)", zIndex: 3, pointerEvents: "none" }}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/potential/frame-esfera-1.webp" width={56} height={56} alt="" />
+          </div>
+          <div style={{ position: "absolute", left: 1264, top: 922, transform: "translate(-50%, -50%)", zIndex: 3, pointerEvents: "none" }}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/potential/frame-esfera-3.webp" width={56} height={56} alt="" />
+          </div>
+
           {/* Node buttons */}
           {classData.nodes.map((node) => {
             const isSelected = selectedNode?.pid === node.pid;
@@ -276,8 +290,29 @@ export default function PotentialClient({ data }: { data: PotentialData }) {
           })}
         </div>
 
+        {/* Back button */}
+        <a
+          href="/"
+          style={{
+            position: "absolute",
+            top: 12,
+            left: 12,
+            zIndex: 20,
+            background: "rgba(10,10,20,0.85)",
+            border: "1px solid #3a3a5a",
+            color: "#c9a84c",
+            padding: "6px 14px",
+            borderRadius: 6,
+            fontSize: 13,
+            textDecoration: "none",
+            cursor: "pointer",
+          }}
+        >
+          ‹ Back
+        </a>
+
         {/* Filter button */}
-        <div className="absolute top-3 left-3" style={{ zIndex: 20 }}>
+        <div className="absolute" style={{ top: 12, left: 90, zIndex: 20 }}>
           <button
             type="button"
             onClick={() => setFilterOpen(true)}
