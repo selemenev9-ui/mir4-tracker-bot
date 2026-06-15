@@ -183,13 +183,18 @@ type TierStock = {
   uncommon: number;
 };
 
+type CraftToggles = {
+  ucr: boolean;
+  re: boolean;
+  el: boolean;
+};
+
 type CalcResult = {
   gap: TierStock;
   totals: {
     gp: number;
-    powder: number;
-    copper: number;
     darksteel: number;
+    copper: number;
   };
 };
 
@@ -200,49 +205,57 @@ const EMPTY_STOCK: TierStock = {
   uncommon: 0,
 };
 
+const DEFAULT_TOGGLES: CraftToggles = { ucr: true, re: true, el: true };
+
 function fmt(value: number) {
   return value.toLocaleString();
 }
 
-function calcMaterial(targetGrade: "epic" | "legendary", need: number, stock: TierStock): CalcResult {
-  if (targetGrade === "epic") {
-    const gapEpic = Math.max(0, need - stock.epic);
-    const gapRare = Math.max(0, gapEpic * 10 - stock.rare);
-    const gapUncommon = Math.max(0, gapRare * 10 - stock.uncommon);
+function calcMaterial(
+  targetGrade: "epic" | "legendary",
+  need: number,
+  stock: TierStock,
+  toggles: CraftToggles
+): CalcResult {
+  if (targetGrade === "legendary") {
+    const craftsEL = Math.max(0, need - stock.legendary);
+    const eMats = craftsEL * 10;
+    const craftsRE = toggles.re ? Math.max(0, eMats - stock.epic) : 0;
+    const rMats = craftsRE * 10;
+    const craftsUCR = toggles.ucr ? Math.max(0, rMats - stock.rare) : 0;
+    const ucNeeded = Math.max(0, craftsUCR * 10 - stock.uncommon);
 
     return {
       gap: {
-        legendary: 0,
-        epic: gapEpic,
-        rare: gapRare,
-        uncommon: gapUncommon,
+        legendary: craftsEL,
+        epic: eMats,
+        rare: rMats,
+        uncommon: ucNeeded,
       },
       totals: {
-        gp: gapEpic * 25 + gapRare * 2,
-        powder: gapEpic * 5_000 + gapRare * 1_000,
-        copper: gapEpic * 20_000 + gapRare * 2_000,
-        darksteel: 0,
+        gp: craftsEL * 125 + craftsRE * 25 + craftsUCR * 2,
+        darksteel: craftsEL * 25_000 + craftsRE * 5_000 + craftsUCR * 1_000,
+        copper: craftsEL * 100_000 + craftsRE * 20_000 + craftsUCR * 2_000,
       },
     };
   }
 
-  const gapLegendary = Math.max(0, need - stock.legendary);
-  const gapEpic = Math.max(0, gapLegendary - stock.epic);
-  const gapRare = Math.max(0, gapEpic * 10 - stock.rare);
-  const gapUncommon = Math.max(0, gapRare * 10 - stock.uncommon);
+  const craftsRE = Math.max(0, need - stock.epic);
+  const rMats = craftsRE * 10;
+  const craftsUCR = toggles.ucr ? Math.max(0, rMats - stock.rare) : 0;
+  const ucNeeded = Math.max(0, craftsUCR * 10 - stock.uncommon);
 
   return {
     gap: {
-      legendary: gapLegendary,
-      epic: gapEpic,
-      rare: gapRare,
-      uncommon: gapUncommon,
+      legendary: 0,
+      epic: craftsRE,
+      rare: rMats,
+      uncommon: ucNeeded,
     },
     totals: {
-      gp: gapEpic * 25 + gapRare * 2,
-      powder: gapLegendary * 25_000 + gapEpic * 5_000 + gapRare * 1_000,
-      copper: gapLegendary * 100_000 + gapEpic * 20_000 + gapRare * 2_000,
-      darksteel: gapLegendary * 125,
+      gp: craftsRE * 25 + craftsUCR * 2,
+      darksteel: craftsRE * 5_000 + craftsUCR * 1_000,
+      copper: craftsRE * 20_000 + craftsUCR * 2_000,
     },
   };
 }
@@ -290,6 +303,15 @@ function EquipmentCalculator() {
     });
     return initial;
   });
+  const [togglesByMaterial, setTogglesByMaterial] = useState<Record<string, CraftToggles>>(() => {
+    const initial: Record<string, CraftToggles> = {};
+    EQUIPMENT_TYPES.forEach((cat) => {
+      cat.materials.forEach((mat) => {
+        initial[`${cat.id}:${mat.id}`] = { ...DEFAULT_TOGGLES };
+      });
+    });
+    return initial;
+  });
   const [ucExpanded, setUcExpanded] = useState<Record<string, boolean>>({});
 
   const currentCategory = EQUIPMENT_TYPES.find((cat) => cat.id === categoryId)!;
@@ -298,20 +320,20 @@ function EquipmentCalculator() {
     return currentCategory.materials.map((mat) => {
       const key = `${currentCategory.id}:${mat.id}`;
       const stock = stockByMaterial[key] ?? { ...EMPTY_STOCK };
-      const calc = calcMaterial(grade, mat.need, stock);
-      return { key, mat, stock, calc };
+      const toggles = togglesByMaterial[key] ?? { ...DEFAULT_TOGGLES };
+      const calc = calcMaterial(grade, mat.need, stock, toggles);
+      return { key, mat, stock, calc, toggles };
     });
-  }, [currentCategory, grade, stockByMaterial]);
+  }, [currentCategory, grade, stockByMaterial, togglesByMaterial]);
 
   const totals = breakdown.reduce(
     (acc, item) => {
       acc.gp += item.calc.totals.gp;
-      acc.powder += item.calc.totals.powder;
       acc.copper += item.calc.totals.copper;
       acc.darksteel += item.calc.totals.darksteel;
       return acc;
     },
-    { gp: 0, powder: 0, copper: 0, darksteel: 0 }
+    { gp: 0, copper: 0, darksteel: 0 }
   );
 
   const ucAlerts = breakdown.filter((item) => item.calc.gap.uncommon > 0);
@@ -322,6 +344,16 @@ function EquipmentCalculator() {
       [key]: {
         ...(prev[key] ?? { ...EMPTY_STOCK }),
         [tier]: Math.max(0, value),
+      },
+    }));
+  }
+
+  function updateToggle(key: string, field: keyof CraftToggles, value: boolean) {
+    setTogglesByMaterial((prev) => ({
+      ...prev,
+      [key]: {
+        ...(prev[key] ?? { ...DEFAULT_TOGGLES }),
+        [field]: value,
       },
     }));
   }
@@ -389,8 +421,52 @@ function EquipmentCalculator() {
           Materials on hand
         </p>
         <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
-          {breakdown.map(({ key, mat, stock, calc }) => (
+          {breakdown.map(({ key, mat, stock, calc, toggles }) => (
             <div key={key} className="rounded-xl border border-zinc-800 bg-zinc-800/70 p-4 space-y-3">
+              <div className="flex flex-wrap items-center gap-3 text-[11px] text-zinc-400">
+                {grade === "legendary" && (
+                  <>
+                    <label className="flex cursor-pointer items-center gap-1">
+                      <input
+                        type="checkbox"
+                        checked={toggles.el}
+                        onChange={(e) => updateToggle(key, "el", e.target.checked)}
+                        className="accent-amber-400"
+                      />
+                      E→L
+                    </label>
+                    <label className="flex cursor-pointer items-center gap-1">
+                      <input
+                        type="checkbox"
+                        checked={toggles.re}
+                        onChange={(e) => updateToggle(key, "re", e.target.checked)}
+                        className="accent-amber-400"
+                      />
+                      R→E
+                    </label>
+                  </>
+                )}
+                {grade === "epic" && (
+                  <label className="flex cursor-pointer items-center gap-1">
+                    <input
+                      type="checkbox"
+                      checked={toggles.re}
+                      onChange={(e) => updateToggle(key, "re", e.target.checked)}
+                      className="accent-amber-400"
+                    />
+                    R→E
+                  </label>
+                )}
+                <label className="flex cursor-pointer items-center gap-1">
+                  <input
+                    type="checkbox"
+                    checked={toggles.ucr}
+                    onChange={(e) => updateToggle(key, "ucr", e.target.checked)}
+                    className="accent-amber-400"
+                  />
+                  UC→R
+                </label>
+              </div>
               <div className="flex items-center justify-between gap-3">
                 <div className="flex items-center gap-3">
                   <CraftIcon src={mat.icon} alt={mat.name} />
@@ -483,20 +559,11 @@ function EquipmentCalculator() {
               <p className="text-lg font-semibold text-zinc-100">{fmt(totals.gp)}</p>
             </div>
           </div>
-          {totals.darksteel > 0 && (
-            <div className="flex items-center gap-3 rounded-xl border border-zinc-800 bg-zinc-800/70 p-4">
-              <CraftIcon src={ICON("Darksteel.webp")} alt="Darksteel" />
-              <div>
-                <p className="text-xs text-zinc-400">Darksteel</p>
-                <p className="text-lg font-semibold text-zinc-100">{fmt(totals.darksteel)}</p>
-              </div>
-            </div>
-          )}
           <div className="flex items-center gap-3 rounded-xl border border-zinc-800 bg-zinc-800/70 p-4">
-            <CraftIcon src={ICON("Powder.png")} alt="Powder" />
+            <CraftIcon src={ICON("Darksteel.webp")} alt="Darksteel" />
             <div>
-              <p className="text-xs text-zinc-400">Powder</p>
-              <p className="text-lg font-semibold text-zinc-100">{fmt(totals.powder)}</p>
+              <p className="text-xs text-zinc-400">Darksteel</p>
+              <p className="text-lg font-semibold text-zinc-100">{fmt(totals.darksteel)}</p>
             </div>
           </div>
           <div className="flex items-center gap-3 rounded-xl border border-zinc-800 bg-zinc-800/70 p-4">
@@ -538,7 +605,7 @@ function DragonArtifactCalculator() {
   const needPiece = Math.max(0, safeCount - inputs.piece);
   const needSphere = Math.max(0, safeCount - inputs.sphere);
   const dragonSteel = safeCount * (grade === "epic" ? 250 : 2_500);
-  const powder = safeCount * (grade === "epic" ? 2_500_000 : 25_000_000);
+  const glitteringPowder = safeCount * (grade === "epic" ? 2_500_000 : 25_000_000);
 
   function update(field: keyof ArtifactState, value: number) {
     setArtifactState((prev) => ({
@@ -685,10 +752,10 @@ function DragonArtifactCalculator() {
             </div>
           </div>
           <div className="flex items-center gap-3 rounded-xl border border-zinc-800 bg-zinc-800/70 p-4">
-            <CraftIcon src={ICON("Powder.png")} alt="Powder" />
+            <CraftIcon src={ICON("GlitteringPowder.png")} alt="Glittering Powder" />
             <div>
-              <p className="text-xs text-zinc-400">Powder</p>
-              <p className="text-lg font-semibold text-zinc-100">{fmt(powder)}</p>
+              <p className="text-xs text-zinc-400">Glittering Powder</p>
+              <p className="text-lg font-semibold text-zinc-100">{fmt(glitteringPowder)}</p>
             </div>
           </div>
         </div>
