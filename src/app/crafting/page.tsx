@@ -233,9 +233,9 @@ function calcMaterial(
         uncommon: ucNeeded,
       },
       totals: {
-        gp: craftsEL * 125 + craftsRE * 25 + craftsUCR * 2,
-        darksteel: craftsEL * 25_000 + craftsRE * 5_000 + craftsUCR * 1_000,
-        copper: craftsEL * 100_000 + craftsRE * 20_000 + craftsUCR * 2_000,
+        gp: craftsEL * 250 + craftsRE * 25 + craftsUCR * 2,
+        darksteel: craftsEL * 50_000 + craftsRE * 5_000 + craftsUCR * 1_000,
+        copper: craftsEL * 200_000 + craftsRE * 20_000 + craftsUCR * 2_000,
       },
     };
   }
