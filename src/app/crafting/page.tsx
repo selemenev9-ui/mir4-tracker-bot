@@ -189,6 +189,11 @@ type CraftToggles = {
   el: boolean;
 };
 
+type ArtifactToggles = {
+  rToE: boolean;
+  eToL: boolean;
+};
+
 type CalcResult = {
   gap: TierStock;
   totals: {
@@ -206,6 +211,7 @@ const EMPTY_STOCK: TierStock = {
 };
 
 const DEFAULT_TOGGLES: CraftToggles = { ucr: true, re: true, el: true };
+const DEFAULT_ARTIFACT_TOGGLES: ArtifactToggles = { rToE: true, eToL: true };
 
 function fmt(value: number) {
   return value.toLocaleString();
@@ -581,7 +587,9 @@ function EquipmentCalculator() {
 
 type ArtifactState = {
   count: number;
-  eternal: number;
+  eternalLegendary: number;
+  eternalEpic: number;
+  eternalRare: number;
   piece: number;
   sphere: number;
 };
@@ -592,21 +600,52 @@ function DragonArtifactCalculator() {
   const [artifactState, setArtifactState] = useState<Record<ArtifactId, ArtifactState>>(() => {
     const initial = {} as Record<ArtifactId, ArtifactState>;
     DRAGON_ARTIFACTS.forEach((artifact) => {
-      initial[artifact.id] = { count: 1, eternal: 0, piece: 0, sphere: 0 };
+      initial[artifact.id] = {
+        count: 1,
+        eternalLegendary: 0,
+        eternalEpic: 0,
+        eternalRare: 0,
+        piece: 0,
+        sphere: 0,
+      };
     });
     return initial;
   });
+  const [toggles, setToggles] = useState<ArtifactToggles>({ ...DEFAULT_ARTIFACT_TOGGLES });
 
   const artifact = DRAGON_ARTIFACTS.find((a) => a.id === artifactId)!;
   const inputs = artifactState[artifact.id];
   const safeCount = Math.max(1, inputs.count || 1);
 
-  const eternalPerCraft = grade === "epic" ? 30 : 50;
-  const needEternal = Math.max(0, safeCount * eternalPerCraft - inputs.eternal);
+  const artifactFeeDS = safeCount * (grade === "epic" ? 250 : 2_500);
+  const artifactFeeDBL = safeCount * (grade === "epic" ? 2_500_000 : 25_000_000);
+  const eternalNeeded = safeCount * (grade === "epic" ? 30 : 50);
+
+  let craftsEToL = 0;
+  let craftsRToE = 0;
+  let rareToFarm = 0;
+
+  if (grade === "legendary") {
+    craftsEToL = Math.max(0, eternalNeeded - inputs.eternalLegendary);
+    const epicForEToL = craftsEToL * 10;
+    if (toggles.eToL) {
+      craftsRToE = toggles.rToE ? Math.max(0, epicForEToL - inputs.eternalEpic) : 0;
+      const rareForRToE = craftsRToE * 10;
+      rareToFarm = Math.max(0, rareForRToE - inputs.eternalRare);
+    }
+  } else {
+    craftsRToE = Math.max(0, eternalNeeded - inputs.eternalEpic);
+    const rareForRToE = craftsRToE * 10;
+    rareToFarm = toggles.rToE ? Math.max(0, rareForRToE - inputs.eternalRare) : 0;
+  }
+
+  const totalGP = craftsEToL * 2_500 + craftsRToE * 500;
+  const totalLE = craftsEToL * 2_500 + craftsRToE * 500;
+  const totalDarksteel = craftsEToL * 250_000 + craftsRToE * 50_000 + artifactFeeDBL;
+  const totalDragonsteel = craftsEToL * 25 + craftsRToE * 5 + artifactFeeDS;
+
   const needPiece = Math.max(0, safeCount - inputs.piece);
   const needSphere = Math.max(0, safeCount - inputs.sphere);
-  const dragonSteel = safeCount * (grade === "epic" ? 250 : 2_500);
-  const darksteelCost = safeCount * (grade === "epic" ? 2_500_000 : 25_000_000);
 
   function update(field: keyof ArtifactState, value: number) {
     setArtifactState((prev) => ({
@@ -615,6 +654,13 @@ function DragonArtifactCalculator() {
         ...prev[artifact.id],
         [field]: Math.max(0, value),
       },
+    }));
+  }
+
+  function updateArtifactToggle(field: keyof ArtifactToggles, value: boolean) {
+    setToggles((prev) => ({
+      ...prev,
+      [field]: value,
     }));
   }
 
@@ -674,6 +720,28 @@ function DragonArtifactCalculator() {
           Inventory
         </p>
         <div className="space-y-3 rounded-xl border border-zinc-800 bg-zinc-800/70 p-4">
+          <div className="flex flex-wrap items-center gap-3 text-[11px] text-zinc-400">
+            {grade === "legendary" && (
+              <label className="flex cursor-pointer items-center gap-1">
+                <input
+                  type="checkbox"
+                  checked={toggles.eToL}
+                  onChange={(event) => updateArtifactToggle("eToL", event.target.checked)}
+                  className="accent-amber-400"
+                />
+                E→L
+              </label>
+            )}
+            <label className="flex cursor-pointer items-center gap-1">
+              <input
+                type="checkbox"
+                checked={toggles.rToE}
+                onChange={(event) => updateArtifactToggle("rToE", event.target.checked)}
+                className="accent-amber-400"
+              />
+              R→E
+            </label>
+          </div>
           <label className="flex items-center justify-between text-sm text-zinc-300">
             <span>Craft:</span>
             <input
@@ -684,13 +752,35 @@ function DragonArtifactCalculator() {
               className="w-28 rounded border border-zinc-600 bg-zinc-700 px-2 py-1 text-right text-sm text-white focus:border-amber-400 focus:outline-none"
             />
           </label>
+          {grade === "legendary" && (
+            <label className="flex items-center justify-between text-sm text-zinc-300">
+              <span>Have [L] Eternal assembled:</span>
+              <input
+                type="number"
+                min={0}
+                value={inputs.eternalLegendary}
+                onChange={(event) => update("eternalLegendary", Number(event.target.value) || 0)}
+                className="w-28 rounded border border-zinc-600 bg-zinc-700 px-2 py-1 text-right text-sm text-white focus:border-amber-400 focus:outline-none"
+              />
+            </label>
+          )}
           <label className="flex items-center justify-between text-sm text-zinc-300">
-            <span>Have {artifact.eternal}:</span>
+            <span>Have [E] Eternal assembled:</span>
             <input
               type="number"
               min={0}
-              value={inputs.eternal}
-              onChange={(event) => update("eternal", Number(event.target.value) || 0)}
+              value={inputs.eternalEpic}
+              onChange={(event) => update("eternalEpic", Number(event.target.value) || 0)}
+              className="w-28 rounded border border-zinc-600 bg-zinc-700 px-2 py-1 text-right text-sm text-white focus:border-amber-400 focus:outline-none"
+            />
+          </label>
+          <label className="flex items-center justify-between text-sm text-zinc-300">
+            <span>Have [R] Eternal (raw):</span>
+            <input
+              type="number"
+              min={0}
+              value={inputs.eternalRare}
+              onChange={(event) => update("eternalRare", Number(event.target.value) || 0)}
               className="w-28 rounded border border-zinc-600 bg-zinc-700 px-2 py-1 text-right text-sm text-white focus:border-amber-400 focus:outline-none"
             />
           </label>
@@ -723,14 +813,6 @@ function DragonArtifactCalculator() {
         </p>
         <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
           <div className="flex items-center gap-3 rounded-xl border border-zinc-800 bg-zinc-800/70 p-4">
-            <CraftIcon src={artifact.eternalIcon} alt={artifact.eternal} />
-            <div>
-              <p className="text-xs text-zinc-400">{artifact.eternal} needed</p>
-              <p className="text-lg font-semibold text-zinc-100">{fmt(needEternal)}</p>
-              <p className="text-[11px] text-zinc-500">Need: {fmt(safeCount * eternalPerCraft)} (×{eternalPerCraft} each)</p>
-            </div>
-          </div>
-          <div className="flex items-center gap-3 rounded-xl border border-zinc-800 bg-zinc-800/70 p-4">
             <CraftIcon src={artifact.pieceIcon} alt={artifact.dragonPiece} />
             <div>
               <p className="text-xs text-zinc-400">{artifact.dragonPiece} needed</p>
@@ -744,23 +826,58 @@ function DragonArtifactCalculator() {
               <p className="text-lg font-semibold text-zinc-100">{fmt(needSphere)}</p>
             </div>
           </div>
-          <div className="flex items-center gap-3 rounded-xl border border-cyan-500/30 bg-zinc-800/70 p-4">
-            <span className="rounded bg-cyan-500/30 px-2 py-1 text-xs font-semibold text-cyan-100">
-              DS★
-            </span>
+          <div className="flex items-center gap-3 rounded-xl border border-zinc-800 bg-zinc-800/70 p-4">
+            <CraftIcon src={ICON("GlitteringPowder.png")} alt="Glittering Powder" />
             <div>
-              <p className="text-xs text-cyan-300">Dragon Steel (не Darksteel)</p>
-              <p className="text-lg font-semibold text-cyan-200">{fmt(dragonSteel)}</p>
+              <p className="text-xs text-zinc-400">Glittering Powder</p>
+              <p className="text-lg font-semibold text-zinc-100">{fmt(totalGP)}</p>
+              <p className="text-[11px] text-zinc-500">Eternal crafting cost</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-3 rounded-xl border border-zinc-800 bg-zinc-800/70 p-4">
+            <span className="rounded bg-emerald-500/30 px-2 py-1 text-xs font-semibold text-emerald-100">LE</span>
+            <div>
+              <p className="text-xs text-zinc-400">Life Essence</p>
+              <p className="text-lg font-semibold text-zinc-100">{fmt(totalLE)}</p>
+              <p className="text-[11px] text-zinc-500">Eternal crafting cost</p>
             </div>
           </div>
           <div className="flex items-center gap-3 rounded-xl border border-zinc-800 bg-zinc-800/70 p-4">
             <CraftIcon src={ICON("Darksteel.png")} alt="Darksteel" />
             <div>
               <p className="text-xs text-zinc-400">Darksteel</p>
-              <p className="text-lg font-semibold text-zinc-100">{fmt(darksteelCost)}</p>
-              <p className="text-[11px] text-zinc-500">Craft cost</p>
+              <p className="text-lg font-semibold text-zinc-100">{fmt(totalDarksteel)}</p>
+              <p className="text-[11px] text-zinc-500">Crafting + assembly fee</p>
             </div>
           </div>
+          <div className="flex items-center gap-3 rounded-xl border border-cyan-500/30 bg-zinc-800/70 p-4">
+            <span className="rounded bg-cyan-500/30 px-2 py-1 text-xs font-semibold text-cyan-100">DS★</span>
+            <div>
+              <p className="text-xs text-cyan-300">Dragon Steel</p>
+              <p className="text-lg font-semibold text-cyan-200">{fmt(totalDragonsteel)}</p>
+              <p className="text-[11px] text-cyan-200/80">Crafting + assembly fee</p>
+            </div>
+          </div>
+          {craftsRToE > 0 && (
+            <div className="flex items-center gap-3 rounded-xl border border-amber-500/40 bg-zinc-800/70 p-4">
+              <span className="rounded bg-amber-500/20 px-2 py-1 text-xs font-semibold text-amber-200">[R]</span>
+              <div>
+                <p className="text-xs text-amber-200">Eternal to farm</p>
+                <p className="text-lg font-semibold text-amber-100">{fmt(rareToFarm)}</p>
+                <p className="text-[11px] text-amber-200/70">Need {fmt(rareToFarm)} Rare Eternal to farm/buy</p>
+              </div>
+            </div>
+          )}
+          {grade === "legendary" && craftsEToL > 0 && (
+            <div className="flex items-center gap-3 rounded-xl border border-purple-500/40 bg-zinc-800/70 p-4">
+              <span className="rounded bg-purple-500/20 px-2 py-1 text-xs font-semibold text-purple-200">[L]</span>
+              <div>
+                <p className="text-xs text-purple-200">Eternal to craft</p>
+                <p className="text-lg font-semibold text-purple-100">{fmt(craftsEToL)}</p>
+                <p className="text-[11px] text-purple-200/70">Uses {fmt(craftsEToL * 10)} Epic Eternal</p>
+              </div>
+            </div>
+          )}
         </div>
       </section>
     </div>
