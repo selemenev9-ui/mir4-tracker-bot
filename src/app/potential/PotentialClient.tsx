@@ -101,6 +101,30 @@ function nodeMatchesFilter(node: PotentialNode, activeFilters: string[]): boolea
   );
 }
 
+const NODE_IMAGES: Record<string, { src: string; size: number }> = {
+  "1":{"src":"5700001.webp","size":44},"2":{"src":"5700002.webp","size":50},"3":{"src":"5700002.webp","size":50},"4":{"src":"5700001.webp","size":44},"5":{"src":"5700002.webp","size":50},"6":{"src":"5700001.webp","size":44},"7":{"src":"5700002.webp","size":50},"8":{"src":"5700002.webp","size":50},"9":{"src":"5700002.webp","size":50},"10":{"src":"5700002.webp","size":50},
+  "11":{"src":"5700001.webp","size":44},"12":{"src":"5700001.webp","size":44},"13":{"src":"5700002.webp","size":50},"14":{"src":"5700001.webp","size":44},"15":{"src":"5700002.webp","size":50},"16":{"src":"5700001.webp","size":44},"17":{"src":"5700002.webp","size":50},"18":{"src":"5700001.webp","size":44},"19":{"src":"5700002.webp","size":50},"20":{"src":"5700002.webp","size":50},
+  "21":{"src":"5700001.webp","size":44},"22":{"src":"5700002.webp","size":50},"23":{"src":"5700003.webp","size":56},"24":{"src":"5700002.webp","size":50},"25":{"src":"5700001.webp","size":44},"26":{"src":"5700002.webp","size":50},"27":{"src":"5700003.webp","size":56},"28":{"src":"5700003.webp","size":56},"29":{"src":"5700003.webp","size":56},"30":{"src":"5700003.webp","size":56},
+  "31":{"src":"5700003.webp","size":56},"32":{"src":"5700003.webp","size":56},"33":{"src":"5700003.webp","size":56},"34":{"src":"5700003.webp","size":56},"35":{"src":"5700003.webp","size":56},"36":{"src":"5700003.webp","size":56},"37":{"src":"5700003.webp","size":56},"38":{"src":"5700003.webp","size":56},"39":{"src":"5700003.webp","size":56},"40":{"src":"5700004.webp","size":64},
+  "41":{"src":"5700003.webp","size":56},"42":{"src":"5700003.webp","size":56},"43":{"src":"5700003.webp","size":56},"44":{"src":"5700004.webp","size":64},"45":{"src":"5700003.webp","size":56},"46":{"src":"5700003.webp","size":56},"47":{"src":"5700003.webp","size":56},"48":{"src":"5700003.webp","size":56},"49":{"src":"5700004.webp","size":64},"50":{"src":"5700004.webp","size":64},
+  "51":{"src":"5700004.webp","size":64},"52":{"src":"5700003.webp","size":56},"53":{"src":"5700004.webp","size":64},"54":{"src":"5700003.webp","size":56},"55":{"src":"5700003.webp","size":56},"56":{"src":"5700003.webp","size":56},"57":{"src":"5700003.webp","size":56},"58":{"src":"5700003.webp","size":56},"59":{"src":"5700003.webp","size":56},"60":{"src":"5700003.webp","size":56},
+  "61":{"src":"5700003.webp","size":56},"62":{"src":"5701001.webp","size":100},"63":{"src":"5701002.webp","size":100},
+  "101":{"src":"5700001.webp","size":44},"102":{"src":"5700002.webp","size":50},"103":{"src":"5700002.webp","size":50},"104":{"src":"5700002.webp","size":50},"105":{"src":"5700002.webp","size":50},"106":{"src":"5700002.webp","size":50},"107":{"src":"5700002.webp","size":50},"108":{"src":"5700001.webp","size":44},"109":{"src":"5700002.webp","size":50},"110":{"src":"5700001.webp","size":44},
+  "111":{"src":"5700002.webp","size":50},"112":{"src":"5700001.webp","size":44},"113":{"src":"5700001.webp","size":44},"114":{"src":"5700001.webp","size":44},"115":{"src":"5700002.webp","size":50},"116":{"src":"5700001.webp","size":44},"117":{"src":"5700002.webp","size":50},"118":{"src":"5700001.webp","size":44},"119":{"src":"5700002.webp","size":50},"120":{"src":"5700002.webp","size":50},
+  "121":{"src":"5700002.webp","size":50},"122":{"src":"5700002.webp","size":50},"123":{"src":"5700003.webp","size":56},"124":{"src":"5700001.webp","size":44},"125":{"src":"5700003.webp","size":56},"126":{"src":"5700003.webp","size":56},"127":{"src":"5700002.webp","size":50},"128":{"src":"5700003.webp","size":56},"129":{"src":"5700003.webp","size":56},"130":{"src":"5700001.webp","size":44},
+  "131":{"src":"5700003.webp","size":56},"132":{"src":"5700003.webp","size":56},"133":{"src":"5700003.webp","size":56},"134":{"src":"5700003.webp","size":56},"135":{"src":"5700003.webp","size":56},"136":{"src":"5700003.webp","size":56},"137":{"src":"5700003.webp","size":56},"138":{"src":"5700004.webp","size":64},"139":{"src":"5700003.webp","size":56},"140":{"src":"5700004.webp","size":64},
+  "141":{"src":"5700003.webp","size":56},"142":{"src":"5700004.webp","size":64},"143":{"src":"5700003.webp","size":56},"144":{"src":"5700004.webp","size":64},"145":{"src":"5700003.webp","size":56},"146":{"src":"5700003.webp","size":56},"147":{"src":"5700003.webp","size":56},"148":{"src":"5700004.webp","size":64},"149":{"src":"5700003.webp","size":56},"150":{"src":"5700003.webp","size":56},
+  "151":{"src":"5700004.webp","size":64},"152":{"src":"5700003.webp","size":56},"153":{"src":"5700004.webp","size":64},"154":{"src":"5700003.webp","size":56},"155":{"src":"5700003.webp","size":56},"156":{"src":"5700003.webp","size":56},"157":{"src":"5700003.webp","size":56},"158":{"src":"5700003.webp","size":56},"159":{"src":"5700003.webp","size":56},"160":{"src":"5700003.webp","size":56},
+  "161":{"src":"5700003.webp","size":56},"162":{"src":"5701003.webp","size":100},"163":{"src":"5701004.webp","size":100},
+  "201":{"src":"5700001.webp","size":44},"202":{"src":"5700002.webp","size":50},"203":{"src":"5700002.webp","size":50},"204":{"src":"5700001.webp","size":44},"205":{"src":"5700001.webp","size":44},"206":{"src":"5700002.webp","size":50},"207":{"src":"5700001.webp","size":44},"208":{"src":"5700001.webp","size":44},"209":{"src":"5700001.webp","size":44},"210":{"src":"5700002.webp","size":50},
+  "211":{"src":"5700001.webp","size":44},"212":{"src":"5700002.webp","size":50},"213":{"src":"5700001.webp","size":44},"214":{"src":"5700002.webp","size":50},"215":{"src":"5700001.webp","size":44},"216":{"src":"5700002.webp","size":50},"217":{"src":"5700001.webp","size":44},"218":{"src":"5700002.webp","size":50},"219":{"src":"5700002.webp","size":50},"220":{"src":"5700002.webp","size":50},
+  "221":{"src":"5700002.webp","size":50},"222":{"src":"5700003.webp","size":56},"223":{"src":"5700002.webp","size":50},"224":{"src":"5700002.webp","size":50},"225":{"src":"5700002.webp","size":50},"226":{"src":"5700002.webp","size":50},"227":{"src":"5700003.webp","size":56},"228":{"src":"5700003.webp","size":56},"229":{"src":"5700003.webp","size":56},"230":{"src":"5700004.webp","size":64},
+  "231":{"src":"5700003.webp","size":56},"232":{"src":"5700003.webp","size":56},"233":{"src":"5700003.webp","size":56},"234":{"src":"5700003.webp","size":56},"235":{"src":"5700003.webp","size":56},"236":{"src":"5700003.webp","size":56},"237":{"src":"5700004.webp","size":64},"238":{"src":"5700003.webp","size":56},"239":{"src":"5700003.webp","size":56},"240":{"src":"5700003.webp","size":56},
+  "241":{"src":"5700003.webp","size":56},"242":{"src":"5700004.webp","size":64},"243":{"src":"5700003.webp","size":56},"244":{"src":"5700004.webp","size":64},"245":{"src":"5700004.webp","size":64},"246":{"src":"5700003.webp","size":56},"247":{"src":"5700004.webp","size":64},"248":{"src":"5700003.webp","size":56},"249":{"src":"5700003.webp","size":56},"250":{"src":"5700003.webp","size":56},
+  "251":{"src":"5700004.webp","size":64},"252":{"src":"5700004.webp","size":64},"253":{"src":"5700003.webp","size":56},"254":{"src":"5700004.webp","size":64},"255":{"src":"5700003.webp","size":56},"256":{"src":"5700003.webp","size":56},"257":{"src":"5700003.webp","size":56},"258":{"src":"5700004.webp","size":64},"259":{"src":"5700004.webp","size":64},"260":{"src":"5700004.webp","size":64},
+  "261":{"src":"5700003.webp","size":56},"262":{"src":"5701005.webp","size":100},"263":{"src":"5701016.webp","size":100},
+};
+
 export default function PotentialClient({ data }: { data: PotentialData }) {
   const classes = Object.keys(data);
   const [selectedClass, setSelectedClass] = useState<string>(classes[0]);
@@ -210,6 +234,7 @@ export default function PotentialClient({ data }: { data: PotentialData }) {
           {classData.nodes.map((node) => {
             const isSelected = selectedNode?.pid === node.pid;
             const isFiltered = nodeMatchesFilter(node, activeFilters);
+            const nodeImg = NODE_IMAGES[node.pid] ?? { src: "5700001.webp", size: 44 };
             return (
               <button
                 key={node.pid}
@@ -223,20 +248,30 @@ export default function PotentialClient({ data }: { data: PotentialData }) {
                   position: "absolute",
                   left: node.x,
                   top: node.y,
-                  transform: "translate(-50%, -50%)",
-                  width: 24,
-                  height: 24,
-                  borderRadius: "50%",
-                  background: isSelected ? "#f59e0b" : "#4b5563",
-                  border: isSelected ? "3px solid #fde68a" : "2px solid #374151",
+                  transform: isSelected
+                    ? "translate(-50%, -50%) scale(1.15)"
+                    : "translate(-50%, -50%)",
                   cursor: "pointer",
-                  boxShadow: isSelected ? "0 0 10px 4px rgba(245,158,11,0.6)" : "none",
-                  transition: "all 0.1s",
-                  zIndex: isSelected || isFiltered ? 10 : 1,
+                  background: "none",
+                  border: "none",
                   padding: 0,
+                  zIndex: isSelected || isFiltered ? 10 : 1,
+                  filter: isSelected
+                    ? "drop-shadow(0 0 10px rgba(255,200,50,0.8))"
+                    : "none",
                   animation: isFiltered ? "filterGlow 1.5s ease-in-out infinite" : "none",
+                  transition: "transform 0.1s, filter 0.1s",
                 }}
-              />
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={`/potential/${nodeImg.src}`}
+                  width={nodeImg.size}
+                  height={nodeImg.size}
+                  style={{ display: "block", pointerEvents: "none", userSelect: "none" }}
+                  alt=""
+                />
+              </button>
             );
           })}
         </div>
