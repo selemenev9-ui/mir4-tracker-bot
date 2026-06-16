@@ -2226,25 +2226,22 @@ export default function DashboardPage() {
 
   return (
     <div className="@container/app flex h-screen flex-col overflow-hidden text-zinc-100 antialiased">
+      <video
+        autoPlay
+        muted
+        loop
+        playsInline
+        style={{ position: "fixed", top: 0, left: 0, width: "100vw", height: "100vh", objectFit: "cover", zIndex: -1, opacity: 0.45, pointerEvents: "none" }}
+      >
+        <source src="/bg-loop.webm" type="video/webm" />
+      </video>
       <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col overflow-hidden p-2 pt-2 @[480px]/app:p-4">
-        <div style={{ position: "relative", overflow: "hidden", paddingBottom: 4 }}>
-          <video
-            autoPlay
-            muted
-            loop
-            playsInline
-            style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", opacity: 0.35, zIndex: 0 }}
-          >
-            <source src="/bg-loop.webm" type="video/webm" />
-          </video>
-          <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.75) 100%)", zIndex: 1 }} />
-          <div style={{ position: "relative", zIndex: 2 }}>
         <header
-          className="flex items-center justify-between gap-2 pb-1.5"
-          style={{ borderBottom: "1px solid rgba(255,255,255,0.07)" }}
+          className="flex items-center justify-between gap-2"
+          style={{ background: "rgba(8,10,20,0.55)", backdropFilter: "blur(14px)", WebkitBackdropFilter: "blur(14px)", borderBottom: "1px solid rgba(255,255,255,0.1)", paddingTop: 12, paddingBottom: 12, paddingLeft: 8, paddingRight: 8, borderRadius: 8, marginBottom: 4 }}
         >
           <div className="shrink-0 flex flex-col gap-0">
-            <h1 className="text-sm @[500px]/app:text-base font-bold tracking-tight text-zinc-100">
+            <h1 className="font-bold tracking-tight text-zinc-100" style={{ fontSize: "1.4rem" }}>
               MIR4 Boss Tracker
             </h1>
             <span className="hidden @[400px]/app:inline text-[10px] text-zinc-500 leading-tight">
@@ -2312,7 +2309,7 @@ export default function DashboardPage() {
         </header>
 
         {/* Tab bar — always visible, drag-to-scroll */}
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-1" style={{ background: "rgba(8,10,20,0.45)", backdropFilter: "blur(10px)", WebkitBackdropFilter: "blur(10px)", paddingTop: 6, paddingBottom: 6, paddingLeft: 4, paddingRight: 4, borderRadius: 8, marginBottom: 4 }}>
           <button
             type="button"
             onClick={() => tabsRef.current?.scrollBy({ left: -160, behavior: "smooth" })}
@@ -2373,7 +2370,7 @@ export default function DashboardPage() {
                   draggable={false}
                   onClick={() => setActiveTab(tab.id)}
                   className={[
-                    "-mb-px shrink-0 border-b-2 px-2 py-0.5 text-[11px] font-semibold transition-all whitespace-nowrap",
+                    "-mb-px shrink-0 border-b-2 px-3.5 py-2 text-[11px] font-semibold transition-all whitespace-nowrap",
                     activeTab === tab.id
                       ? "border-red-500 text-zinc-100"
                       : "border-transparent text-zinc-500 hover:border-zinc-600 hover:text-zinc-300",
@@ -2468,8 +2465,6 @@ export default function DashboardPage() {
             </svg>
             <span className="hidden @[600px]/app:inline">WAR BOARD</span>
           </a>
-        </div>
-          </div>
         </div>
 
         <section className="flex-1 overflow-y-auto pb-2 @[480px]/app:pb-4" suppressHydrationWarning>
