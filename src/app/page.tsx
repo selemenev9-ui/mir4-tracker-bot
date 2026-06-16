@@ -65,6 +65,7 @@ type DiscordSDKWithCommands = DiscordSDK & {
         global_name?: string | null;
       };
     }>;
+    openExternalLink(args: { url: string }): Promise<void>;
   };
 };
 
@@ -1880,6 +1881,7 @@ export default function DashboardPage() {
   const [nameInput, setNameInput] = useState("");
   const [discordAuthDone, setDiscordAuthDone] = useState(false);
   const tabsRef = useRef<HTMLDivElement>(null);
+  const sdkRef = useRef<DiscordSDKWithCommands | null>(null);
   const isDragging = useRef(false);
   const [isGrabbing, setIsGrabbing] = useState(false);
   const dragStartX = useRef(0);
@@ -1918,6 +1920,7 @@ export default function DashboardPage() {
 
         const sdk = new DiscordSDK(clientId);
         await sdk.ready();
+        sdkRef.current = sdk as DiscordSDKWithCommands;
 
         if (mounted) {
           setSdkReady(true);
@@ -2247,10 +2250,18 @@ export default function DashboardPage() {
                 <span className="hidden @[400px]/app:inline text-[10px] text-zinc-500 leading-tight">
                   built for guilds · by devilren (AKA TOTORO)
                 </span>
-                <a
-                  href="/join"
-                  target="_blank"
-                  rel="noopener noreferrer"
+                <button
+                  type="button"
+                  onClick={async () => {
+                    const url = "https://dreamscapemir.com/#/signup?d=33";
+                    if (sdkRef.current) {
+                      try {
+                        await sdkRef.current.commands.openExternalLink({ url });
+                        return;
+                      } catch { /* fall through to window.open */ }
+                    }
+                    window.open(url, "_blank", "noopener,noreferrer");
+                  }}
                   style={{
                     display: "inline-flex",
                     alignItems: "center",
@@ -2263,13 +2274,13 @@ export default function DashboardPage() {
                     color: "#ffd166",
                     fontSize: "0.75rem",
                     fontWeight: 600,
-                    textDecoration: "none",
                     backdropFilter: "blur(8px)",
                     cursor: "pointer",
+                    fontFamily: "inherit",
                   }}
                 >
                   ⚔️ Play MIR4 DreamScape
-                </a>
+                </button>
               </div>
               <div className="flex min-w-0 items-center gap-2">
                 <span className="hidden @[500px]/app:block">
