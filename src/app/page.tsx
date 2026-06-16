@@ -2233,11 +2233,11 @@ export default function DashboardPage() {
             muted
             loop
             playsInline
-            style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", opacity: 0.55 }}
+            style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", opacity: 0.75 }}
           >
             <source src="/bg-loop.webm" type="video/webm" />
           </video>
-          <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, rgba(0,0,0,0.35) 0%, rgba(6,8,16,0.85) 100%)" }} />
+          <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(6,8,16,0.5) 100%)" }} />
           <div style={{ position: "relative", zIndex: 2, padding: "16px 16px 8px" }}>
             <header className="flex items-center justify-between gap-2">
               <div className="shrink-0 flex flex-col gap-0">
