@@ -2227,6 +2227,18 @@ export default function DashboardPage() {
   return (
     <div className="@container/app flex h-screen flex-col overflow-hidden text-zinc-100 antialiased">
       <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col overflow-hidden p-2 pt-2 @[480px]/app:p-4">
+        <div style={{ position: "relative", overflow: "hidden", paddingBottom: 4 }}>
+          <video
+            autoPlay
+            muted
+            loop
+            playsInline
+            style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", opacity: 0.35, zIndex: 0 }}
+          >
+            <source src="/bg-loop.webm" type="video/webm" />
+          </video>
+          <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.75) 100%)", zIndex: 1 }} />
+          <div style={{ position: "relative", zIndex: 2 }}>
         <header
           className="flex items-center justify-between gap-2 pb-1.5"
           style={{ borderBottom: "1px solid rgba(255,255,255,0.07)" }}
@@ -2236,7 +2248,7 @@ export default function DashboardPage() {
               MIR4 Boss Tracker
             </h1>
             <span className="hidden @[400px]/app:inline text-[10px] text-zinc-500 leading-tight">
-              built for guilds · by devilren (AKA Balor)
+              built for guilds · by devilren (AKA TOTORO)
             </span>
           </div>
           <div className="flex min-w-0 items-center gap-2">
@@ -2456,6 +2468,8 @@ export default function DashboardPage() {
             </svg>
             <span className="hidden @[600px]/app:inline">WAR BOARD</span>
           </a>
+        </div>
+          </div>
         </div>
 
         <section className="flex-1 overflow-y-auto pb-2 @[480px]/app:pb-4" suppressHydrationWarning>
