@@ -2421,6 +2421,17 @@ export default function DashboardPage() {
             <span className="hidden @[500px]/app:inline">Primal Force</span>
           </a>
           <a
+            href="/constitution"
+            className="ml-1 flex shrink-0 items-center gap-1 rounded-full border px-2 @[600px]/app:px-3 py-1 text-[11px] font-semibold text-emerald-300 transition-colors hover:bg-emerald-500/25"
+            style={{
+              background: "rgba(52,211,153,0.10)",
+              borderColor: "rgba(52,211,153,0.35)",
+            }}
+          >
+            <span>🌿</span>
+            <span className="hidden @[500px]/app:inline">Constitution</span>
+          </a>
+          <a
             href="/war"
             className="ml-1 flex shrink-0 items-center gap-1 rounded-full border px-2 @[600px]/app:px-3 py-1 text-[11px] font-semibold text-red-300 transition-colors hover:bg-red-500/25"
             style={{
