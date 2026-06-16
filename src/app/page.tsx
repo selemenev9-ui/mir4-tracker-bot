@@ -2250,7 +2250,7 @@ export default function DashboardPage() {
                 <span className="hidden @[400px]/app:inline text-[10px] text-zinc-500 leading-tight">
                   built for guilds · by devilren (AKA TOTORO)
                 </span>
-                <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginTop: 8 }}>
+                <div style={{ display: "flex", flexDirection: "column", gap: 6, marginTop: 8, alignItems: "flex-start" }}>
                   <button
                     type="button"
                     onClick={async () => {
