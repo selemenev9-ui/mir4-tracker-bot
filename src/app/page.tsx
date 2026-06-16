@@ -2247,6 +2247,29 @@ export default function DashboardPage() {
                 <span className="hidden @[400px]/app:inline text-[10px] text-zinc-500 leading-tight">
                   built for guilds · by devilren (AKA TOTORO)
                 </span>
+                <a
+                  href="/join"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: 6,
+                    marginTop: 8,
+                    padding: "5px 14px",
+                    background: "rgba(255,180,0,0.15)",
+                    border: "1px solid rgba(255,180,0,0.4)",
+                    borderRadius: 20,
+                    color: "#ffd166",
+                    fontSize: "0.75rem",
+                    fontWeight: 600,
+                    textDecoration: "none",
+                    backdropFilter: "blur(8px)",
+                    cursor: "pointer",
+                  }}
+                >
+                  ⚔️ Play MIR4 DreamScape
+                </a>
               </div>
               <div className="flex min-w-0 items-center gap-2">
                 <span className="hidden @[500px]/app:block">
