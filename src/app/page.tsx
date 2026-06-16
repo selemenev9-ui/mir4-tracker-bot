@@ -2250,37 +2250,68 @@ export default function DashboardPage() {
                 <span className="hidden @[400px]/app:inline text-[10px] text-zinc-500 leading-tight">
                   built for guilds · by devilren (AKA TOTORO)
                 </span>
-                <button
-                  type="button"
-                  onClick={async () => {
-                    const url = "https://dreamscapemir.com/#/signup?d=33";
-                    if (sdkRef.current) {
-                      try {
-                        await sdkRef.current.commands.openExternalLink({ url });
-                        return;
-                      } catch { /* fall through to window.open */ }
-                    }
-                    window.open(url, "_blank", "noopener,noreferrer");
-                  }}
-                  style={{
-                    display: "inline-flex",
-                    alignItems: "center",
-                    gap: 6,
-                    marginTop: 8,
-                    padding: "5px 14px",
-                    background: "rgba(255,180,0,0.15)",
-                    border: "1px solid rgba(255,180,0,0.4)",
-                    borderRadius: 20,
-                    color: "#ffd166",
-                    fontSize: "0.75rem",
-                    fontWeight: 600,
-                    backdropFilter: "blur(8px)",
-                    cursor: "pointer",
-                    fontFamily: "inherit",
-                  }}
-                >
-                  ⚔️ Play MIR4 DreamScape
-                </button>
+                <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginTop: 8 }}>
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      const url = "https://dreamscapemir.com/#/signup?d=33";
+                      if (sdkRef.current) {
+                        try {
+                          await sdkRef.current.commands.openExternalLink({ url });
+                          return;
+                        } catch { /* fall through to window.open */ }
+                      }
+                      window.open(url, "_blank", "noopener,noreferrer");
+                    }}
+                    style={{
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: 6,
+                      padding: "5px 14px",
+                      background: "rgba(255,180,0,0.15)",
+                      border: "1px solid rgba(255,180,0,0.4)",
+                      borderRadius: 20,
+                      color: "#ffd166",
+                      fontSize: "0.75rem",
+                      fontWeight: 600,
+                      backdropFilter: "blur(8px)",
+                      cursor: "pointer",
+                      fontFamily: "inherit",
+                    }}
+                  >
+                    ⚔️ Play MIR4 DreamScape
+                  </button>
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      const url = "https://discord.gg/officialdreamscape";
+                      if (sdkRef.current) {
+                        try {
+                          await sdkRef.current.commands.openExternalLink({ url });
+                          return;
+                        } catch { /* fall through to window.open */ }
+                      }
+                      window.open(url, "_blank", "noopener,noreferrer");
+                    }}
+                    style={{
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: 6,
+                      padding: "5px 14px",
+                      background: "rgba(88,101,242,0.15)",
+                      border: "1px solid rgba(88,101,242,0.5)",
+                      borderRadius: 20,
+                      color: "#a5b4fc",
+                      fontSize: "0.75rem",
+                      fontWeight: 600,
+                      backdropFilter: "blur(8px)",
+                      cursor: "pointer",
+                      fontFamily: "inherit",
+                    }}
+                  >
+                    💬 Official Discord
+                  </button>
+                </div>
               </div>
               <div className="flex min-w-0 items-center gap-2">
                 <span className="hidden @[500px]/app:block">
