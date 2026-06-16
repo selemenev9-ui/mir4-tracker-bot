@@ -8,6 +8,8 @@ export function middleware(request: NextRequest) {
     pathname.startsWith("/_next") ||
     pathname.startsWith("/api") ||
     pathname.startsWith("/discord-only") ||
+    pathname.startsWith("/terms") ||
+    pathname.startsWith("/privacy") ||
     pathname.includes(".")
   ) {
     return NextResponse.next();
