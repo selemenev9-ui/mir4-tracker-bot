@@ -2225,91 +2225,93 @@ export default function DashboardPage() {
   ];
 
   return (
-    <div className="@container/app flex h-screen flex-col overflow-hidden text-zinc-100 antialiased">
-      <video
-        autoPlay
-        muted
-        loop
-        playsInline
-        style={{ position: "fixed", top: 0, left: 0, width: "100vw", height: "100vh", objectFit: "cover", zIndex: -1, opacity: 0.45, pointerEvents: "none" }}
-      >
-        <source src="/bg-loop.webm" type="video/webm" />
-      </video>
-      <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col overflow-hidden p-2 pt-2 @[480px]/app:p-4">
-        <header
-          className="flex items-center justify-between gap-2"
-          style={{ background: "rgba(8,10,20,0.55)", backdropFilter: "blur(14px)", WebkitBackdropFilter: "blur(14px)", borderBottom: "1px solid rgba(255,255,255,0.1)", paddingTop: 12, paddingBottom: 12, paddingLeft: 8, paddingRight: 8, borderRadius: 8, marginBottom: 4 }}
-        >
-          <div className="shrink-0 flex flex-col gap-0">
-            <h1 className="font-bold tracking-tight text-zinc-100" style={{ fontSize: "1.4rem" }}>
-              MIR4 Boss Tracker
-            </h1>
-            <span className="hidden @[400px]/app:inline text-[10px] text-zinc-500 leading-tight">
-              built for guilds · by devilren (AKA TOTORO)
-            </span>
-          </div>
-          <div className="flex min-w-0 items-center gap-2">
-            <span className="hidden @[500px]/app:block">
-              <ServerClock />
-            </span>
-            {currentUser ? (
-              <>
-                {currentUser.avatarUrl && (
-                  <img
-                    src={currentUser.avatarUrl}
-                    alt=""
-                    className="shrink-0 rounded-full object-cover"
-                    style={{
-                      width: 28,
-                      height: 28,
-                      marginRight: 6,
-                    }}
-                  />
-                )}
-                <span
-                  className="max-w-[120px] truncate text-xs"
-                  style={{
-                    background: "rgba(255,255,255,0.05)",
-                    border: "1px solid rgba(255,255,255,0.1)",
-                    borderRadius: "20px",
-                    padding: "2px 8px",
-                    color: "#94a3b8",
-                  }}
-                >
-                  {currentUser.username}
+    <div className="@container/app flex h-screen flex-col text-zinc-100 antialiased">
+      <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col overflow-y-auto">
+        <div style={{ position: "relative", height: 220, overflow: "hidden", flexShrink: 0 }}>
+          <video
+            autoPlay
+            muted
+            loop
+            playsInline
+            style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", opacity: 0.55 }}
+          >
+            <source src="/bg-loop.webm" type="video/webm" />
+          </video>
+          <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, rgba(0,0,0,0.35) 0%, rgba(6,8,16,0.85) 100%)" }} />
+          <div style={{ position: "relative", zIndex: 2, padding: "16px 16px 8px" }}>
+            <header className="flex items-center justify-between gap-2">
+              <div className="shrink-0 flex flex-col gap-0">
+                <h1 className="font-bold tracking-tight text-zinc-100" style={{ fontSize: "1.4rem" }}>
+                  MIR4 Boss Tracker
+                </h1>
+                <span className="hidden @[400px]/app:inline text-[10px] text-zinc-500 leading-tight">
+                  built for guilds · by devilren (AKA TOTORO)
                 </span>
-                {!discordAuthDone && (
+              </div>
+              <div className="flex min-w-0 items-center gap-2">
+                <span className="hidden @[500px]/app:block">
+                  <ServerClock />
+                </span>
+                {currentUser ? (
+                  <>
+                    {currentUser.avatarUrl && (
+                      <img
+                        src={currentUser.avatarUrl}
+                        alt=""
+                        className="shrink-0 rounded-full object-cover"
+                        style={{
+                          width: 28,
+                          height: 28,
+                          marginRight: 6,
+                        }}
+                      />
+                    )}
+                    <span
+                      className="max-w-[120px] truncate text-xs"
+                      style={{
+                        background: "rgba(255,255,255,0.05)",
+                        border: "1px solid rgba(255,255,255,0.1)",
+                        borderRadius: "20px",
+                        padding: "2px 8px",
+                        color: "#94a3b8",
+                      }}
+                    >
+                      {currentUser.username}
+                    </span>
+                    {!discordAuthDone && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          localStorage.removeItem("mir4_username");
+                          localStorage.removeItem("mir4_user_id");
+                          setCurrentUser(null);
+                          setSdkReady(false);
+                          setSdkError(false);
+                          setShowNamePrompt(true);
+                          setNameInput("");
+                        }}
+                        className="shrink-0 text-[10px] text-zinc-600 transition-colors hover:text-zinc-400"
+                      >
+                        change
+                      </button>
+                    )}
+                  </>
+                ) : (
                   <button
                     type="button"
-                    onClick={() => {
-                      localStorage.removeItem("mir4_username");
-                      localStorage.removeItem("mir4_user_id");
-                      setCurrentUser(null);
-                      setSdkReady(false);
-                      setSdkError(false);
-                      setShowNamePrompt(true);
-                      setNameInput("");
-                    }}
-                    className="shrink-0 text-[10px] text-zinc-600 transition-colors hover:text-zinc-400"
+                    onClick={() => setShowNamePrompt(true)}
+                    className="shrink-0 text-xs text-zinc-500 underline underline-offset-2 transition-colors hover:text-zinc-300"
                   >
-                    change
+                    {sdkError ? "Login (web mode)" : "Login"}
                   </button>
                 )}
-              </>
-            ) : (
-              <button
-                type="button"
-                onClick={() => setShowNamePrompt(true)}
-                className="shrink-0 text-xs text-zinc-500 underline underline-offset-2 transition-colors hover:text-zinc-300"
-              >
-                {sdkError ? "Login (web mode)" : "Login"}
-              </button>
-            )}
+              </div>
+            </header>
           </div>
-        </header>
+        </div>
 
         {/* Tab bar — always visible, drag-to-scroll */}
-        <div className="flex items-center gap-1" style={{ background: "rgba(8,10,20,0.45)", backdropFilter: "blur(10px)", WebkitBackdropFilter: "blur(10px)", paddingTop: 6, paddingBottom: 6, paddingLeft: 4, paddingRight: 4, borderRadius: 8, marginBottom: 4 }}>
+        <div className="flex items-center gap-1" style={{ position: "sticky", top: 0, zIndex: 20, background: "rgba(6,8,16,0.85)", backdropFilter: "blur(14px)", WebkitBackdropFilter: "blur(14px)", borderBottom: "1px solid rgba(255,255,255,0.07)", paddingTop: 6, paddingBottom: 6, paddingLeft: 4, paddingRight: 4 }}>
           <button
             type="button"
             onClick={() => tabsRef.current?.scrollBy({ left: -160, behavior: "smooth" })}
@@ -2467,7 +2469,7 @@ export default function DashboardPage() {
           </a>
         </div>
 
-        <section className="flex-1 overflow-y-auto pb-2 @[480px]/app:pb-4" suppressHydrationWarning>
+        <section className="p-2 @[480px]/app:p-4" suppressHydrationWarning>
           {activeTab === "secret_peak" && (
             <SecretPeakView
               dynamicTimers={dynamicTimers}
