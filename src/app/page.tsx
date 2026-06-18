@@ -2683,11 +2683,11 @@ export default function DashboardPage() {
               loop
               muted
               playsInline
-              style={{ width: "100%", height: "100%", objectFit: "cover", opacity: 0.18 }}
+              style={{ width: "100%", height: "100%", objectFit: "cover", opacity: 0.40 }}
             >
               <source src="/bg-primal.webm" type="video/webm" />
             </video>
-            <div style={{ position: "absolute", inset: 0, zIndex: 1, background: "linear-gradient(to bottom, rgba(6,8,16,0.7) 0%, rgba(6,8,16,0.4) 40%, rgba(6,8,16,0.7) 100%)" }} />
+            <div style={{ position: "absolute", inset: 0, zIndex: 1, background: "linear-gradient(to bottom, rgba(6,8,16,0.45) 0%, rgba(6,8,16,0.2) 40%, rgba(6,8,16,0.45) 100%)" }} />
           </div>
 
           {/* Tab bar — always visible, drag-to-scroll */}
