@@ -1890,6 +1890,46 @@ function BellIcon() {
   );
 }
 
+function CraftingIcon() {
+  return (
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M16 4l4 4-8 8-2-2 6-6-2-2-6 6-2-2 8-8zM2 20l1-3 2 2-3 1z" />
+    </svg>
+  );
+}
+
+function PotentialIcon() {
+  return (
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M13 2L4.09 12.97 11 13l-2 9L20 11h-7l2-9z" />
+    </svg>
+  );
+}
+
+function ShieldIcon() {
+  return (
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M12 2L4 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-10-3z" />
+    </svg>
+  );
+}
+
+function InnerForceIcon() {
+  return (
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15v-4l4 2-4 2zm0-6V7l4 2-4 2z" />
+    </svg>
+  );
+}
+
+function WarIcon() {
+  return (
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M12 2a10 10 0 1 0 0 20A10 10 0 0 0 12 2zm4 13.59L14.59 17 12 14.41 9.41 17 8 15.59 10.59 13 8 10.41 9.41 9 12 11.59 14.59 9 16 10.41 13.41 13 16 15.59z" />
+    </svg>
+  );
+}
+
 // ─── HeroButton ───────────────────────────────────────────────────────────
 
 interface HeroButtonProps {
@@ -2001,6 +2041,137 @@ function HeroButton({ icon, label, onClick, color, glowColor }: HeroButtonProps)
         {icon}
         {label}
       </button>
+    </div>
+  );
+}
+
+// ─── TabBtn ────────────────────────────────────────────────────────────
+
+interface TabBtnProps {
+  id: Tab;
+  label: string;
+  active: boolean;
+  onClick: () => void;
+}
+
+function TabBtn({ id, label, active, onClick }: TabBtnProps) {
+  const [hovered, setHovered] = useState(false);
+  const [pressed, setPressed] = useState(false);
+
+  return (
+    <button
+      data-tab-id={id}
+      type="button"
+      draggable={false}
+      onClick={onClick}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => { setHovered(false); setPressed(false); }}
+      onMouseDown={() => setPressed(true)}
+      onMouseUp={() => setPressed(false)}
+      className={[
+        "-mb-px shrink-0 border-b-2 px-3.5 py-2 text-[11px] font-semibold whitespace-nowrap",
+        active
+          ? "border-red-500 text-zinc-100"
+          : "border-transparent text-zinc-500 hover:border-zinc-600 hover:text-zinc-300",
+      ].join(" ")}
+      style={{
+        position: "relative",
+        overflow: "hidden",
+        transform: `scale(${pressed ? 0.95 : hovered ? 1.05 : 1})`,
+        transition: "transform 0.15s ease, color 0.15s ease",
+        filter: active ? "drop-shadow(0 2px 6px rgba(239,68,68,0.6))" : undefined,
+        textShadow: active ? "0 0 12px rgba(239,68,68,0.5)" : undefined,
+      }}
+    >
+      {hovered && (
+        <div style={{ position: "absolute", inset: 0, background: "rgba(255,255,255,0.06)", pointerEvents: "none" }} />
+      )}
+      {label}
+    </button>
+  );
+}
+
+// ─── NavPill ────────────────────────────────────────────────────────────
+
+interface NavPillProps {
+  href: string;
+  icon: React.ReactNode;
+  label: string;
+  color: string;
+  hidden?: boolean;
+}
+
+function NavPill({ href, icon, label, color, hidden: isHidden }: NavPillProps) {
+  const linkRef = useRef<HTMLAnchorElement>(null);
+  const [tilt, setTilt] = useState({ rotX: 0, rotY: 0, shine: 50 });
+  const [hovered, setHovered] = useState(false);
+  const [pressed, setPressed] = useState(false);
+
+  return (
+    <div
+      className="ml-1 shrink-0"
+      style={{ position: "relative", display: isHidden ? "none" : "inline-flex" }}
+      onMouseMove={(e) => {
+        const rect = linkRef.current?.getBoundingClientRect();
+        if (!rect) return;
+        const nx = (e.clientX - (rect.left + rect.width / 2)) / (rect.width / 2);
+        const ny = (e.clientY - (rect.top + rect.height / 2)) / (rect.height / 2);
+        setTilt({ rotX: -ny * 8, rotY: nx * 12, shine: nx * 30 + 50 });
+      }}
+      onMouseLeave={() => { setTilt({ rotX: 0, rotY: 0, shine: 50 }); setHovered(false); setPressed(false); }}
+      onMouseEnter={() => setHovered(true)}
+    >
+      <div
+        style={{
+          position: "absolute",
+          bottom: -6,
+          left: "10%",
+          width: "80%",
+          height: 6,
+          background: color,
+          opacity: hovered ? 0.5 : 0,
+          filter: "blur(8px)",
+          borderRadius: "50%",
+          transition: "opacity 0.2s ease",
+          pointerEvents: "none",
+        }}
+      />
+      <a
+        ref={linkRef}
+        href={href}
+        onMouseDown={() => setPressed(true)}
+        onMouseUp={() => setPressed(false)}
+        className="flex items-center gap-1 rounded-full border px-2 @[600px]/app:px-3 py-1 text-[11px] font-semibold"
+        style={{
+          color,
+          borderColor: `${color}59`,
+          background: `${color}1e`,
+          position: "relative",
+          overflow: "hidden",
+          textDecoration: "none",
+          transform: `perspective(400px) rotateX(${tilt.rotX}deg) rotateY(${tilt.rotY}deg) scale(${pressed ? 0.93 : hovered ? 1.07 : 1})`,
+          transition: "transform 0.15s ease, box-shadow 0.2s ease",
+          boxShadow: hovered ? `0 0 16px ${color}80, inset 0 1px 0 ${color}60` : "none",
+        }}
+      >
+        <div style={{ position: "absolute", inset: 0, borderRadius: "inherit", pointerEvents: "none", overflow: "hidden" }}>
+          <div
+            style={{
+              position: "absolute",
+              top: "-50%",
+              left: `${tilt.shine - 15}%`,
+              width: "30%",
+              height: "200%",
+              background: "linear-gradient(90deg, transparent 0%, white 50%, transparent 100%)",
+              opacity: hovered ? 0.15 : 0.06,
+              transform: "skewX(-15deg)",
+              transition: "left 0.1s ease, opacity 0.2s ease",
+            }}
+          />
+        </div>
+        {icon}
+        <span className="hidden @[500px]/app:inline">{label}</span>
+      </a>
     </div>
   );
 }
@@ -2574,21 +2745,13 @@ export default function DashboardPage() {
               }}
             >
               {tabs.map((tab) => (
-                <button
+                <TabBtn
                   key={tab.id}
-                  data-tab-id={tab.id}
-                  type="button"
-                  draggable={false}
+                  id={tab.id}
+                  label={tab.label}
+                  active={activeTab === tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={[
-                    "-mb-px shrink-0 border-b-2 px-3.5 py-2 text-[11px] font-semibold transition-all whitespace-nowrap",
-                    activeTab === tab.id
-                      ? "border-red-500 text-zinc-100"
-                      : "border-transparent text-zinc-500 hover:border-zinc-600 hover:text-zinc-300",
-                  ].join(" ")}
-                >
-                  {tab.label}
-                </button>
+                />
               ))}
             </nav>
           </div>
@@ -2607,75 +2770,12 @@ export default function DashboardPage() {
               lineHeight: 1,
             }}
           >›</button>
-          <a
-            href="/crafting"
-            className="ml-1 flex shrink-0 items-center gap-1 rounded-full border px-2 @[600px]/app:px-3 py-1 text-[11px] font-semibold text-amber-300 transition-colors hover:bg-amber-500/25"
-            style={{
-              background: "rgba(245,158,11,0.12)",
-              borderColor: "rgba(245,158,11,0.35)",
-            }}
-          >
-            <span>⛏</span>
-            <span className="hidden @[500px]/app:inline">Crafting</span>
-          </a>
-          <a
-            href="/potential"
-            className="ml-1 flex shrink-0 items-center gap-1 rounded-full border px-2 @[600px]/app:px-3 py-1 text-[11px] font-semibold text-cyan-300 transition-colors hover:bg-cyan-500/25"
-            style={{
-              background: "rgba(6,182,212,0.12)",
-              borderColor: "rgba(6,182,212,0.35)",
-            }}
-          >
-            <span>⚡</span>
-            <span className="hidden @[500px]/app:inline">Potential</span>
-          </a>
-          <a
-            href="/primal-force"
-            className="ml-1 flex shrink-0 items-center gap-1 rounded-full border px-2 @[600px]/app:px-3 py-1 text-[11px] font-semibold text-orange-300 transition-colors hover:bg-orange-500/25"
-            style={{
-              background: "rgba(249,115,22,0.12)",
-              borderColor: "rgba(249,115,22,0.35)",
-            }}
-          >
-            <span>⚔️</span>
-            <span className="hidden @[500px]/app:inline">Primal Force</span>
-          </a>
-          <a
-            href="/constitution"
-            className="hidden ml-1 flex shrink-0 items-center gap-1 rounded-full border px-2 @[600px]/app:px-3 py-1 text-[11px] font-semibold text-emerald-300 transition-colors hover:bg-emerald-500/25"
-            style={{
-              background: "rgba(52,211,153,0.10)",
-              borderColor: "rgba(52,211,153,0.35)",
-            }}
-          >
-            <span>🌿</span>
-            <span className="hidden @[500px]/app:inline">Constitution</span>
-          </a>
-          <a
-            href="/inner-force"
-            className="hidden ml-1 flex shrink-0 items-center gap-1 rounded-full border px-2 @[600px]/app:px-3 py-1 text-[11px] font-semibold text-violet-300 transition-colors hover:bg-violet-500/25"
-            style={{
-              background: "rgba(139,92,246,0.12)",
-              borderColor: "rgba(139,92,246,0.35)",
-            }}
-          >
-            <span>🌀</span>
-            <span className="hidden @[500px]/app:inline">Inner Force</span>
-          </a>
-          <a
-            href="/war"
-            className="ml-1 flex shrink-0 items-center gap-1 rounded-full border px-2 @[600px]/app:px-3 py-1 text-[11px] font-semibold text-red-300 transition-colors hover:bg-red-500/25"
-            style={{
-              background: "rgba(239,68,68,0.15)",
-              borderColor: "rgba(239,68,68,0.4)",
-            }}
-          >
-            <svg viewBox="0 0 24 24" width={14} height={14} className="text-red-300">
-              <line x1={6} y1={6} x2={18} y2={18} stroke="currentColor" strokeWidth={2} />
-              <line x1={18} y1={6} x2={6} y2={18} stroke="currentColor" strokeWidth={2} />
-            </svg>
-            <span className="hidden @[600px]/app:inline">WAR BOARD</span>
-          </a>
+          <NavPill href="/crafting" icon={<CraftingIcon />} label="Crafting" color="#f59e0b" />
+          <NavPill href="/potential" icon={<PotentialIcon />} label="Potential" color="#06b6d4" />
+          <NavPill href="/primal-force" icon={<SwordIcon />} label="Primal Force" color="#f97316" />
+          <NavPill href="/constitution" icon={<ShieldIcon />} label="Constitution" color="#34d399" hidden />
+          <NavPill href="/inner-force" icon={<InnerForceIcon />} label="Inner Force" color="#8b5cf6" hidden />
+          <NavPill href="/war" icon={<WarIcon />} label="WAR BOARD" color="#ef4444" />
         </div>
 
         <section className="p-2 @[480px]/app:p-4" style={{ position: "relative", zIndex: 2 }} suppressHydrationWarning>
