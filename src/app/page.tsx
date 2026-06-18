@@ -2504,7 +2504,22 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {/* Tab bar — always visible, drag-to-scroll */}
+        <div style={{ position: "relative", flex: 1 }}>
+          {/* Content video background */}
+          <div style={{ position: "absolute", inset: 0, zIndex: 0, overflow: "hidden", pointerEvents: "none" }}>
+            <video
+              autoPlay
+              loop
+              muted
+              playsInline
+              style={{ width: "100%", height: "100%", objectFit: "cover", opacity: 0.18 }}
+            >
+              <source src="/bg-primal.webm" type="video/webm" />
+            </video>
+            <div style={{ position: "absolute", inset: 0, zIndex: 1, background: "linear-gradient(to bottom, rgba(6,8,16,0.7) 0%, rgba(6,8,16,0.4) 40%, rgba(6,8,16,0.7) 100%)" }} />
+          </div>
+
+          {/* Tab bar — always visible, drag-to-scroll */}
         <div className="flex items-center gap-1" style={{ position: "sticky", top: 0, zIndex: 20, background: "rgba(6,8,16,0.85)", backdropFilter: "blur(14px)", WebkitBackdropFilter: "blur(14px)", borderBottom: "1px solid rgba(255,255,255,0.07)", paddingTop: 6, paddingBottom: 6, paddingLeft: 4, paddingRight: 4 }}>
           <button
             type="button"
@@ -2663,7 +2678,7 @@ export default function DashboardPage() {
           </a>
         </div>
 
-        <section className="p-2 @[480px]/app:p-4" suppressHydrationWarning>
+        <section className="p-2 @[480px]/app:p-4" style={{ position: "relative", zIndex: 2 }} suppressHydrationWarning>
           {activeTab === "secret_peak" && (
             <SecretPeakView
               dynamicTimers={dynamicTimers}
@@ -2733,6 +2748,7 @@ export default function DashboardPage() {
           )}
           {activeTab === "calculator" && <MiningCalculatorView />}
         </section>
+        </div>
       </main>
 
       {/* Custom Reminder Modal */}
