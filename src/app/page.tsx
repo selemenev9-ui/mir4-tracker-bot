@@ -1880,6 +1880,13 @@ export default function DashboardPage() {
   const [showNamePrompt, setShowNamePrompt] = useState(false);
   const [nameInput, setNameInput] = useState("");
   const [discordAuthDone, setDiscordAuthDone] = useState(false);
+  const [reminderModal, setReminderModal] = useState(false);
+  const [reminderLabel, setReminderLabel] = useState("");
+  const [reminderNote, setReminderNote] = useState("");
+  const [reminderMode, setReminderMode] = useState<"minutes" | "time">("minutes");
+  const [reminderMinutes, setReminderMinutes] = useState(30);
+  const [reminderTime, setReminderTime] = useState("");
+  const [reminderSaving, setReminderSaving] = useState(false);
   const tabsRef = useRef<HTMLDivElement>(null);
   const sdkRef = useRef<DiscordSDKWithCommands | null>(null);
   const isDragging = useRef(false);
@@ -2311,6 +2318,29 @@ export default function DashboardPage() {
                   >
                     💬 Official Discord
                   </button>
+                  {currentUser && (
+                    <button
+                      type="button"
+                      onClick={() => setReminderModal(true)}
+                      style={{
+                        display: "inline-flex",
+                        alignItems: "center",
+                        gap: 6,
+                        padding: "5px 14px",
+                        background: "rgba(34,197,94,0.15)",
+                        border: "1px solid rgba(34,197,94,0.4)",
+                        borderRadius: 20,
+                        color: "#86efac",
+                        fontSize: "0.75rem",
+                        fontWeight: 600,
+                        backdropFilter: "blur(8px)",
+                        cursor: "pointer",
+                        fontFamily: "inherit",
+                      }}
+                    >
+                      ⏰ Remind me
+                    </button>
+                  )}
                 </div>
               </div>
               <div className="flex min-w-0 items-center gap-2">
@@ -2605,6 +2635,142 @@ export default function DashboardPage() {
           {activeTab === "calculator" && <MiningCalculatorView />}
         </section>
       </main>
+
+      {/* Custom Reminder Modal */}
+      {reminderModal && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center"
+          style={{ background: "rgba(3,7,17,0.85)", backdropFilter: "blur(16px)" }}
+        >
+          <div
+            className="w-full max-w-sm rounded-2xl p-6 shadow-2xl mx-4"
+            style={{
+              background: "rgba(8,14,36,0.9)",
+              border: "1px solid rgba(255,255,255,0.1)",
+              backdropFilter: "blur(20px)",
+              boxShadow: "0 0 80px rgba(34,197,94,0.15), 0 32px 64px rgba(0,0,0,0.7)",
+            }}
+          >
+            <h2 className="mb-4 text-base font-bold text-zinc-50">⏰ Custom Reminder</h2>
+            <input
+              type="text"
+              value={reminderLabel}
+              onChange={(e) => setReminderLabel(e.target.value)}
+              placeholder="Boss / event name"
+              autoFocus
+              className="mb-3 w-full rounded-xl border border-zinc-700 bg-zinc-900 px-3 py-2 text-sm text-zinc-100 placeholder-zinc-600 outline-none focus:border-emerald-500/60 focus:ring-1 focus:ring-emerald-500/20"
+            />
+            <div className="mb-3 flex gap-2">
+              <button
+                type="button"
+                onClick={() => setReminderMode("minutes")}
+                className={`flex-1 rounded-xl border py-1.5 text-xs font-semibold transition-colors ${
+                  reminderMode === "minutes"
+                    ? "border-emerald-500/60 bg-emerald-500/20 text-emerald-300"
+                    : "border-zinc-700 bg-zinc-900 text-zinc-500 hover:text-zinc-300"
+                }`}
+              >
+                In X minutes
+              </button>
+              <button
+                type="button"
+                onClick={() => setReminderMode("time")}
+                className={`flex-1 rounded-xl border py-1.5 text-xs font-semibold transition-colors ${
+                  reminderMode === "time"
+                    ? "border-emerald-500/60 bg-emerald-500/20 text-emerald-300"
+                    : "border-zinc-700 bg-zinc-900 text-zinc-500 hover:text-zinc-300"
+                }`}
+              >
+                At time (UTC+8)
+              </button>
+            </div>
+            {reminderMode === "minutes" ? (
+              <input
+                type="number"
+                min={1}
+                max={1440}
+                value={reminderMinutes}
+                onChange={(e) => setReminderMinutes(Number(e.target.value))}
+                className="mb-3 w-full rounded-xl border border-zinc-700 bg-zinc-900 px-3 py-2 text-sm text-zinc-100 outline-none focus:border-emerald-500/60 focus:ring-1 focus:ring-emerald-500/20"
+              />
+            ) : (
+              <input
+                type="time"
+                value={reminderTime}
+                onChange={(e) => setReminderTime(e.target.value)}
+                className="mb-3 w-full rounded-xl border border-zinc-700 bg-zinc-900 px-3 py-2 text-sm text-zinc-100 outline-none focus:border-emerald-500/60 focus:ring-1 focus:ring-emerald-500/20"
+              />
+            )}
+            <textarea
+              value={reminderNote}
+              onChange={(e) => setReminderNote(e.target.value)}
+              placeholder="Optional note..."
+              rows={2}
+              className="mb-4 w-full resize-none rounded-xl border border-zinc-700 bg-zinc-900 px-3 py-2 text-sm text-zinc-100 placeholder-zinc-600 outline-none focus:border-emerald-500/60 focus:ring-1 focus:ring-emerald-500/20"
+            />
+            <div className="flex gap-2">
+              <button
+                type="button"
+                disabled={reminderSaving || !reminderLabel.trim()}
+                onClick={async () => {
+                  if (!currentUser) return;
+                  setReminderSaving(true);
+                  let fireAt: Date;
+                  if (reminderMode === "minutes") {
+                    fireAt = new Date(Date.now() + reminderMinutes * 60_000);
+                  } else {
+                    const [hStr, mStr] = reminderTime.split(":");
+                    const h = parseInt(hStr ?? "0", 10);
+                    const m = parseInt(mStr ?? "0", 10);
+                    const nowUtc8 = new Date(Date.now() + 8 * 3600_000);
+                    const y = nowUtc8.getUTCFullYear();
+                    const mo = nowUtc8.getUTCMonth();
+                    const d = nowUtc8.getUTCDate();
+                    fireAt = new Date(Date.UTC(y, mo, d, h, m, 0) - 8 * 3600_000);
+                    if (fireAt.getTime() <= Date.now()) {
+                      fireAt = new Date(fireAt.getTime() + 24 * 3600_000);
+                    }
+                  }
+                  await fetch("/api/custom-reminders", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                      user_id: currentUser.id,
+                      label: reminderLabel.trim(),
+                      note: reminderNote.trim() || undefined,
+                      fire_at: fireAt.toISOString(),
+                    }),
+                  });
+                  setReminderSaving(false);
+                  setReminderModal(false);
+                  setReminderLabel("");
+                  setReminderNote("");
+                  setReminderMode("minutes");
+                  setReminderMinutes(30);
+                  setReminderTime("");
+                }}
+                className="flex-1 rounded-xl border border-emerald-500/80 bg-emerald-500/20 py-2 text-sm font-semibold text-emerald-300 transition-colors hover:bg-emerald-500/30 disabled:cursor-not-allowed disabled:opacity-40"
+              >
+                {reminderSaving ? "Saving..." : "Save"}
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setReminderModal(false);
+                  setReminderLabel("");
+                  setReminderNote("");
+                  setReminderMode("minutes");
+                  setReminderMinutes(30);
+                  setReminderTime("");
+                }}
+                className="flex-1 rounded-xl border border-zinc-700 bg-zinc-800 py-2 text-sm font-semibold text-zinc-400 transition-colors hover:text-zinc-200"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Name Prompt Modal */}
       {showNamePrompt && !currentUser && !discordAuthDone && (

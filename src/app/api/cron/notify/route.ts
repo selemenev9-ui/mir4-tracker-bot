@@ -339,5 +339,33 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
   }
 
 
+  // ── Custom Reminders ─────────────────────────────────────────────────────
+  const customWindowStart = new Date(Date.now() - 60 * 1000).toISOString();
+  const customWindowEnd = new Date(Date.now() + 60 * 1000).toISOString();
+
+  const { data: customReminders } = await supabase
+    .from("custom_reminders")
+    .select("id, user_id, label, note")
+    .gte("fire_at", customWindowStart)
+    .lte("fire_at", customWindowEnd);
+
+  if (customReminders?.length) {
+    for (const reminder of customReminders as Array<{
+      id: string;
+      user_id: string;
+      label: string;
+      note: string | null;
+    }>) {
+      const channelId = await openDmChannel(reminder.user_id);
+      if (channelId) {
+        let msg = `⏰ **Custom Reminder**: ${reminder.label}`;
+        if (reminder.note) msg += `\n> ${reminder.note}`;
+        await sendDM(channelId, msg);
+        notifications.push(`custom_${reminder.id}`);
+      }
+      await supabase.from("custom_reminders").delete().eq("id", reminder.id);
+    }
+  }
+
   return NextResponse.json({ ok: true, sent: notifications });
 }
