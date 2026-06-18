@@ -1864,6 +1864,147 @@ function MiningCalculatorView() {
   );
 }
 
+// ─── SVG Icons ──────────────────────────────────────────────────────────
+
+function SwordIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M14.5 2.5l7 7-10 10-2-2 8-8-5-5-8 8-2-2 10-10zM3 17l1.5 1.5L3 20l1 1-3 1 1-3 1-1z" />
+    </svg>
+  );
+}
+
+function DiscordIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057c.003.028.015.057.03.07a19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z" />
+    </svg>
+  );
+}
+
+function BellIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M12 22a2 2 0 0 0 2-2H10a2 2 0 0 0 2 2zm6-6V11c0-3.07-1.64-5.64-4.5-6.32V4a1.5 1.5 0 0 0-3 0v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z" />
+    </svg>
+  );
+}
+
+// ─── HeroButton ───────────────────────────────────────────────────────────
+
+interface HeroButtonProps {
+  icon: React.ReactNode;
+  label: string;
+  onClick: () => void;
+  color: string;
+  glowColor: string;
+}
+
+function HeroButton({ icon, label, onClick, color, glowColor }: HeroButtonProps) {
+  const btnRef = useRef<HTMLButtonElement>(null);
+  const [tilt, setTilt] = useState({ rotX: 0, rotY: 0, shine: 60 });
+  const [hovered, setHovered] = useState(false);
+  const [pressed, setPressed] = useState(false);
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = btnRef.current?.getBoundingClientRect();
+    if (!rect) return;
+    const nx = (e.clientX - (rect.left + rect.width / 2)) / (rect.width / 2);
+    const ny = (e.clientY - (rect.top + rect.height / 2)) / (rect.height / 2);
+    setTilt({ rotX: -ny * 12, rotY: nx * 18, shine: nx * 30 + 60 });
+  };
+
+  const handleMouseLeave = () => {
+    setTilt({ rotX: 0, rotY: 0, shine: 60 });
+    setHovered(false);
+    setPressed(false);
+  };
+
+  const scale = pressed ? 0.94 : hovered ? 1.06 : 1;
+
+  return (
+    <div
+      style={{ position: "relative", display: "inline-block" }}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+      onMouseEnter={() => setHovered(true)}
+    >
+      <div
+        style={{
+          position: "absolute",
+          bottom: -8,
+          left: "10%",
+          width: "80%",
+          height: 8,
+          background: glowColor,
+          filter: "blur(10px)",
+          borderRadius: "50%",
+          opacity: hovered ? 1 : 0,
+          transition: "opacity 0.2s ease",
+          pointerEvents: "none",
+        }}
+      />
+      <button
+        ref={btnRef}
+        type="button"
+        onClick={onClick}
+        onMouseDown={() => setPressed(true)}
+        onMouseUp={() => setPressed(false)}
+        style={{
+          display: "inline-flex",
+          alignItems: "center",
+          gap: 8,
+          padding: "9px 20px",
+          fontSize: "0.82rem",
+          fontWeight: 700,
+          letterSpacing: "0.03em",
+          fontFamily: "inherit",
+          cursor: "pointer",
+          borderRadius: 14,
+          border: `1px solid ${color}40`,
+          background: `linear-gradient(135deg, ${color}22 0%, ${color}0a 100%)`,
+          color,
+          backdropFilter: "blur(12px)",
+          WebkitBackdropFilter: "blur(12px)",
+          position: "relative",
+          overflow: "hidden",
+          transform: `perspective(600px) rotateX(${tilt.rotX}deg) rotateY(${tilt.rotY}deg) scale(${scale})`,
+          transition: "transform 0.15s ease, box-shadow 0.2s ease",
+          boxShadow: hovered
+            ? `0 0 24px ${glowColor}, inset 0 1px 0 ${color}60`
+            : "none",
+        }}
+      >
+        <div
+          style={{
+            position: "absolute",
+            inset: 0,
+            borderRadius: "inherit",
+            pointerEvents: "none",
+            overflow: "hidden",
+          }}
+        >
+          <div
+            style={{
+              position: "absolute",
+              top: "-50%",
+              left: `${tilt.shine - 20}%`,
+              width: "40%",
+              height: "200%",
+              background: "linear-gradient(90deg, transparent 0%, white 50%, transparent 100%)",
+              opacity: hovered ? 0.18 : 0.08,
+              transform: "skewX(-15deg)",
+              transition: "left 0.1s ease, opacity 0.2s ease",
+            }}
+          />
+        </div>
+        {icon}
+        {label}
+      </button>
+    </div>
+  );
+}
+
 // ─── Main Page ─────────────────────────────────────────────────────────---
 
 export default function DashboardPage() {
@@ -2257,89 +2398,47 @@ export default function DashboardPage() {
                 <span className="hidden @[400px]/app:inline text-[10px] text-zinc-500 leading-tight">
                   built for guilds · by devilren (AKA TOTORO)
                 </span>
-                <div style={{ display: "flex", flexDirection: "column", gap: 6, marginTop: 8, alignItems: "flex-start" }}>
-                  <button
-                    type="button"
-                    onClick={async () => {
+                <div style={{ display: "flex", flexDirection: "column", gap: 8, marginTop: 10, alignItems: "flex-start" }}>
+                  <HeroButton
+                    icon={<SwordIcon />}
+                    label="Play MIR4 DreamScape"
+                    color="#d4a017"
+                    glowColor="rgba(212,160,23,0.5)"
+                    onClick={() => {
                       const url = "https://dreamscapemir.com/#/signup?d=33";
                       if (sdkRef.current) {
-                        try {
-                          await sdkRef.current.commands.openExternalLink({ url });
-                          return;
-                        } catch { /* fall through to window.open */ }
+                        sdkRef.current.commands.openExternalLink({ url }).catch(() => {
+                          window.open(url, "_blank", "noopener,noreferrer");
+                        });
+                      } else {
+                        window.open(url, "_blank", "noopener,noreferrer");
                       }
-                      window.open(url, "_blank", "noopener,noreferrer");
                     }}
-                    style={{
-                      display: "inline-flex",
-                      alignItems: "center",
-                      gap: 6,
-                      padding: "5px 14px",
-                      background: "rgba(255,180,0,0.15)",
-                      border: "1px solid rgba(255,180,0,0.4)",
-                      borderRadius: 20,
-                      color: "#ffd166",
-                      fontSize: "0.75rem",
-                      fontWeight: 600,
-                      backdropFilter: "blur(8px)",
-                      cursor: "pointer",
-                      fontFamily: "inherit",
-                    }}
-                  >
-                    ⚔️ Play MIR4 DreamScape
-                  </button>
-                  <button
-                    type="button"
-                    onClick={async () => {
+                  />
+                  <HeroButton
+                    icon={<DiscordIcon />}
+                    label="Official Discord"
+                    color="#5865F2"
+                    glowColor="rgba(88,101,242,0.5)"
+                    onClick={() => {
                       const url = "https://discord.gg/officialdreamscape";
                       if (sdkRef.current) {
-                        try {
-                          await sdkRef.current.commands.openExternalLink({ url });
-                          return;
-                        } catch { /* fall through to window.open */ }
+                        sdkRef.current.commands.openExternalLink({ url }).catch(() => {
+                          window.open(url, "_blank", "noopener,noreferrer");
+                        });
+                      } else {
+                        window.open(url, "_blank", "noopener,noreferrer");
                       }
-                      window.open(url, "_blank", "noopener,noreferrer");
                     }}
-                    style={{
-                      display: "inline-flex",
-                      alignItems: "center",
-                      gap: 6,
-                      padding: "5px 14px",
-                      background: "rgba(88,101,242,0.15)",
-                      border: "1px solid rgba(88,101,242,0.5)",
-                      borderRadius: 20,
-                      color: "#a5b4fc",
-                      fontSize: "0.75rem",
-                      fontWeight: 600,
-                      backdropFilter: "blur(8px)",
-                      cursor: "pointer",
-                      fontFamily: "inherit",
-                    }}
-                  >
-                    💬 Official Discord
-                  </button>
+                  />
                   {currentUser && (
-                    <button
-                      type="button"
+                    <HeroButton
+                      icon={<BellIcon />}
+                      label="Remind me"
+                      color="#22c55e"
+                      glowColor="rgba(34,197,94,0.5)"
                       onClick={() => setReminderModal(true)}
-                      style={{
-                        display: "inline-flex",
-                        alignItems: "center",
-                        gap: 6,
-                        padding: "5px 14px",
-                        background: "rgba(34,197,94,0.15)",
-                        border: "1px solid rgba(34,197,94,0.4)",
-                        borderRadius: 20,
-                        color: "#86efac",
-                        fontSize: "0.75rem",
-                        fontWeight: 600,
-                        backdropFilter: "blur(8px)",
-                        cursor: "pointer",
-                        fontFamily: "inherit",
-                      }}
-                    >
-                      ⏰ Remind me
-                    </button>
+                    />
                   )}
                 </div>
               </div>
