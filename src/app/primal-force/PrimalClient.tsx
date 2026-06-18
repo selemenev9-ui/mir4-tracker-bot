@@ -136,14 +136,33 @@ export default function PrimalClient({ data }: { data: PrimalItem[] }) {
           inset: 0,
           zIndex: 0,
           pointerEvents: "none",
-          background: `
-            radial-gradient(ellipse at 20% 50%, rgba(120,40,200,0.12) 0%, transparent 60%),
-            radial-gradient(ellipse at 80% 20%, rgba(200,140,20,0.08) 0%, transparent 50%),
-            #070b14
-          `,
+          background: "#070b14",
           animation: "bgPulse 8s ease-in-out infinite alternate",
         }}
-      />
+      >
+        <div style={{ position: "absolute", inset: 0, overflow: "hidden" }}>
+          <video
+            autoPlay
+            loop
+            muted
+            playsInline
+            style={{ width: "100%", height: "100%", objectFit: "cover", opacity: 0.35 }}
+          >
+            <source src="/bg-primal.webm" type="video/webm" />
+          </video>
+        </div>
+        <div
+          style={{
+            position: "absolute",
+            inset: 0,
+            opacity: 0.7,
+            background: `
+              radial-gradient(ellipse at 20% 50%, rgba(120,40,200,0.12) 0%, transparent 60%),
+              radial-gradient(ellipse at 80% 20%, rgba(200,140,20,0.08) 0%, transparent 50%)
+            `,
+          }}
+        />
+      </div>
 
       {/* ── Header ── */}
       <header
