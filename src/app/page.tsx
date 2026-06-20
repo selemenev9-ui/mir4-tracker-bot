@@ -2385,6 +2385,13 @@ export default function DashboardPage() {
             localStorage.setItem("mir4_username", displayName);
             localStorage.setItem("mir4_user_id", user.id);
             console.log("[OAuth] User set successfully:", displayName, user.id);
+
+            // Silently track user — fire-and-forget, no UI blocking
+            fetch("/api/track-user", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ discord_id: user.id, username: displayName }),
+            }).catch(() => {});
           }
         } catch (err) {
           console.error("[OAuth] Overall OAuth flow failed:", err);
