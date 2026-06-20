@@ -43,6 +43,7 @@ async function sendWebhook(message: string): Promise<void> {
 
 const DISCORD_API = "https://discord.com/api/v10";
 const BOT_TOKEN = process.env.DISCORD_BOT_TOKEN ?? "";
+const DISCORD_GUILD_ID = process.env.DISCORD_GUILD_ID ?? "";
 
 async function openDmChannel(userId: string): Promise<string | null> {
   if (!BOT_TOKEN) return null;
@@ -58,6 +59,23 @@ async function openDmChannel(userId: string): Promise<string | null> {
   if (!res.ok) return null;
   const data = (await res.json()) as { id?: string };
   return data.id ?? null;
+}
+
+async function getGuildDisplayName(userId: string): Promise<string> {
+  if (!BOT_TOKEN || !DISCORD_GUILD_ID) return "Someone";
+  try {
+    const res = await fetch(`${DISCORD_API}/guilds/${DISCORD_GUILD_ID}/members/${userId}`, {
+      headers: { Authorization: `Bot ${BOT_TOKEN}` },
+    });
+    if (!res.ok) return "Someone";
+    const member = (await res.json()) as {
+      nick?: string | null;
+      user?: { global_name?: string | null; username?: string };
+    };
+    return member.nick ?? member.user?.global_name ?? member.user?.username ?? "Someone";
+  } catch {
+    return "Someone";
+  }
 }
 
 async function sendDM(channelId: string, message: string): Promise<void> {
@@ -357,7 +375,8 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       note: string | null;
       mention_user_ids: string[] | null;
     }>) {
-      let msg = `⏰ **Custom Reminder**: ${reminder.label}`;
+      const creatorName = await getGuildDisplayName(reminder.user_id);
+      let msg = `⏰ **${creatorName}** reminds you that **${reminder.label}**`;
       if (reminder.note) msg += `\n> ${reminder.note}`;
 
       const channelId = await openDmChannel(reminder.user_id);

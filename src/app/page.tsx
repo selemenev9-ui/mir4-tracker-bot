@@ -2936,7 +2936,7 @@ export default function DashboardPage() {
             />
             {guildMembers.length > 0 && (
               <div className="mb-4">
-                <p className="mb-1.5 text-xs font-semibold text-zinc-400">Тегнуть в личку:</p>
+                <p className="mb-1.5 text-xs font-semibold text-zinc-400">Notify members:</p>
                 {guildMembers.length > 20 && (
                   <input
                     type="text"
