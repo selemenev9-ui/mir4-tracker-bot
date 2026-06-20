@@ -2866,15 +2866,16 @@ export default function DashboardPage() {
       {reminderModal && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center"
-          style={{ background: "rgba(3,7,17,0.85)", backdropFilter: "blur(16px)" }}
+          style={{ background: "rgba(3,7,17,0.85)", backdropFilter: "blur(16px)", overflowY: "auto", maxHeight: "100dvh" }}
         >
           <div
-            className="w-full max-w-sm rounded-2xl p-6 shadow-2xl mx-4"
+            className="w-full max-w-sm rounded-2xl p-6 shadow-2xl mx-4 my-6"
             style={{
               background: "rgba(8,14,36,0.9)",
               border: "1px solid rgba(255,255,255,0.1)",
               backdropFilter: "blur(20px)",
               boxShadow: "0 0 80px rgba(34,197,94,0.15), 0 32px 64px rgba(0,0,0,0.7)",
+              marginBottom: 24,
             }}
           >
             <h2 className="mb-4 text-base font-bold text-zinc-50">⏰ Custom Reminder</h2>
