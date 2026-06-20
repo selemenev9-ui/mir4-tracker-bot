@@ -2937,14 +2937,64 @@ export default function DashboardPage() {
             {guildMembers.length > 0 && (
               <div className="mb-4">
                 <p className="mb-1.5 text-xs font-semibold text-zinc-400">Notify members:</p>
-                {guildMembers.length > 20 && (
-                  <input
-                    type="text"
-                    value={mentionSearch}
-                    onChange={(e) => setMentionSearch(e.target.value)}
-                    placeholder="Search member..."
-                    className="mb-2 w-full rounded-lg border border-zinc-700 bg-zinc-900 px-2 py-1 text-xs text-zinc-100 placeholder-zinc-600 outline-none focus:border-red-500/40"
-                  />
+
+                {/* Zone 1 — selected (always visible) */}
+                {selectedMentions.length > 0 && (
+                  <div
+                    style={{
+                      marginBottom: 8,
+                      paddingBottom: 8,
+                      borderBottom: "1px solid rgba(255,255,255,0.06)",
+                    }}
+                  >
+                    <p style={{ fontSize: 11, color: "rgba(255,255,255,0.4)", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: 6 }}>
+                      Selected:
+                    </p>
+                    <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+                      {selectedMentions.map((id) => {
+                        const m = guildMembers.find((x) => x.id === id);
+                        if (!m) return null;
+                        return (
+                          <button
+                            key={id}
+                            type="button"
+                            onClick={() => setSelectedMentions((prev) => prev.filter((x) => x !== id))}
+                            style={{
+                              padding: "4px 8px 4px 10px",
+                              borderRadius: 9999,
+                              fontSize: 12,
+                              fontFamily: "inherit",
+                              cursor: "pointer",
+                              display: "inline-flex",
+                              alignItems: "center",
+                              gap: 4,
+                              transition: "all 0.15s ease",
+                              background: "rgba(239,68,68,0.15)",
+                              border: "1px solid rgba(239,68,68,0.5)",
+                              color: "#ef4444",
+                            }}
+                          >
+                            {m.displayName}
+                            <span style={{ fontSize: 10, opacity: 0.7, lineHeight: 1 }}>×</span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+
+                {/* Zone 2 — all unselected, filterable */}
+                <input
+                  type="text"
+                  value={mentionSearch}
+                  onChange={(e) => setMentionSearch(e.target.value)}
+                  placeholder="Search member..."
+                  className="mb-2 w-full rounded-lg border border-zinc-700 bg-zinc-900 px-2 py-1 text-xs text-zinc-100 placeholder-zinc-600 outline-none focus:border-red-500/40"
+                />
+                {selectedMentions.length > 0 && (
+                  <p style={{ fontSize: 11, color: "rgba(255,255,255,0.4)", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: 6 }}>
+                    All members:
+                  </p>
                 )}
                 <div
                   style={{
@@ -2957,38 +3007,32 @@ export default function DashboardPage() {
                   }}
                 >
                   {guildMembers
+                    .filter((m) => !selectedMentions.includes(m.id))
                     .filter((m) =>
                       mentionSearch.trim()
                         ? m.displayName.toLowerCase().includes(mentionSearch.toLowerCase())
                         : true
                     )
-                    .map((m) => {
-                      const selected = selectedMentions.includes(m.id);
-                      return (
-                        <button
-                          key={m.id}
-                          type="button"
-                          onClick={() =>
-                            setSelectedMentions((prev) =>
-                              selected ? prev.filter((id) => id !== m.id) : [...prev, m.id]
-                            )
-                          }
-                          style={{
-                            padding: "4px 10px",
-                            borderRadius: 9999,
-                            fontSize: 12,
-                            fontFamily: "inherit",
-                            cursor: "pointer",
-                            transition: "all 0.15s ease",
-                            background: selected ? "rgba(239,68,68,0.15)" : "rgba(255,255,255,0.04)",
-                            border: selected ? "1px solid rgba(239,68,68,0.5)" : "1px solid rgba(255,255,255,0.1)",
-                            color: selected ? "#ef4444" : "rgba(255,255,255,0.5)",
-                          }}
-                        >
-                          {m.displayName}
-                        </button>
-                      );
-                    })}
+                    .map((m) => (
+                      <button
+                        key={m.id}
+                        type="button"
+                        onClick={() => setSelectedMentions((prev) => [...prev, m.id])}
+                        style={{
+                          padding: "4px 10px",
+                          borderRadius: 9999,
+                          fontSize: 12,
+                          fontFamily: "inherit",
+                          cursor: "pointer",
+                          transition: "all 0.15s ease",
+                          background: "rgba(255,255,255,0.04)",
+                          border: "1px solid rgba(255,255,255,0.1)",
+                          color: "rgba(255,255,255,0.5)",
+                        }}
+                      >
+                        {m.displayName}
+                      </button>
+                    ))}
                 </div>
               </div>
             )}
