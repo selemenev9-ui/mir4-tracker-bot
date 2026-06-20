@@ -2878,165 +2878,212 @@ export default function DashboardPage() {
               marginBottom: 24,
             }}
           >
-            <h2 className="mb-4 text-base font-bold text-zinc-50">⏰ Custom Reminder</h2>
-            <input
-              type="text"
-              value={reminderLabel}
-              onChange={(e) => setReminderLabel(e.target.value)}
-              placeholder="Boss / event name"
-              autoFocus
-              className="mb-3 w-full rounded-xl border border-zinc-700 bg-zinc-900 px-3 py-2 text-sm text-zinc-100 placeholder-zinc-600 outline-none focus:border-emerald-500/60 focus:ring-1 focus:ring-emerald-500/20"
-            />
-            <div className="mb-3 flex gap-2">
-              <button
-                type="button"
-                onClick={() => setReminderMode("minutes")}
-                className={`flex-1 rounded-xl border py-1.5 text-xs font-semibold transition-colors ${
-                  reminderMode === "minutes"
-                    ? "border-emerald-500/60 bg-emerald-500/20 text-emerald-300"
-                    : "border-zinc-700 bg-zinc-900 text-zinc-500 hover:text-zinc-300"
-                }`}
-              >
-                In X minutes
-              </button>
-              <button
-                type="button"
-                onClick={() => setReminderMode("time")}
-                className={`flex-1 rounded-xl border py-1.5 text-xs font-semibold transition-colors ${
-                  reminderMode === "time"
-                    ? "border-emerald-500/60 bg-emerald-500/20 text-emerald-300"
-                    : "border-zinc-700 bg-zinc-900 text-zinc-500 hover:text-zinc-300"
-                }`}
-              >
-                At time (UTC+8)
-              </button>
+            {/* Header — outside scrollable body */}
+            <div
+              className="flex items-center gap-2.5"
+              style={{ padding: "16px 16px 12px" }}
+            >
+              <svg width="28" height="28" viewBox="0 0 110 110" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                  <radialGradient id="rcBody" cx="38%" cy="32%" r="65%">
+                    <stop offset="0%" stopColor="#ff7675" />
+                    <stop offset="45%" stopColor="#d63031" />
+                    <stop offset="100%" stopColor="#6b0000" />
+                  </radialGradient>
+                  <radialGradient id="rcShine" cx="30%" cy="28%" r="45%">
+                    <stop offset="0%" stopColor="rgba(255,255,255,0.55)" />
+                    <stop offset="100%" stopColor="rgba(255,255,255,0)" />
+                  </radialGradient>
+                  <radialGradient id="rcMetal" cx="40%" cy="30%" r="60%">
+                    <stop offset="0%" stopColor="#b2bec3" />
+                    <stop offset="100%" stopColor="#2d3436" />
+                  </radialGradient>
+                </defs>
+                <ellipse cx="25" cy="22" rx="9" ry="7" fill="url(#rcMetal)" transform="rotate(-35,25,22)" />
+                <ellipse cx="85" cy="22" rx="9" ry="7" fill="url(#rcMetal)" transform="rotate(35,85,22)" />
+                <line x1="31" y1="27" x2="43" y2="37" stroke="#888" strokeWidth="4" strokeLinecap="round" />
+                <line x1="79" y1="27" x2="67" y2="37" stroke="#888" strokeWidth="4" strokeLinecap="round" />
+                <circle cx="55" cy="62" r="42" fill="url(#rcBody)" />
+                <circle cx="55" cy="62" r="42" fill="url(#rcShine)" />
+                <circle cx="55" cy="62" r="42" stroke="rgba(255,150,150,0.4)" strokeWidth="1.5" fill="none" />
+                <circle cx="55" cy="62" r="33" fill="rgba(0,0,0,0.25)" />
+                <line x1="55" y1="31" x2="55" y2="37" stroke="rgba(255,255,255,0.6)" strokeWidth="2" strokeLinecap="round" />
+                <line x1="55" y1="93" x2="55" y2="87" stroke="rgba(255,255,255,0.6)" strokeWidth="2" strokeLinecap="round" />
+                <line x1="23" y1="62" x2="29" y2="62" stroke="rgba(255,255,255,0.6)" strokeWidth="2" strokeLinecap="round" />
+                <line x1="87" y1="62" x2="81" y2="62" stroke="rgba(255,255,255,0.6)" strokeWidth="2" strokeLinecap="round" />
+                <line x1="55" y1="62" x2="55" y2="41" stroke="white" strokeWidth="3.5" strokeLinecap="round" />
+                <line x1="55" y1="62" x2="71" y2="54" stroke="white" strokeWidth="2.5" strokeLinecap="round" />
+                <circle cx="55" cy="62" r="4" fill="white" />
+                <circle cx="55" cy="62" r="2" fill="#d63031" />
+                <ellipse cx="38" cy="103" rx="8" ry="5" fill="url(#rcMetal)" transform="rotate(-15,38,103)" />
+                <ellipse cx="72" cy="103" rx="8" ry="5" fill="url(#rcMetal)" transform="rotate(15,72,103)" />
+              </svg>
+              <span style={{ fontSize: 18, fontWeight: 700, color: "white" }}>Custom Reminder</span>
             </div>
-            {reminderMode === "minutes" ? (
-              <input
-                type="number"
-                min={1}
-                max={1440}
-                value={reminderMinutes}
-                onChange={(e) => setReminderMinutes(Number(e.target.value))}
-                className="mb-3 w-full rounded-xl border border-zinc-700 bg-zinc-900 px-3 py-2 text-sm text-zinc-100 outline-none focus:border-emerald-500/60 focus:ring-1 focus:ring-emerald-500/20"
-              />
-            ) : (
-              <input
-                type="time"
-                value={reminderTime}
-                onChange={(e) => setReminderTime(e.target.value)}
-                className="mb-3 w-full rounded-xl border border-zinc-700 bg-zinc-900 px-3 py-2 text-sm text-zinc-100 outline-none focus:border-emerald-500/60 focus:ring-1 focus:ring-emerald-500/20"
-              />
-            )}
-            <textarea
-              value={reminderNote}
-              onChange={(e) => setReminderNote(e.target.value)}
-              placeholder="Optional note..."
-              rows={2}
-              className="mb-3 w-full resize-none rounded-xl border border-zinc-700 bg-zinc-900 px-3 py-2 text-sm text-zinc-100 placeholder-zinc-600 outline-none focus:border-emerald-500/60 focus:ring-1 focus:ring-emerald-500/20"
-            />
-            {guildMembers.length > 0 && (
-              <div className="mb-4">
-                <p className="mb-1.5 text-xs font-semibold text-zinc-400">Notify members:</p>
 
-                <div style={{ maxHeight: 220, overflowY: "auto", paddingRight: 2 }}>
-                {/* Zone 1 — selected (always visible) */}
-                {selectedMentions.length > 0 && (
-                  <div
-                    style={{
-                      marginBottom: 8,
-                      paddingBottom: 8,
-                      borderBottom: "1px solid rgba(255,255,255,0.06)",
-                    }}
-                  >
-                    <p style={{ fontSize: 11, color: "rgba(255,255,255,0.4)", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: 6 }}>
-                      Selected:
-                    </p>
-                    <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
-                      {selectedMentions.map((id) => {
-                        const m = guildMembers.find((x) => x.id === id);
-                        if (!m) return null;
-                        return (
+            {/* Scrollable body */}
+            <div style={{ overflowY: "auto", maxHeight: "50vh", padding: "0 16px 16px" }}>
+              <input
+                type="text"
+                value={reminderLabel}
+                onChange={(e) => setReminderLabel(e.target.value)}
+                placeholder="Boss / event name"
+                autoFocus
+                className="mb-3 w-full rounded-xl border border-zinc-700 bg-zinc-900 px-3 py-2 text-sm text-zinc-100 placeholder-zinc-600 outline-none focus:border-emerald-500/60 focus:ring-1 focus:ring-emerald-500/20"
+              />
+              <div className="mb-3 flex gap-2">
+                <button
+                  type="button"
+                  onClick={() => setReminderMode("minutes")}
+                  className={`flex-1 rounded-xl border py-1.5 text-xs font-semibold transition-colors ${
+                    reminderMode === "minutes"
+                      ? "border-emerald-500/60 bg-emerald-500/20 text-emerald-300"
+                      : "border-zinc-700 bg-zinc-900 text-zinc-500 hover:text-zinc-300"
+                  }`}
+                >
+                  In X minutes
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setReminderMode("time")}
+                  className={`flex-1 rounded-xl border py-1.5 text-xs font-semibold transition-colors ${
+                    reminderMode === "time"
+                      ? "border-emerald-500/60 bg-emerald-500/20 text-emerald-300"
+                      : "border-zinc-700 bg-zinc-900 text-zinc-500 hover:text-zinc-300"
+                  }`}
+                >
+                  At time (UTC+8)
+                </button>
+              </div>
+              {reminderMode === "minutes" ? (
+                <input
+                  type="number"
+                  min={1}
+                  max={1440}
+                  value={reminderMinutes}
+                  onChange={(e) => setReminderMinutes(Number(e.target.value))}
+                  className="mb-3 w-full rounded-xl border border-zinc-700 bg-zinc-900 px-3 py-2 text-sm text-zinc-100 outline-none focus:border-emerald-500/60 focus:ring-1 focus:ring-emerald-500/20"
+                />
+              ) : (
+                <input
+                  type="time"
+                  value={reminderTime}
+                  onChange={(e) => setReminderTime(e.target.value)}
+                  className="mb-3 w-full rounded-xl border border-zinc-700 bg-zinc-900 px-3 py-2 text-sm text-zinc-100 outline-none focus:border-emerald-500/60 focus:ring-1 focus:ring-emerald-500/20"
+                />
+              )}
+              <textarea
+                value={reminderNote}
+                onChange={(e) => setReminderNote(e.target.value)}
+                placeholder="Optional note..."
+                rows={2}
+                className="mb-3 w-full resize-none rounded-xl border border-zinc-700 bg-zinc-900 px-3 py-2 text-sm text-zinc-100 placeholder-zinc-600 outline-none focus:border-emerald-500/60 focus:ring-1 focus:ring-emerald-500/20"
+              />
+              {guildMembers.length > 0 && (
+                <div className="mb-4">
+                  <p className="mb-1.5 text-xs font-semibold text-zinc-400">Notify members:</p>
+
+                  <div style={{ maxHeight: 220, overflowY: "auto", paddingRight: 2 }}>
+                    {/* Zone 1 — selected (always visible) */}
+                    {selectedMentions.length > 0 && (
+                      <div
+                        style={{
+                          marginBottom: 8,
+                          paddingBottom: 8,
+                          borderBottom: "1px solid rgba(255,255,255,0.06)",
+                        }}
+                      >
+                        <p style={{ fontSize: 11, color: "rgba(255,255,255,0.4)", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: 6 }}>
+                          Selected:
+                        </p>
+                        <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+                          {selectedMentions.map((id) => {
+                            const m = guildMembers.find((x) => x.id === id);
+                            if (!m) return null;
+                            return (
+                              <button
+                                key={id}
+                                type="button"
+                                onClick={() => setSelectedMentions((prev) => prev.filter((x) => x !== id))}
+                                style={{
+                                  padding: "4px 8px 4px 10px",
+                                  borderRadius: 9999,
+                                  fontSize: 12,
+                                  fontFamily: "inherit",
+                                  cursor: "pointer",
+                                  display: "inline-flex",
+                                  alignItems: "center",
+                                  gap: 4,
+                                  transition: "all 0.15s ease",
+                                  background: "rgba(239,68,68,0.15)",
+                                  border: "1px solid rgba(239,68,68,0.5)",
+                                  color: "#ef4444",
+                                }}
+                              >
+                                {m.displayName}
+                                <span style={{ fontSize: 10, opacity: 0.7, lineHeight: 1 }}>×</span>
+                              </button>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Zone 2 — all unselected, filterable */}
+                    <input
+                      type="text"
+                      value={mentionSearch}
+                      onChange={(e) => setMentionSearch(e.target.value)}
+                      placeholder="Search member..."
+                      className="mb-2 w-full rounded-lg border border-zinc-700 bg-zinc-900 px-2 py-1 text-xs text-zinc-100 placeholder-zinc-600 outline-none focus:border-red-500/40"
+                    />
+                    {selectedMentions.length > 0 && (
+                      <p style={{ fontSize: 11, color: "rgba(255,255,255,0.4)", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: 6 }}>
+                        All members:
+                      </p>
+                    )}
+                    <div
+                      style={{
+                        display: "flex",
+                        flexWrap: "wrap",
+                        gap: 6,
+                      }}
+                    >
+                      {guildMembers
+                        .filter((m) => !selectedMentions.includes(m.id))
+                        .filter((m) =>
+                          mentionSearch.trim()
+                            ? m.displayName.toLowerCase().includes(mentionSearch.toLowerCase())
+                            : true
+                        )
+                        .map((m) => (
                           <button
-                            key={id}
+                            key={m.id}
                             type="button"
-                            onClick={() => setSelectedMentions((prev) => prev.filter((x) => x !== id))}
+                            onClick={() => setSelectedMentions((prev) => [...prev, m.id])}
                             style={{
-                              padding: "4px 8px 4px 10px",
+                              padding: "4px 10px",
                               borderRadius: 9999,
                               fontSize: 12,
                               fontFamily: "inherit",
                               cursor: "pointer",
-                              display: "inline-flex",
-                              alignItems: "center",
-                              gap: 4,
                               transition: "all 0.15s ease",
-                              background: "rgba(239,68,68,0.15)",
-                              border: "1px solid rgba(239,68,68,0.5)",
-                              color: "#ef4444",
+                              background: "rgba(255,255,255,0.04)",
+                              border: "1px solid rgba(255,255,255,0.1)",
+                              color: "rgba(255,255,255,0.5)",
                             }}
                           >
                             {m.displayName}
-                            <span style={{ fontSize: 10, opacity: 0.7, lineHeight: 1 }}>×</span>
                           </button>
-                        );
-                      })}
+                        ))}
                     </div>
                   </div>
-                )}
+                </div>
+              )}
+            </div>
 
-                {/* Zone 2 — all unselected, filterable */}
-                <input
-                  type="text"
-                  value={mentionSearch}
-                  onChange={(e) => setMentionSearch(e.target.value)}
-                  placeholder="Search member..."
-                  className="mb-2 w-full rounded-lg border border-zinc-700 bg-zinc-900 px-2 py-1 text-xs text-zinc-100 placeholder-zinc-600 outline-none focus:border-red-500/40"
-                />
-                {selectedMentions.length > 0 && (
-                  <p style={{ fontSize: 11, color: "rgba(255,255,255,0.4)", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: 6 }}>
-                    All members:
-                  </p>
-                )}
-                <div
-                  style={{
-                    display: "flex",
-                    flexWrap: "wrap",
-                    gap: 6,
-                  }}
-                >
-                  {guildMembers
-                    .filter((m) => !selectedMentions.includes(m.id))
-                    .filter((m) =>
-                      mentionSearch.trim()
-                        ? m.displayName.toLowerCase().includes(mentionSearch.toLowerCase())
-                        : true
-                    )
-                    .map((m) => (
-                      <button
-                        key={m.id}
-                        type="button"
-                        onClick={() => setSelectedMentions((prev) => [...prev, m.id])}
-                        style={{
-                          padding: "4px 10px",
-                          borderRadius: 9999,
-                          fontSize: 12,
-                          fontFamily: "inherit",
-                          cursor: "pointer",
-                          transition: "all 0.15s ease",
-                          background: "rgba(255,255,255,0.04)",
-                          border: "1px solid rgba(255,255,255,0.1)",
-                          color: "rgba(255,255,255,0.5)",
-                        }}
-                      >
-                        {m.displayName}
-                      </button>
-                    ))}
-                </div>
-                </div>
-              </div>
-            )}
-            <div className="flex gap-2">
+            {/* Footer — buttons, outside scrollable body */}
+            <div className="flex gap-2" style={{ padding: "0 16px 16px" }}>
               <button
                 type="button"
                 disabled={reminderSaving || !reminderLabel.trim()}
