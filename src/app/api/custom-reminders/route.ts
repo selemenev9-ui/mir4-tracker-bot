@@ -4,11 +4,12 @@ import { getSupabaseClient } from "@/lib/supabase";
 const supabase = getSupabaseClient();
 
 export async function POST(req: NextRequest) {
-  const { user_id, label, note, fire_at } = (await req.json()) as {
+  const { user_id, label, note, fire_at, mention_user_ids } = (await req.json()) as {
     user_id?: string;
     label?: string;
     note?: string;
     fire_at?: string;
+    mention_user_ids?: string[];
   };
 
   if (!user_id || !label || !fire_at) {
@@ -17,7 +18,7 @@ export async function POST(req: NextRequest) {
 
   const { error } = await supabase
     .from("custom_reminders")
-    .insert({ user_id, label, note: note ?? null, fire_at });
+    .insert({ user_id, label, note: note ?? null, fire_at, mention_user_ids: mention_user_ids?.length ? mention_user_ids : [] });
 
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 400 });

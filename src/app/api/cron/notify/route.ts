@@ -345,7 +345,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 
   const { data: customReminders } = await supabase
     .from("custom_reminders")
-    .select("id, user_id, label, note")
+    .select("id, user_id, label, note, mention_user_ids")
     .gte("fire_at", customWindowStart)
     .lte("fire_at", customWindowEnd);
 
@@ -355,14 +355,24 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       user_id: string;
       label: string;
       note: string | null;
+      mention_user_ids: string[] | null;
     }>) {
+      let msg = `⏰ **Custom Reminder**: ${reminder.label}`;
+      if (reminder.note) msg += `\n> ${reminder.note}`;
+
       const channelId = await openDmChannel(reminder.user_id);
       if (channelId) {
-        let msg = `⏰ **Custom Reminder**: ${reminder.label}`;
-        if (reminder.note) msg += `\n> ${reminder.note}`;
         await sendDM(channelId, msg);
         notifications.push(`custom_${reminder.id}`);
       }
+
+      if (reminder.mention_user_ids?.length) {
+        for (const mentionId of reminder.mention_user_ids) {
+          const mChannel = await openDmChannel(mentionId);
+          if (mChannel) await sendDM(mChannel, msg);
+        }
+      }
+
       await supabase.from("custom_reminders").delete().eq("id", reminder.id);
     }
   }

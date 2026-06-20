@@ -2199,12 +2199,23 @@ export default function DashboardPage() {
   const [reminderMinutes, setReminderMinutes] = useState(30);
   const [reminderTime, setReminderTime] = useState("");
   const [reminderSaving, setReminderSaving] = useState(false);
+  const [selectedMentions, setSelectedMentions] = useState<string[]>([]);
+  const [guildMembers, setGuildMembers] = useState<{ id: string; displayName: string; avatarUrl: string | null }[]>([]);
+  const [mentionSearch, setMentionSearch] = useState("");
   const tabsRef = useRef<HTMLDivElement>(null);
   const sdkRef = useRef<DiscordSDKWithCommands | null>(null);
   const isDragging = useRef(false);
   const [isGrabbing, setIsGrabbing] = useState(false);
   const dragStartX = useRef(0);
   const dragScrollLeft = useRef(0);
+
+  useEffect(() => {
+    if (!reminderModal) return;
+    fetch("/api/guild-members")
+      .then((r) => r.json())
+      .then((data) => setGuildMembers(data as Array<{ id: string; displayName: string; avatarUrl: string | null }>))
+      .catch(() => {});
+  }, [reminderModal]);
 
   useEffect(() => {
     if (!tabsRef.current) return;
@@ -2921,8 +2932,66 @@ export default function DashboardPage() {
               onChange={(e) => setReminderNote(e.target.value)}
               placeholder="Optional note..."
               rows={2}
-              className="mb-4 w-full resize-none rounded-xl border border-zinc-700 bg-zinc-900 px-3 py-2 text-sm text-zinc-100 placeholder-zinc-600 outline-none focus:border-emerald-500/60 focus:ring-1 focus:ring-emerald-500/20"
+              className="mb-3 w-full resize-none rounded-xl border border-zinc-700 bg-zinc-900 px-3 py-2 text-sm text-zinc-100 placeholder-zinc-600 outline-none focus:border-emerald-500/60 focus:ring-1 focus:ring-emerald-500/20"
             />
+            {guildMembers.length > 0 && (
+              <div className="mb-4">
+                <p className="mb-1.5 text-xs font-semibold text-zinc-400">Тегнуть в личку:</p>
+                {guildMembers.length > 20 && (
+                  <input
+                    type="text"
+                    value={mentionSearch}
+                    onChange={(e) => setMentionSearch(e.target.value)}
+                    placeholder="Search member..."
+                    className="mb-2 w-full rounded-lg border border-zinc-700 bg-zinc-900 px-2 py-1 text-xs text-zinc-100 placeholder-zinc-600 outline-none focus:border-red-500/40"
+                  />
+                )}
+                <div
+                  style={{
+                    display: "flex",
+                    flexWrap: "wrap",
+                    gap: 6,
+                    maxHeight: 112,
+                    overflowY: "auto",
+                    paddingRight: 2,
+                  }}
+                >
+                  {guildMembers
+                    .filter((m) =>
+                      mentionSearch.trim()
+                        ? m.displayName.toLowerCase().includes(mentionSearch.toLowerCase())
+                        : true
+                    )
+                    .map((m) => {
+                      const selected = selectedMentions.includes(m.id);
+                      return (
+                        <button
+                          key={m.id}
+                          type="button"
+                          onClick={() =>
+                            setSelectedMentions((prev) =>
+                              selected ? prev.filter((id) => id !== m.id) : [...prev, m.id]
+                            )
+                          }
+                          style={{
+                            padding: "4px 10px",
+                            borderRadius: 9999,
+                            fontSize: 12,
+                            fontFamily: "inherit",
+                            cursor: "pointer",
+                            transition: "all 0.15s ease",
+                            background: selected ? "rgba(239,68,68,0.15)" : "rgba(255,255,255,0.04)",
+                            border: selected ? "1px solid rgba(239,68,68,0.5)" : "1px solid rgba(255,255,255,0.1)",
+                            color: selected ? "#ef4444" : "rgba(255,255,255,0.5)",
+                          }}
+                        >
+                          {m.displayName}
+                        </button>
+                      );
+                    })}
+                </div>
+              </div>
+            )}
             <div className="flex gap-2">
               <button
                 type="button"
@@ -2954,6 +3023,7 @@ export default function DashboardPage() {
                       label: reminderLabel.trim(),
                       note: reminderNote.trim() || undefined,
                       fire_at: fireAt.toISOString(),
+                      mention_user_ids: selectedMentions,
                     }),
                   });
                   setReminderSaving(false);
@@ -2963,6 +3033,9 @@ export default function DashboardPage() {
                   setReminderMode("minutes");
                   setReminderMinutes(30);
                   setReminderTime("");
+                  setSelectedMentions([]);
+                  setGuildMembers([]);
+                  setMentionSearch("");
                 }}
                 className="flex-1 rounded-xl border border-emerald-500/80 bg-emerald-500/20 py-2 text-sm font-semibold text-emerald-300 transition-colors hover:bg-emerald-500/30 disabled:cursor-not-allowed disabled:opacity-40"
               >
@@ -2977,6 +3050,9 @@ export default function DashboardPage() {
                   setReminderMode("minutes");
                   setReminderMinutes(30);
                   setReminderTime("");
+                  setSelectedMentions([]);
+                  setGuildMembers([]);
+                  setMentionSearch("");
                 }}
                 className="flex-1 rounded-xl border border-zinc-700 bg-zinc-800 py-2 text-sm font-semibold text-zinc-400 transition-colors hover:text-zinc-200"
               >
