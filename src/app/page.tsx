@@ -2668,7 +2668,13 @@ export default function DashboardPage() {
                 <h1 className="font-bold tracking-tight text-zinc-100" style={{ fontSize: "1.4rem" }}>
                   MIR4 Boss Tracker
                 </h1>
-                <span className="hidden @[400px]/app:inline text-[10px] text-zinc-500 leading-tight">
+                <span
+                  className="hidden @[400px]/app:inline text-[10px] leading-tight"
+                  style={{
+                    color: "rgba(255,255,255,0.75)",
+                    textShadow: "0 1px 4px rgba(0,0,0,0.9), 0 0 12px rgba(0,0,0,0.8)",
+                  }}
+                >
                   built for guilds · by devilren (AKA TOTORO)
                 </span>
                 <div style={{ display: "flex", flexDirection: "column", gap: 8, marginTop: 10, alignItems: "flex-start" }}>
@@ -2774,7 +2780,15 @@ export default function DashboardPage() {
                     </button>
                   )}
                 </div>
-                <div style={{ textAlign: "right" }}>
+                <div style={{
+                  textAlign: "right",
+                  background: "rgba(0,0,0,0.45)",
+                  backdropFilter: "blur(6px)",
+                  WebkitBackdropFilter: "blur(6px)",
+                  borderRadius: 8,
+                  padding: "6px 10px",
+                  border: "1px solid rgba(255,255,255,0.06)",
+                }}>
                   <p
                     onClick={() => {
                       navigator.clipboard?.writeText("TB5V2sNE5GXFnvUmqtpYgKctQJyWrwkiV5");
@@ -2782,12 +2796,12 @@ export default function DashboardPage() {
                       setTimeout(() => setCopied(false), 1500);
                     }}
                     title="Click to copy USDT TRC-20"
-                    style={{ fontSize: 9, color: "rgba(255,255,255,0.25)", fontFamily: "monospace",
+                    style={{ fontSize: 9, color: "rgba(255,220,80,0.85)", fontFamily: "monospace",
                       cursor: "pointer", marginBottom: 2, userSelect: "none" }}
                   >
                     {copied ? "✓ Copied!" : "💛 Donate USDT TRC-20"}
                   </p>
-                  <p style={{ fontSize: 9, color: "rgba(255,255,255,0.2)", lineHeight: 1.4 }}>
+                  <p style={{ fontSize: 9, color: "rgba(255,255,255,0.55)", lineHeight: 1.4 }}>
                     Want this for your server?{" "}
                     <span
                       onClick={() => {
@@ -2799,7 +2813,7 @@ export default function DashboardPage() {
                           window.open(url, "_blank", "noopener,noreferrer");
                         }
                       }}
-                      style={{ color: "rgba(100,180,255,0.5)", cursor: "pointer",
+                      style={{ color: "rgba(120,200,255,0.9)", cursor: "pointer",
                         textDecoration: "underline", textDecorationColor: "rgba(100,180,255,0.25)" }}
                     >
                       Contact me
