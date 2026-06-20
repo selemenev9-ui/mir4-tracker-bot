@@ -2185,6 +2185,9 @@ export default function DashboardPage() {
   >(null);
   const [sdkReady, setSdkReady] = useState(false);
   const [sdkError, setSdkError] = useState(false);
+  const [unauthorizedServer, setUnauthorizedServer] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const ALLOWED_GUILD = process.env.NEXT_PUBLIC_DISCORD_GUILD_ID ?? "";
   const [dynamicTimers, setDynamicTimers] = useState<DynamicTimerMap>({});
   const [subscribedBossIds, setSubscribedBossIds] = useState<Set<string>>(
     () => new Set(),
@@ -2344,6 +2347,10 @@ export default function DashboardPage() {
           try {
             const guildId = (discordSdk as unknown as { guildId?: string }).guildId;
             console.log("[OAuth] guildId:", guildId ?? "none");
+            if (guildId && ALLOWED_GUILD && guildId !== ALLOWED_GUILD) {
+              setUnauthorizedServer(true);
+              return;
+            }
             if (guildId) {
               const memberRes = await fetch(
                 `/api/guild-member?userId=${user.id}&guildId=${guildId}`,
@@ -2557,6 +2564,90 @@ export default function DashboardPage() {
     { id: "calculator", label: "⛏ Calculator" },
   ];
 
+  if (unauthorizedServer) {
+    return (
+      <div style={{
+        height: "100dvh",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        background: "linear-gradient(135deg, #060810 0%, #0d1117 100%)",
+        padding: "32px 24px",
+        textAlign: "center",
+        gap: 0,
+      }}>
+        {/* Lock icon */}
+        <div style={{ fontSize: 48, marginBottom: 16 }}>🔒</div>
+
+        {/* Title */}
+        <h1 style={{ fontSize: 20, fontWeight: 700, color: "#e2e8f0", marginBottom: 8 }}>
+          MIR4 Boss Tracker
+        </h1>
+
+        {/* Subtitle */}
+        <p style={{ fontSize: 13, color: "#64748b", marginBottom: 32, maxWidth: 260, lineHeight: 1.6 }}>
+          This app is private and available for selected servers only.
+        </p>
+
+        {/* Contact button */}
+        <button
+          onClick={() => {
+            const url = "https://discord.com/users/992543055188078693";
+            if (sdkRef.current) {
+              (sdkRef.current as DiscordSDKWithCommands).commands
+                .openExternalLink({ url })
+                .catch(() => window.open(url, "_blank", "noopener,noreferrer"));
+            } else {
+              window.open(url, "_blank", "noopener,noreferrer");
+            }
+          }}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 8,
+            background: "linear-gradient(135deg, #5865F2, #4752c4)",
+            border: "none",
+            borderRadius: 12,
+            padding: "12px 24px",
+            color: "white",
+            fontWeight: 600,
+            fontSize: 14,
+            cursor: "pointer",
+            marginBottom: 24,
+            boxShadow: "0 4px 20px rgba(88,101,242,0.4)",
+          }}
+        >
+          💬 Contact TOTORO on Discord
+        </button>
+
+        {/* Donate */}
+        <p style={{ fontSize: 10, color: "#334155", marginBottom: 6 }}>
+          Want to support the project?
+        </p>
+        <p
+          onClick={() => {
+            navigator.clipboard?.writeText("TB5V2sNE5GXFnvUmqtpYgKctQJyWrwkiV5");
+            setCopied(true);
+            setTimeout(() => setCopied(false), 1500);
+          }}
+          style={{
+            fontSize: 10,
+            color: copied ? "#22c55e" : "#475569",
+            fontFamily: "monospace",
+            cursor: "pointer",
+            letterSpacing: "0.02em",
+            wordBreak: "break-all",
+            maxWidth: 280,
+          }}
+          title="Click to copy"
+        >
+          {copied ? "✓ Copied!" : "💛 USDT TRC-20: TB5V2sNE5GXFnvUmqtpYgKctQJyWrwkiV5"}
+        </p>
+      </div>
+    );
+  }
+
   return (
     <div className="@container/app flex h-screen flex-col text-zinc-100 antialiased">
       <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col overflow-y-auto">
@@ -2624,63 +2715,97 @@ export default function DashboardPage() {
                   )}
                 </div>
               </div>
-              <div className="flex min-w-0 items-center gap-2">
-                <span className="hidden @[500px]/app:block">
-                  <ServerClock />
-                </span>
-                {currentUser ? (
-                  <>
-                    {currentUser.avatarUrl && (
-                      <img
-                        src={currentUser.avatarUrl}
-                        alt=""
-                        className="shrink-0 rounded-full object-cover"
+              <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 4 }}>
+                <div className="flex min-w-0 items-center gap-2">
+                  <span className="hidden @[500px]/app:block">
+                    <ServerClock />
+                  </span>
+                  {currentUser ? (
+                    <>
+                      {currentUser.avatarUrl && (
+                        <img
+                          src={currentUser.avatarUrl}
+                          alt=""
+                          className="shrink-0 rounded-full object-cover"
+                          style={{
+                            width: 28,
+                            height: 28,
+                            marginRight: 6,
+                          }}
+                        />
+                      )}
+                      <span
+                        className="max-w-[120px] truncate text-xs"
                         style={{
-                          width: 28,
-                          height: 28,
-                          marginRight: 6,
+                          background: "rgba(255,255,255,0.05)",
+                          border: "1px solid rgba(255,255,255,0.1)",
+                          borderRadius: "20px",
+                          padding: "2px 8px",
+                          color: "#94a3b8",
                         }}
-                      />
-                    )}
-                    <span
-                      className="max-w-[120px] truncate text-xs"
-                      style={{
-                        background: "rgba(255,255,255,0.05)",
-                        border: "1px solid rgba(255,255,255,0.1)",
-                        borderRadius: "20px",
-                        padding: "2px 8px",
-                        color: "#94a3b8",
-                      }}
-                    >
-                      {currentUser.username}
-                    </span>
-                    {!discordAuthDone && (
-                      <button
-                        type="button"
-                        onClick={() => {
-                          localStorage.removeItem("mir4_username");
-                          localStorage.removeItem("mir4_user_id");
-                          setCurrentUser(null);
-                          setSdkReady(false);
-                          setSdkError(false);
-                          setShowNamePrompt(true);
-                          setNameInput("");
-                        }}
-                        className="shrink-0 text-[10px] text-zinc-600 transition-colors hover:text-zinc-400"
                       >
-                        change
-                      </button>
-                    )}
-                  </>
-                ) : (
-                  <button
-                    type="button"
-                    onClick={() => setShowNamePrompt(true)}
-                    className="shrink-0 text-xs text-zinc-500 underline underline-offset-2 transition-colors hover:text-zinc-300"
+                        {currentUser.username}
+                      </span>
+                      {!discordAuthDone && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            localStorage.removeItem("mir4_username");
+                            localStorage.removeItem("mir4_user_id");
+                            setCurrentUser(null);
+                            setSdkReady(false);
+                            setSdkError(false);
+                            setShowNamePrompt(true);
+                            setNameInput("");
+                          }}
+                          className="shrink-0 text-[10px] text-zinc-600 transition-colors hover:text-zinc-400"
+                        >
+                          change
+                        </button>
+                      )}
+                    </>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => setShowNamePrompt(true)}
+                      className="shrink-0 text-xs text-zinc-500 underline underline-offset-2 transition-colors hover:text-zinc-300"
+                    >
+                      {sdkError ? "Login (web mode)" : "Login"}
+                    </button>
+                  )}
+                </div>
+                <div style={{ textAlign: "right" }}>
+                  <p
+                    onClick={() => {
+                      navigator.clipboard?.writeText("TB5V2sNE5GXFnvUmqtpYgKctQJyWrwkiV5");
+                      setCopied(true);
+                      setTimeout(() => setCopied(false), 1500);
+                    }}
+                    title="Click to copy USDT TRC-20"
+                    style={{ fontSize: 9, color: "rgba(255,255,255,0.25)", fontFamily: "monospace",
+                      cursor: "pointer", marginBottom: 2, userSelect: "none" }}
                   >
-                    {sdkError ? "Login (web mode)" : "Login"}
-                  </button>
-                )}
+                    {copied ? "✓ Copied!" : "💛 Donate USDT TRC-20"}
+                  </p>
+                  <p style={{ fontSize: 9, color: "rgba(255,255,255,0.2)", lineHeight: 1.4 }}>
+                    Want this for your server?{" "}
+                    <span
+                      onClick={() => {
+                        const url = "https://discord.com/users/992543055188078693";
+                        if (sdkRef.current) {
+                          sdkRef.current.commands.openExternalLink({ url })
+                            .catch(() => window.open(url, "_blank", "noopener,noreferrer"));
+                        } else {
+                          window.open(url, "_blank", "noopener,noreferrer");
+                        }
+                      }}
+                      style={{ color: "rgba(100,180,255,0.5)", cursor: "pointer",
+                        textDecoration: "underline", textDecorationColor: "rgba(100,180,255,0.25)" }}
+                    >
+                      Contact me
+                    </span>
+                  </p>
+                </div>
               </div>
             </header>
           </div>
