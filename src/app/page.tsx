@@ -2938,6 +2938,7 @@ export default function DashboardPage() {
               <div className="mb-4">
                 <p className="mb-1.5 text-xs font-semibold text-zinc-400">Notify members:</p>
 
+                <div style={{ maxHeight: 220, overflowY: "auto", paddingRight: 2 }}>
                 {/* Zone 1 — selected (always visible) */}
                 {selectedMentions.length > 0 && (
                   <div
@@ -3001,9 +3002,6 @@ export default function DashboardPage() {
                     display: "flex",
                     flexWrap: "wrap",
                     gap: 6,
-                    maxHeight: 112,
-                    overflowY: "auto",
-                    paddingRight: 2,
                   }}
                 >
                   {guildMembers
@@ -3033,6 +3031,7 @@ export default function DashboardPage() {
                         {m.displayName}
                       </button>
                     ))}
+                </div>
                 </div>
               </div>
             )}
