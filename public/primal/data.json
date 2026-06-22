@@ -2,6 +2,7 @@
   {
     "name": "Arma",
     "img": "arma.png",
+    "magicStone": "Magic Stone of Destruction",
     "stones": [
       "1.png",
       "1.1.png",
@@ -159,6 +160,7 @@
   {
     "name": "Arma Secundaria",
     "img": "secundaria.png",
+    "magicStone": "Magic Stone of Awakening",
     "stones": [
       "2.png",
       "2.1.png",
@@ -316,6 +318,7 @@
   {
     "name": "Armadura",
     "img": "armadura.png",
+    "magicStone": "Magic Stone of Vigor",
     "stones": [
       "3.png",
       "3.1.png",
@@ -473,6 +476,7 @@
   {
     "name": "Calça",
     "img": "calca.png",
+    "magicStone": "Magic Stone of Force",
     "stones": [
       "4.png",
       "4.1.png",
@@ -630,6 +634,7 @@
   {
     "name": "Luva",
     "img": "luva.png",
+    "magicStone": "Magic Stone of Precision",
     "stones": [
       "5.png",
       "5.1.png",
@@ -787,6 +792,7 @@
   {
     "name": "Bota",
     "img": "bota.png",
+    "magicStone": "Magic Stone of Agility",
     "stones": [
       "6.png",
       "6.1.png",
@@ -944,6 +950,7 @@
   {
     "name": "Colar",
     "img": "colar.png",
+    "magicStone": "Magic Stone of Antidemon",
     "stones": [
       "7.png",
       "7.1.png",
@@ -1101,6 +1108,7 @@
   {
     "name": "Bracelete",
     "img": "bracelete.png",
+    "magicStone": "Magic Stone of Focus",
     "stones": [
       "8.png",
       "8.1.png",
@@ -1258,6 +1266,7 @@
   {
     "name": "Anel",
     "img": "anel.png",
+    "magicStone": "Magic Stone of Growth",
     "stones": [
       "9.png",
       "9.1.png",
@@ -1415,6 +1424,7 @@
   {
     "name": "Brinco",
     "img": "brinco.png",
+    "magicStone": "Magic Stone of Mana",
     "stones": [
       "10.png",
       "10.1.png",
@@ -1572,10 +1582,11 @@
   {
     "name": "Medalha",
     "img": "medalha.png",
+    "magicStone": "Magic Stone of Antidemon",
     "stones": [
-      "8.png",
-      "8.1.png",
-      "8.2.png"
+      "7.png",
+      "7.1.png",
+      "7.2.png"
     ],
     "mainStats": [
       {
@@ -1729,10 +1740,11 @@
   {
     "name": "Berloque",
     "img": "sino.png",
+    "magicStone": "Magic Stone of Focus",
     "stones": [
-      "7.png",
-      "7.1.png",
-      "7.2.png"
+      "8.png",
+      "8.1.png",
+      "8.2.png"
     ],
     "mainStats": [
       {

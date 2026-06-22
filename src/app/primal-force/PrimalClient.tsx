@@ -15,6 +15,7 @@ export type PrimalItem = {
   stones: string[];
   mainStats: Stat[];
   secStats: Stat[];
+  magicStone?: string;
 };
 
 const EN_NAMES: Record<string, string> = {
@@ -473,6 +474,31 @@ export default function PrimalClient({ data }: { data: PrimalItem[] }) {
               ))}
             </div>
           </div>
+
+          {/* Required Magic Stone */}
+          {item.magicStone && (
+            <div style={{
+              marginTop: 10,
+              marginBottom: 20,
+              padding: "6px 10px",
+              background: "rgba(139, 92, 246, 0.12)",
+              border: "1px solid rgba(139, 92, 246, 0.3)",
+              borderRadius: 8,
+              display: "flex",
+              alignItems: "center",
+              gap: 6,
+            }}>
+              <span style={{ fontSize: 14 }}>💎</span>
+              <div>
+                <div style={{ fontSize: 9, color: "rgba(167, 139, 250, 0.7)", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 1 }}>
+                  Required Magic Stone
+                </div>
+                <div style={{ fontSize: 11, color: "rgba(221, 214, 254, 0.95)", fontWeight: 600 }}>
+                  {item.magicStone}
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Stats — two columns */}
           <div
